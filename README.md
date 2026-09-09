@@ -1,32 +1,43 @@
 # 🧭 Travel Architect Hub
 
-> **Personal Travel Architect & Master Multi-Trip Hub**  
-> An offline-first, mobile-optimized progressive web application (PWA) to architect, navigate, and preserve road trips and international expeditions.
+> **Personal Travel Architect & AI-Maintained Expedition Engine**  
+> An offline-first, mobile-optimized progressive web application (PWA) to architect, navigate, and preserve road trips and international journeys.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start)
-[![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
-[![PWA Ready](https://img.shields.io/badge/PWA-Offline--First-blue.svg)](manifest.json)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-trip--architect--plan.vercel.app-emerald?style=for-the-badge&logo=vercel)](https://trip-architect-plan.vercel.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![PWA Ready](https://img.shields.io/badge/PWA-Offline--First-violet.svg)](manifest.json)
+[![AI Maintained](https://img.shields.io/badge/AI%20Maintained-AGENTS.md-amber.svg)](AGENTS.md)
 
 ---
 
 ## 🌟 Overview & Architecture
 
-Travel Architect Hub solves the problem of fragmented travel notes and scattered documents by establishing a **Centralized Selection Deck** paired with **Standalone, Deep-Dive Trip Companions**.
+Travel Architect Hub solves the problem of fragmented travel notes and scattered documents by establishing a **Hybrid AI-Maintained Architecture**:
+
+1. **Master Selection Deck (`index.html`)**: Executive Bento Box 2.0 interface with multi-trip search, category filters, interactive preview drawer, budget calculator, and an in-browser **AI Itinerary Copilot**.
+2. **Universal Dynamic JSON Runner (`trip.html?id=<slug>`)**: A unified, responsive trip viewer that dynamically parses and renders rich itineraries from `data/trips/<slug>.json` (or browser storage). Features synchronized Leaflet maps, day filters, interactive packing checklists, driver cards, and SOS contacts.
+3. **Dedicated Bespoke Companions**: High-polish custom single-page apps (`vietnam_trip_architect_5_0.html` and `chikmagalur_trip_architect.html`) with embedded audio phrasebooks, currency converters, and local cultural guides.
+4. **AI Maintenance Engine (`AGENTS.md` & `trip.schema.json`)**: A formalized contract and JSON schema enabling any AI coding agent (Antigravity, Cursor, Claude, Copilot) or in-browser model (Gemini 2.5 Flash) to generate and integrate complete trips with zero hallucination.
 
 ```text
 trip-architect/
-├── index.html                       # 🧭 Master Hub & Trip Selection Deck (Bento 2.0 UI)
-├── trips_registry.js                # 📋 Central Registry of all active & archived journeys
-├── chikmagalur_trip_architect.html  # ⛰️ Chikmagalur 3-Day Master Companion
-├── vietnam_trip_architect_5_0.html  # 🇻🇳 Vietnam 8-Day Master Companion (v5.0)
-├── trip_template.html               # 📐 Turn-Key Blueprint Template for future trips
+├── index.html                       # 🧭 Master Hub & Deck (Bento 2.0 UI + AI Copilot Modal)
+├── trip.html                        # ⚡ Universal Dynamic Trip Engine (?id=<slug>)
+├── trips_registry.js                # 📋 Central Registry of active, upcoming & past journeys
+├── trip.schema.json                 # 📐 Formal JSON Schema defining trip structure
+├── AGENTS.md                        # 🤖 AI Agent Playbook for auto-generating & maintaining trips
+├── data/
+│   └── trips/
+│       └── chikmagalur-2026.json    # 📄 Chikmagalur master plan in pure structured JSON
+├── chikmagalur_trip_architect.html  # ⛰️ Chikmagalur 3-Day Standalone Companion (12 GPS pins)
+├── vietnam_trip_architect_5_0.html  # 🇻🇳 Vietnam 8-Day Master Companion (v5.0 with Audio/VND)
+├── trip_template.html               # 📐 Turn-Key Blueprint Template for custom standalone pages
 ├── manifest.json                    # 📱 PWA installation manifest (iOS/Android home screen)
-├── sw.js                            # ⚡ Offline Service Worker caching
+├── sw.js                            # ⚡ Offline Service Worker caching & PWA engine
 ├── vercel.json                      # ▲ Vercel zero-config deployment rules
 ├── netlify.toml                     # 🌐 Netlify deployment configuration
 ├── package.json                     # 📦 Project metadata & dev scripts
-└── styles.css                       # 🎨 Design system & Liquid Glass tokens
+└── styles.css                       # 🎨 Shared Liquid Glass styling & design tokens
 ```
 
 ---
@@ -34,106 +45,77 @@ trip-architect/
 ## 🚀 Key Features
 
 ### 1. Master Command Hub (`index.html`)
-- **Executive Bento 2.0 Deck**: Live trip countdowns, altitude & weather chips, and expedition stats.
-- **Instant Search & Category Filters**: Search sights, towns, and food across all journeys.
-- **Slide-over Quick Preview Drawer**: View day-by-day plans without leaving the central hub.
-- **Budget & Shared Cost Splitter**: Pre-calculated group splits for cabs, 4x4 jeeps, and scooty rentals.
-- **One-Click Trip Generator**: Add new journeys directly in the browser with instant local storage persistence.
+- **Executive Bento 2.0 Deck**: Live trip countdowns, altitude chips, weather badges, and expedition stats.
+- **Search & Category Filters**: Search sights, towns, and food across all expeditions (All, Domestic, International, Upcoming, Completed).
+- **Slide-Over Quick Preview Drawer**: Inspect full day-by-day plans without leaving the central hub.
+- **Budget & Shared Cost Splitter**: Pre-calculated group splits for cabs, 4x4 jeeps, and rental scooties.
+- **🪄 In-Browser AI Itinerary Copilot**: Paste raw text, WhatsApp flight notes, or booking emails. Supports Google Gemini API key or automatic local heuristic parser to create ready-to-run trips instantly.
 
-### 2. Chikmagalur Master Companion (`chikmagalur_trip_architect.html`)
-- **Interactive Day-by-Day Timeline**: Hour-by-hour milestones with strategy tips.
-- **Synchronized Leaflet Map**: 12 custom pins across Mullayanagiri (1,930m peak), Jhari Falls, Hirekolale Lake, Baba Budangiri, Z-Point, and Panduranga Coffee.
-- **Auto / Driver Card in Kannada**: Local language translation (`ಟ್ರೆಸ್ಕಾ ಎ ಲಕ್ಸುರಿ ಹೋಟೆಲ್...`) with one-tap Google Maps directions.
-- **Tresca 9:30 AM Strategy**: Cloakroom bag drop guide and RG Road dining logistics.
-- **125cc Scooty Guidelines**: Mountain power advice and rental hub locations.
-- **Packing Progress Tracker**: Real-time percentage counter with automatic browser persistence.
-- **Emergency SOS Directory**: Quick dial for KSRTC inquiry, Forest Checkpost, and District Hospital.
+### 2. Universal Dynamic JSON Engine (`trip.html`)
+- **Zero-Code Trip Ingestion**: Simply add `data/trips/<slug>.json` to render a complete interactive trip experience.
+- **Synchronized Leaflet GPS Map**: Automatically computes bounds and plots all itinerary spots with custom pins and popups.
+- **Interactive Packing Checklist**: Category grouping (Clothing, Documents, Tech, Toiletries) with live progress bar and local storage state.
+- **Emergency & Driver Cards**: One-tap phone dialing, WhatsApp messaging, and Kannada/local language driver instruction cards.
 
-### 3. Vietnam Master Companion (`vietnam_trip_architect_5_0.html`)
-- Comprehensive 8-day expedition across Hanoi, Ha Long Bay luxury cruise, Da Nang Golden Bridge, and Hoi An lantern ancient town.
-- Real-time VND ⇄ INR Currency Converter.
-- Pure vegetarian dining matrix & Vietnamese audio pronunciation flashcards.
-- 9-Seater Luxury Limousine logistics matrix & airport VIP immigration fast-track.
-- Direct **`← Trip Hub`** navigation button to return to the selection deck.
-
-### 4. Offline-First PWA (Progressive Web App)
-- Works without internet when driving through mountain ghats or cruising bays.
-- Installable directly to your iPhone or Android home screen with full-screen experience.
+### 3. Dedicated Bespoke Companions
+- **Chikmagalur (`chikmagalur_trip_architect.html`)**: 12 GPS pins covering Mullayanagiri (1,930m peak), Jhari Falls 4x4 route, Hirekolale Lake, Baba Budangiri, Z-Point, and Panduranga Coffee, with scooty guidelines and Kannada cab prompts.
+- **Vietnam (`vietnam_trip_architect_5_0.html`)**: Complete 8-day expedition with VND currency converter, interactive Vietnamese audio flashcards, grab safety tips, and packing trackers.
 
 ---
 
-## 🛠️ Local Development
+## 🤖 How AI Maintains This Website
 
-To run the project locally on your machine:
+We designed this repository so AI assistants can do 100% of the heavy lifting.
 
-### Option A: Open directly in your browser
-Double-click `index.html` or run:
+### Method 1: Ask Any AI Coding Assistant (Antigravity / Cursor / Copilot)
+Simply prompt the AI:
+> *"Here is my itinerary for 4 days in Hampi / Bali / Ladakh. Please add it to my Trip Architect using the `AGENTS.md` playbook."*
+
+The AI will:
+1. Validate against [trip.schema.json](trip.schema.json).
+2. Write `data/trips/<slug>.json`.
+3. Register the trip in [trips_registry.js](trips_registry.js).
+4. The trip immediately appears on the Hub and opens in `trip.html?id=<slug>`.
+
+### Method 2: Use the In-Browser AI Copilot (No Code)
+1. Open the [Live Site](https://trip-architect-plan.vercel.app/) or `index.html`.
+2. Click **`🪄 AI Copilot`** in the top navigation.
+3. Paste unformatted notes or hotel confirmations.
+4. Click **Parse with AI** — the trip is instantly saved to your browser and launches in `trip.html`.
+
+### Method 3: Standalone Custom HTML
+Duplicate `trip_template.html`, customize, and link in `trips_registry.js` for trips that need custom audio, custom converters, or unique visual shaders.
+
+---
+
+## 💻 Local Development
+
+Run locally with any static web server:
+
 ```bash
-open index.html
+# Python 3
+python3 -m http.server 3000
+
+# or Node.js
+npx serve .
 ```
 
-### Option B: Run a local static server
-```bash
-npm run dev
-# Or
-npx serve . -l 3000
-```
 Open `http://localhost:3000` in your browser.
 
 ---
 
 ## 🚢 Deployment
 
-### 1. Deploy to Vercel (Recommended)
-Using the Vercel CLI:
-```bash
-npx vercel
-```
-Or connect this repository directly in the [Vercel Dashboard](https://vercel.com/new).
+The repository is configured for zero-config continuous deployment:
 
-### 2. Deploy to Netlify
-Using the Netlify CLI:
-```bash
-npx netlify deploy --prod
-```
-Or drag and drop this project folder in the [Netlify App](https://app.netlify.com/drop).
+### Vercel (Current Production)
+Pushing to the `main` branch automatically triggers deployment to:
+**[https://trip-architect-plan.vercel.app/](https://trip-architect-plan.vercel.app/)**
 
-### 3. Deploy to GitHub Pages
-1. Push this repository to GitHub.
-2. Go to **Settings > Pages**.
-3. Under **Branch**, select `main` and root `/` folder, then click **Save**.
-
----
-
-## ➕ How to Add Your Next Trip
-
-### Method A: In-Browser (Instant)
-1. Click **`+ Add Trip`** in the top navigation bar of `index.html`.
-2. Fill in the destination, dates, and basecamp.
-3. The trip card is immediately created and saved in your browser's local storage.
-
-### Method B: Dedicated Standalone HTML Companion
-1. Duplicate `trip_template.html` and name it after your destination (e.g. `japan_trip_architect.html` or `goa_trip_architect.html`).
-2. Add your custom itinerary points and Leaflet map GPS coordinates.
-3. Add one entry in `trips_registry.js`:
-```javascript
-{
-    id: "japan-2027",
-    title: "Japan Autumn Expedition",
-    destination: "Tokyo, Kyoto & Osaka, Japan",
-    flag: "🇯🇵",
-    status: "upcoming",
-    category: "international",
-    dates: "Nov 5 – 15, 2027",
-    url: "japan_trip_architect.html",
-    summary: "Autumn foliage, bullet trains, and Kyoto shrine walks.",
-    basecamp: "Hotel Gracery Shinjuku",
-    transport: "JR Shinkansen Pass + Tokyo Metro",
-    highlights: [ ... ]
-}
-```
+### Netlify
+Connect this repository to Netlify; `netlify.toml` handles caching headers and PWA service workers out-of-the-box.
 
 ---
 
 ## 📄 License
-This project is licensed under the [MIT License](LICENSE).
+This project is open source and available under the [MIT License](LICENSE).

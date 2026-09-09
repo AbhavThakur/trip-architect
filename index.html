@@ -60,7 +60,6 @@
         .light-theme .text-slate-300, .light-theme .text-slate-400 { color: #475569 !important; }
         .light-theme .border-slate-800 { border-color: #e2e8f0 !important; }
 
-        /* Liquid Glass & Bento 2.0 aesthetics */
         .glass-card {
             background: rgba(17, 24, 39, 0.72);
             backdrop-filter: blur(18px);
@@ -111,28 +110,34 @@
             <!-- Global Search & Actions -->
             <div class="flex items-center gap-2">
                 <!-- Search Input -->
-                <div class="relative hidden sm:block w-60">
+                <div class="relative hidden sm:block w-52">
                     <i class="fa-solid fa-magnifying-glass text-slate-500 text-xs absolute left-3 top-2.5"></i>
                     <input type="text" id="trip-search" oninput="filterTrips()" placeholder="Search trips, places, sights..." 
                            class="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
 
+                <!-- 🪄 AI Copilot Button -->
+                <button onclick="openAiImportModal()" class="px-3.5 py-1.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-black rounded-xl text-xs flex items-center gap-1.5 shadow-lg active:scale-95 transition-all" title="Paste raw notes & AI architects trip">
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                    <span>AI Copilot</span>
+                </button>
+
                 <!-- Budget & Split Calc Button -->
                 <button onclick="openBudgetModal()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700/80 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95" title="Trip Budget & Split Calculator">
                     <i class="fa-solid fa-calculator text-amber-400"></i>
-                    <span class="hidden md:inline">Budget Calc</span>
+                    <span class="hidden md:inline">Budget</span>
                 </button>
 
-                <!-- Plan New Trip Button -->
+                <!-- Manual Plan New Trip Button -->
                 <button onclick="openPlanTripModal()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-lg active:scale-95 transition-all">
                     <i class="fa-solid fa-plus text-xs"></i>
                     <span class="hidden sm:inline">Add Trip</span>
                 </button>
 
-                <!-- Architecture & How-To Button -->
-                <button onclick="openHowItWorksModal()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" title="How multiple trips are managed">
-                    <i class="fa-solid fa-code-branch text-blue-400"></i>
-                    <span class="hidden lg:inline">How It Works</span>
+                <!-- How It Works / AGENTS.md Button -->
+                <button onclick="openHowItWorksModal()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" title="How AI maintains multiple trips">
+                    <i class="fa-solid fa-robot text-blue-400"></i>
+                    <span class="hidden lg:inline">AI Manual</span>
                 </button>
 
                 <!-- Theme Toggle -->
@@ -146,7 +151,7 @@
     <!-- 2. MAIN HUB CONTENT -->
     <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 py-6 flex-1 space-y-8">
         
-        <!-- HERO DASHBOARD BANNER WITH BENTO 2.0 TOUCHES -->
+        <!-- HERO DASHBOARD BANNER -->
         <div class="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border border-slate-800 shadow-2xl">
             <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div class="max-w-2xl space-y-2.5">
@@ -171,7 +176,10 @@
                             <i class="fa-solid fa-rocket text-amber-300"></i> Launch Chikmagalur Companion
                         </a>
                         <button onclick="previewTrip('chikmagalur-2026')" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 flex items-center gap-1.5 transition-all">
-                            <i class="fa-solid fa-eye text-emerald-400"></i> Quick Itinerary Preview
+                            <i class="fa-solid fa-eye text-emerald-400"></i> Quick Preview
+                        </button>
+                        <button onclick="openAiImportModal()" class="px-4 py-2.5 bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-extrabold rounded-xl flex items-center gap-2 border border-indigo-400/40 shadow-lg active:scale-95 transition-all">
+                            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> Architect Next Trip with AI
                         </button>
                     </div>
                 </div>
@@ -229,15 +237,19 @@
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
             <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span>Personal Travel Architect • Offline-First PWA Ready</span>
+                <span>Personal Travel Architect • AI-Maintained & PWA Ready</span>
             </div>
             <div class="flex items-center gap-3">
-                <a href="trip_template.html" target="_blank" class="hover:text-emerald-400 transition-colors">
-                    <i class="fa-solid fa-file-lines mr-1"></i> View Blank Template
+                <button onclick="openAiImportModal()" class="hover:text-purple-400 transition-colors font-bold">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> AI Copilot
+                </button>
+                <span>•</span>
+                <a href="AGENTS.md" target="_blank" class="hover:text-emerald-400 transition-colors">
+                    <i class="fa-solid fa-robot mr-1"></i> AGENTS.md Playbook
                 </a>
                 <span>•</span>
                 <button onclick="openHowItWorksModal()" class="hover:text-amber-400 transition-colors">
-                    <i class="fa-solid fa-circle-question mr-1"></i> How to Add Trips
+                    <i class="fa-solid fa-circle-question mr-1"></i> How It Works
                 </button>
             </div>
         </div>
@@ -298,7 +310,6 @@
                 </div>
             </div>
 
-            <!-- Drawer Bottom Launch Button -->
             <div class="pt-4 mt-6 border-t border-slate-800 flex items-center gap-3">
                 <button onclick="closeDrawer()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs">
                     Close Preview
@@ -311,8 +322,66 @@
     </div>
 
     <!-- =============================================================
-         BUDGET & SPLIT CALCULATOR MODAL
+         🪄 AI ITINERARY COPILOT MODAL (GEMINI API + SMART FALLBACK)
          ============================================================= -->
+    <div id="ai-import-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-purple-500/40 rounded-2xl w-full max-w-xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAiImportModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-3 pb-3 border-b border-slate-800">
+                <div class="w-10 h-10 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center text-lg border border-purple-500/30">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-white">AI Itinerary Copilot</h3>
+                    <p class="text-xs text-slate-400">Paste raw notes, WhatsApp chats, or booking emails</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleAiTripGeneration(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="font-bold text-slate-300">Raw Itinerary Notes / Travel Text</label>
+                        <button type="button" onclick="loadAiSamplePrompt()" class="text-[11px] text-purple-400 hover:text-purple-300 font-semibold">
+                            Load Sample Notes
+                        </button>
+                    </div>
+                    <textarea id="ai-raw-text" rows="7" required
+                              placeholder="Paste unstructured notes here, e.g.:&#10;Goa 4-Day Roadtrip in November with 2 friends. Staying at Taj Holiday Village, Candolim.&#10;Day 1: Arrive Dabolim 11 AM, rent Thar, sunset at Chapora Fort, dinner at Thalassa.&#10;Day 2: Fontainhas Old Latin Quarter walking tour, Miramar beach, night casino boat.&#10;Day 3: South Goa beach hopping (Palolem & Cola beach kayaking).&#10;Day 4: Spice plantation tour and flight back."
+                              class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono text-[11.5px] leading-relaxed"></textarea>
+                </div>
+
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="font-bold text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-key text-amber-400"></i> Google Gemini API Key (Optional)
+                        </label>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-[10px] text-emerald-400 hover:underline">
+                            Get Free Key ↗
+                        </a>
+                    </div>
+                    <input type="password" id="ai-gemini-key" placeholder="AIzaSy... (Leave blank to use built-in Smart Heuristic Parser)"
+                           class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-purple-500 text-xs">
+                    <p class="text-[10px] text-slate-500 mt-1">
+                        Stored strictly locally in your browser. Powered by Gemini 2.5 Flash for deep travel logic and GPS extraction.
+                    </p>
+                </div>
+
+                <div class="pt-3 border-t border-slate-800 flex items-center justify-end gap-2">
+                    <button type="button" onclick="closeAiImportModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold">
+                        Cancel
+                    </button>
+                    <button type="submit" id="ai-submit-btn" class="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold shadow-lg flex items-center gap-2 active:scale-95 transition-all">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span id="ai-btn-text">Architect Trip with AI</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BUDGET CALCULATOR MODAL -->
     <div id="budget-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
             <button onclick="closeBudgetModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
@@ -324,7 +393,7 @@
                 </div>
                 <div>
                     <h3 class="text-base font-extrabold text-white">Chikmagalur Split Calculator</h3>
-                    <p class="text-xs text-slate-400">Estimate transport, jeep & food costs</p>
+                    <p class="text-xs text-slate-400">Shared transport, 4x4 jeep & scooty rental</p>
                 </div>
             </div>
 
@@ -369,9 +438,7 @@
         </div>
     </div>
 
-    <!-- =============================================================
-         PLAN NEW TRIP MODAL
-         ============================================================= -->
+    <!-- PLAN NEW TRIP MODAL -->
     <div id="plan-trip-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
             <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
@@ -419,13 +486,6 @@
                 </div>
 
                 <div>
-                    <label class="block text-slate-300 font-bold mb-1">HTML File URL / Filename</label>
-                    <input type="text" id="form-url" placeholder="e.g. coorg_trip_architect.html (optional)" 
-                           class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <span class="text-[10px] text-slate-500 mt-0.5 block">You can duplicate `trip_template.html` and name it as this file.</span>
-                </div>
-
-                <div>
                     <label class="block text-slate-300 font-bold mb-1">Basecamp / Hotel</label>
                     <input type="text" id="form-basecamp" placeholder="e.g. Tamara Luxury Resort, Madikeri" 
                            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
@@ -449,46 +509,36 @@
         </div>
     </div>
 
-    <!-- =============================================================
-         ARCHITECTURE & HOW IT WORKS MODAL
-         ============================================================= -->
+    <!-- ARCHITECTURE & AGENTS.md MODAL -->
     <div id="how-it-works-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-xl p-6 shadow-2xl relative">
             <button onclick="closeHowItWorksModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div class="flex items-center gap-2 mb-3">
-                <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm border border-amber-500/30">
-                    <i class="fa-solid fa-code-branch"></i>
+                <div class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-sm border border-blue-500/30">
+                    <i class="fa-solid fa-robot"></i>
                 </div>
                 <div>
-                    <h3 class="text-base font-extrabold text-white">How Multiple Trips Are Managed</h3>
-                    <p class="text-xs text-slate-400">Clean, scalable, offline-first architecture</p>
+                    <h3 class="text-base font-extrabold text-white">How AI Maintains This Website</h3>
+                    <p class="text-xs text-slate-400">Zero-HTML, Schema-driven Architecture</p>
                 </div>
             </div>
 
             <div class="space-y-3.5 text-xs text-slate-300 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
                 <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                    <h4 class="font-bold text-emerald-400 text-sm mb-1">1. Master Hub (`index.html`)</h4>
-                    <p>The Hub is your master landing deck. It presents high-level trip cards, upcoming countdowns, stats, and a quick preview drawer. It connects all your journeys in one unified portal.</p>
+                    <h4 class="font-bold text-emerald-400 text-sm mb-1">1. Zero-HTML Trip Engine (`trip.html?id=...`)</h4>
+                    <p>Instead of generating huge HTML files, you or your AI assistant simply creates a structured JSON file at <code class="text-amber-300">data/trips/&lt;slug&gt;.json</code> following <code class="text-blue-300">trip.schema.json</code>. The website automatically renders the interactive Leaflet map, day schedule, packing list, and driver cards.</p>
                 </div>
 
                 <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                    <h4 class="font-bold text-amber-400 text-sm mb-1">2. Dedicated Trip HTML Files</h4>
-                    <p>Each major journey is its own standalone HTML application with custom capabilities:</p>
-                    <ul class="list-disc list-inside mt-1 space-y-1 text-slate-400">
-                        <li><strong class="text-slate-200">`vietnam_trip_architect_5_0.html`:</strong> 8-day international itinerary, FX currency converter, 9-seater limousine matrix, pure veg dining, Vietnamese audio cards.</li>
-                        <li><strong class="text-slate-200">`chikmagalur_trip_architect.html`:</strong> 3-day weekend hill itinerary, 4x4 off-road jeep guide, 125cc scooty hill power rules, Tresca 9:30 AM arrival strategy, Kannada driver address card.</li>
-                    </ul>
+                    <h4 class="font-bold text-purple-400 text-sm mb-1">2. In-Browser "AI Copilot"</h4>
+                    <p>Click the <strong class="text-purple-300">AI Copilot</strong> button at any time. Paste unstructured WhatsApp itineraries, flight tickets, or hotel emails. Powered by Gemini 2.5 Flash, it converts your text into a live interactive trip in 3 seconds!</p>
                 </div>
 
                 <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                    <h4 class="font-bold text-blue-400 text-sm mb-1">3. How to Add Your Next Trip</h4>
-                    <p>Whenever you plan a new trip (e.g. *Goa, Ladakh, Europe*), choose either:</p>
-                    <ul class="list-disc list-inside mt-1 space-y-1 text-slate-400">
-                        <li><strong class="text-slate-200">Method A (One Click in Browser):</strong> Click "+ Add Trip" in the top bar, fill in the details, and it immediately appears in your Hub.</li>
-                        <li><strong class="text-slate-200">Method B (New HTML Companion):</strong> Copy `trip_template.html` to `your_trip.html`, add your custom map pins & timeline, and add one entry to `trips_registry.js`.</li>
-                    </ul>
+                    <h4 class="font-bold text-amber-400 text-sm mb-1">3. Coding AI Agent Playbook (`AGENTS.md`)</h4>
+                    <p>When you pair-program with coding assistants (like Antigravity, Cursor, Copilot), the AI reads <strong class="text-white">AGENTS.md</strong> in this repository to create and register trips automatically with 100% adherence to design guidelines.</p>
                 </div>
             </div>
         </div>
@@ -505,6 +555,13 @@
             renderTrips();
             updateCounts();
             registerServiceWorker();
+            
+            // Load saved Gemini API key if present
+            const savedKey = localStorage.getItem('gemini_user_api_key');
+            if (savedKey) {
+                const keyInput = document.getElementById('ai-gemini-key');
+                if (keyInput) keyInput.value = savedKey;
+            }
         });
 
         function registerServiceWorker() {
@@ -538,6 +595,7 @@
         }
 
         function createTripCardHtml(trip) {
+            const tripUrl = trip.url || `trip.html?id=${trip.id}`;
             return `
                 <div class="glass-card rounded-2xl overflow-hidden shadow-xl border border-slate-800 flex flex-col justify-between group hover:border-slate-700 transition-all duration-300">
                     <div class="bg-gradient-to-r ${trip.heroGradient || 'from-slate-900 to-indigo-950'} p-6 relative">
@@ -545,7 +603,7 @@
                             <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-black/40 text-amber-300 backdrop-blur-md border border-white/10">
                                 ${trip.badge || 'Expedition'}
                             </span>
-                            <span class="text-3xl">${trip.flag}</span>
+                            <span class="text-3xl">${trip.flag || '✈️'}</span>
                         </div>
                         <h3 class="text-xl font-black text-white group-hover:text-emerald-300 transition-colors">
                             ${trip.title}
@@ -564,7 +622,7 @@
                                 </div>
                                 <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                     <span class="text-slate-400 block text-[10px] uppercase font-semibold">Travelers</span>
-                                    <span class="font-bold text-slate-200 mt-0.5 block">${trip.travelers}</span>
+                                    <span class="font-bold text-slate-200 mt-0.5 block">${trip.travelers || 'Travelers'}</span>
                                 </div>
                             </div>
 
@@ -589,8 +647,8 @@
                             <button onclick="previewTrip('${trip.id}')" class="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-all">
                                 <i class="fa-solid fa-eye text-slate-400"></i> Preview
                             </button>
-                            <a href="${trip.url || '#'}" class="flex-1 py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95">
-                                <i class="fa-solid fa-rocket text-amber-300"></i> Launch Trip Architect
+                            <a href="${tripUrl}" class="flex-1 py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95">
+                                <i class="fa-solid fa-rocket text-amber-300"></i> Launch Companion
                             </a>
                         </div>
                     </div>
@@ -628,12 +686,12 @@
             const trip = allTrips.find(t => t.id === tripId);
             if (!trip) return;
 
-            document.getElementById('drawer-flag').textContent = trip.flag;
+            document.getElementById('drawer-flag').textContent = trip.flag || '✈️';
             document.getElementById('drawer-title').textContent = trip.title;
             document.getElementById('drawer-dates').textContent = trip.dates;
-            document.getElementById('drawer-basecamp').textContent = trip.basecamp || 'Custom Accommodations';
-            document.getElementById('drawer-transport').textContent = trip.transport || 'Self-guided / local transit';
-            document.getElementById('drawer-launch-btn').setAttribute('href', trip.url || '#');
+            document.getElementById('drawer-basecamp').textContent = trip.basecamp || 'Accommodations';
+            document.getElementById('drawer-transport').textContent = trip.transport || 'Local transport';
+            document.getElementById('drawer-launch-btn').setAttribute('href', trip.url || `trip.html?id=${trip.id}`);
 
             const itinList = document.getElementById('drawer-itinerary-list');
             if (trip.quickItinerary) {
@@ -664,17 +722,248 @@
             document.getElementById('preview-drawer').classList.add('hidden');
         }
 
+        /* 🪄 AI Itinerary Modal & Generation Logic */
+        function openAiImportModal() { document.getElementById('ai-import-modal').classList.remove('hidden'); }
+        function closeAiImportModal() { document.getElementById('ai-import-modal').classList.add('hidden'); }
+
+        function loadAiSamplePrompt() {
+            document.getElementById('ai-raw-text').value = `Goa 4-Day Coastal Escape in November with 2 friends. Staying at Heritage Villa, Anjuna.
+Day 1: Arrive Goa airport 11 AM, rent self-drive Thar, sunset drinks at Chapora Fort, dinner at Thalassa.
+Day 2: Morning Fontainhas Old Latin Quarter walking tour, coffee at Bombay Coffee Roasters, Miramar beach, night casino boat on Mandovi river.
+Day 3: South Goa scenic beach hopping down to Palolem & Cola beach kayaking.
+Day 4: Sahakari spice plantation tour, fresh Goan fish thali, and evening flight back to BLR.`;
+        }
+
+        async function handleAiTripGeneration(e) {
+            e.preventDefault();
+            const rawText = document.getElementById('ai-raw-text').value.trim();
+            const apiKey = document.getElementById('ai-gemini-key').value.trim();
+            const btn = document.getElementById('ai-submit-btn');
+            const btnText = document.getElementById('ai-btn-text');
+
+            if (apiKey) localStorage.setItem('gemini_user_api_key', apiKey);
+
+            btn.disabled = true;
+            btnText.textContent = "Architecting with AI...";
+
+            try {
+                let tripJson = null;
+
+                if (apiKey) {
+                    // Call Google Gemini API
+                    const prompt = `You are an elite Travel Architect. Convert this raw unstructured travel text into a JSON object matching this exact schema:
+{
+  "id": "slug-name",
+  "title": "Descriptive Trip Title",
+  "destination": "City, State/Country",
+  "flag": "emoji",
+  "status": "upcoming",
+  "category": "domestic" or "international",
+  "dates": "Dates string",
+  "daysCount": number,
+  "travelers": "Number/type of travelers",
+  "heroGradient": "from-blue-950 via-slate-900 to-teal-950",
+  "badge": "Short badge",
+  "summary": "1-2 sentence overview",
+  "basecamp": {
+    "name": "Hotel Name",
+    "location": "Area",
+    "checkIn": "12:00 PM",
+    "checkOut": "11:00 AM",
+    "arrivalStrategy": "Tips on arrival & bag drop",
+    "coords": [latitude, longitude]
+  },
+  "transportPlan": [
+    { "day": "Day", "mode": "Mode", "purpose": "Description" }
+  ],
+  "mapCenter": [latitude, longitude],
+  "mapZoom": 12,
+  "locations": [
+    { "id": "loc-1", "name": "Spot Name", "category": "stay" or "nature" or "viewpoint" or "food" or "culture" or "transport", "coords": [latitude, longitude], "desc": "Info", "day": 1, "icon": "fa-map-pin", "color": "pin-emerald" }
+  ],
+  "itinerary": [
+    {
+      "dayNumber": 1,
+      "date": "Day 1",
+      "title": "Day Title",
+      "highlight": "Highlight",
+      "events": [
+        { "time": "Time", "title": "Activity", "desc": "Description", "tip": "Practical advice" }
+      ]
+    }
+  ],
+  "packingList": [
+    { "id": "p1", "item": "Item", "category": "Category", "checked": false }
+  ],
+  "emergencyContacts": [
+    { "name": "Contact", "phone": "Phone", "info": "Details" }
+  ],
+  "budget": {
+    "totalEstimate": "Total",
+    "perPersonSplit": "Split"
+  }
+}
+
+Respond with strictly valid JSON only. Raw travel text:
+${rawText}`;
+
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            generationConfig: { responseMimeType: "application/json" }
+                        })
+                    });
+
+                    const data = await res.json();
+                    if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+                        tripJson = JSON.parse(data.candidates[0].content.parts[0].text);
+                    } else {
+                        throw new Error(data.error?.message || "Invalid response from Gemini API");
+                    }
+                } else {
+                    // Smart Client-side Heuristic Parser
+                    tripJson = parseRawTextHeuristic(rawText);
+                }
+
+                if (!tripJson.id) tripJson.id = `trip-${Date.now()}`;
+
+                // Save full JSON to localStorage for trip.html to consume
+                localStorage.setItem(`trip_json_${tripJson.id}`, JSON.stringify(tripJson));
+
+                // Save summary to registry
+                const registryEntry = {
+                    id: tripJson.id,
+                    title: tripJson.title,
+                    destination: tripJson.destination,
+                    flag: tripJson.flag || '🌴',
+                    status: tripJson.status || 'upcoming',
+                    category: tripJson.category || 'domestic',
+                    dates: tripJson.dates || 'Upcoming',
+                    daysCount: tripJson.daysCount || 3,
+                    travelers: tripJson.travelers || 'Travelers',
+                    heroGradient: tripJson.heroGradient || 'from-indigo-950 via-slate-900 to-teal-950',
+                    badge: tripJson.badge || 'AI Curated',
+                    accentColor: '#10b981',
+                    url: `trip.html?id=${tripJson.id}`,
+                    summary: tripJson.summary || 'Curated itinerary.',
+                    basecamp: tripJson.basecamp?.name || 'Local Accommodations',
+                    transport: tripJson.transportPlan?.[0]?.mode || 'Self-guided',
+                    highlights: tripJson.locations?.slice(0, 4).map(l => ({ icon: 'fa-map-pin', title: l.name, desc: l.desc })) || [],
+                    quickItinerary: tripJson.itinerary?.map(i => ({ day: `Day ${i.dayNumber}`, title: i.title })) || []
+                };
+
+                saveCustomTripToRegistry(registryEntry);
+                allTrips = getAllTrips();
+                renderTrips();
+                updateCounts();
+                closeAiImportModal();
+
+                // Open the new companion immediately!
+                window.location.href = `trip.html?id=${tripJson.id}`;
+
+            } catch (err) {
+                alert("AI parsing error: " + err.message + "\nFalling back to manual form.");
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = "Architect Trip with AI";
+            }
+        }
+
+        /* Smart Heuristic Parser for zero-key instant generation */
+        function parseRawTextHeuristic(text) {
+            const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+            const firstLine = lines[0] || "My Journey";
+            const id = `trip-${Date.now()}`;
+            
+            // Extract destination from first line
+            let dest = "Scenic Destination";
+            if (firstLine.toLowerCase().includes("goa")) dest = "Goa, India";
+            else if (firstLine.toLowerCase().includes("coorg")) dest = "Coorg, Karnataka";
+            else if (firstLine.toLowerCase().includes("ladakh")) dest = "Leh Ladakh, India";
+            else dest = firstLine.slice(0, 30);
+
+            const days = [];
+            let currentDay = null;
+
+            lines.forEach((line, i) => {
+                if (line.toLowerCase().startsWith("day")) {
+                    const match = line.match(/day\s*(\d+):?\s*(.*)/i);
+                    const dayNum = match ? parseInt(match[1]) : (days.length + 1);
+                    const desc = match ? match[2] : line;
+                    currentDay = {
+                        dayNumber: dayNum,
+                        date: `Day ${dayNum}`,
+                        title: desc || `Highlights for Day ${dayNum}`,
+                        highlight: "Sightseeing",
+                        events: [
+                            { time: "Day Schedule", title: desc || "Exploration", desc: line, tip: "Carry hydration and offline maps." }
+                        ]
+                    };
+                    days.push(currentDay);
+                }
+            });
+
+            if (days.length === 0) {
+                days.push({
+                    dayNumber: 1,
+                    date: "Day 1",
+                    title: "Arrival & Local Sightseeing",
+                    highlight: "Explore",
+                    events: [{ time: "Morning to Evening", title: "Explore", desc: text, tip: "Check local timings." }]
+                });
+            }
+
+            return {
+                id: id,
+                title: firstLine.slice(0, 45),
+                destination: dest,
+                flag: "🌴",
+                status: "upcoming",
+                category: "domestic",
+                dates: "Upcoming",
+                daysCount: days.length,
+                travelers: "Travelers",
+                heroGradient: "from-blue-950 via-teal-900 to-slate-950",
+                badge: "AI Quick Import",
+                summary: lines.slice(0, 2).join(' '),
+                basecamp: {
+                    name: "Central Stay",
+                    location: dest,
+                    checkIn: "12:00 PM",
+                    checkOut: "11:00 AM",
+                    arrivalStrategy: "Check in and drop bags before heading out.",
+                    coords: [15.2993, 74.1240]
+                },
+                transportPlan: [
+                    { day: "All Days", mode: "Rental Vehicle / Cab", purpose: "Cruising between highlights" }
+                ],
+                mapCenter: [15.2993, 74.1240],
+                mapZoom: 11,
+                locations: [
+                    { id: "loc-base", name: dest, category: "stay", coords: [15.2993, 74.1240], desc: "Base location", day: 1, color: "pin-rose", icon: "fa-hotel" }
+                ],
+                itinerary: days,
+                packingList: [
+                    { id: "pk-1", item: "Valid Government ID / Driving License", category: "Documents", checked: false },
+                    { id: "pk-2", item: "Sunscreen & Sunglasses", category: "Personal Care", checked: false },
+                    { id: "pk-3", item: "Power bank & charging cables", category: "Electronics", checked: false }
+                ],
+                emergencyContacts: [
+                    { name: "Emergency Police", phone: "112", info: "National Emergency" }
+                ]
+            };
+        }
+
         /* Budget Modal */
         function openBudgetModal() { document.getElementById('budget-modal').classList.remove('hidden'); }
         function closeBudgetModal() { document.getElementById('budget-modal').classList.add('hidden'); }
 
         /* Plan New Trip Modal */
-        function openPlanTripModal() {
-            document.getElementById('plan-trip-modal').classList.remove('hidden');
-        }
-        function closePlanTripModal() {
-            document.getElementById('plan-trip-modal').classList.add('hidden');
-        }
+        function openPlanTripModal() { document.getElementById('plan-trip-modal').classList.remove('hidden'); }
+        function closePlanTripModal() { document.getElementById('plan-trip-modal').classList.add('hidden'); }
 
         function handleNewTripSubmit(e) {
             e.preventDefault();
@@ -683,12 +972,12 @@
             const flag = document.getElementById('form-flag').value || '✈️';
             const dates = document.getElementById('form-dates').value;
             const status = document.getElementById('form-status').value;
-            const url = document.getElementById('form-url').value || 'trip_template.html';
             const basecamp = document.getElementById('form-basecamp').value || dest;
             const summary = document.getElementById('form-summary').value || `Trip to ${dest}`;
 
+            const newTripId = `trip-${Date.now()}`;
             const newTrip = {
-                id: `trip-${Date.now()}`,
+                id: newTripId,
                 title: title,
                 destination: dest,
                 flag: flag,
@@ -700,17 +989,22 @@
                 heroGradient: "from-blue-950 via-slate-900 to-teal-950",
                 badge: status === 'upcoming' ? 'Upcoming Expedition' : 'Archived Trip',
                 accentColor: "#3b82f6",
-                url: url,
+                url: `trip.html?id=${newTripId}`,
                 summary: summary,
                 basecamp: basecamp,
                 transport: "Local Transport",
-                highlights: [
-                    { icon: "fa-map-pin", title: dest, desc: "Key location" }
-                ],
-                quickItinerary: [
-                    { day: "Day 1", title: "Arrival & explore" }
-                ]
+                highlights: [{ icon: "fa-map-pin", title: dest, desc: "Key location" }],
+                quickItinerary: [{ day: "Day 1", title: "Arrival & explore" }]
             };
+
+            // Save empty JSON structure for trip.html
+            localStorage.setItem(`trip_json_${newTripId}`, JSON.stringify({
+                ...newTrip,
+                basecamp: { name: basecamp, location: dest, checkIn: "12:00 PM", checkOut: "11:00 AM", coords: [15.2993, 74.1240] },
+                locations: [{ id: "loc-1", name: dest, category: "stay", coords: [15.2993, 74.1240], desc: "Basecamp", day: 1, color: "pin-rose", icon: "fa-hotel" }],
+                itinerary: [{ dayNumber: 1, date: dates, title: "Day 1", highlight: "Arrival", events: [{ time: "10:00 AM", title: "Arrival & Check-in", desc: summary, tip: "Enjoy the journey" }] }],
+                packingList: [{ id: "p1", item: "Govt ID & Tickets", category: "Documents", checked: false }]
+            }));
 
             saveCustomTripToRegistry(newTrip);
             allTrips = getAllTrips();
@@ -720,12 +1014,8 @@
         }
 
         /* How It Works Modal */
-        function openHowItWorksModal() {
-            document.getElementById('how-it-works-modal').classList.remove('hidden');
-        }
-        function closeHowItWorksModal() {
-            document.getElementById('how-it-works-modal').classList.add('hidden');
-        }
+        function openHowItWorksModal() { document.getElementById('how-it-works-modal').classList.remove('hidden'); }
+        function closeHowItWorksModal() { document.getElementById('how-it-works-modal').classList.add('hidden'); }
 
         /* Theme Toggle */
         function toggleTheme() {

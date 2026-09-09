@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TripArchitectSchema",
+  "description": "JSON schema for defining trips in Travel Architect Hub",
+  "type": "object",
+  "required": ["id", "title", "destination", "dates", "itinerary", "locations"],
+  "properties": {
+    "id": { "type": "string", "description": "Unique slug, e.g., 'goa-2026'" },
+    "title": { "type": "string", "description": "Display title of the trip" },
+    "destination": { "type": "string", "description": "City, State, Country" },
+    "flag": { "type": "string", "description": "Emoji flag or icon, e.g. 🇮🇳 or ⛰️" },
+    "status": { "type": "string", "enum": ["upcoming", "past", "planning"] },
+    "category": { "type": "string", "enum": ["domestic", "international", "roadtrip", "weekend"] },
+    "dates": { "type": "string", "description": "Formatted dates string, e.g. 'Oct 10 – 14, 2026'" },
+    "startDate": { "type": "string", "format": "date" },
+    "endDate": { "type": "string", "format": "date" },
+    "daysCount": { "type": "integer" },
+    "travelers": { "type": "string", "description": "e.g. '2–3 Travelers' or 'Family of 4'" },
+    "heroGradient": { "type": "string", "description": "Tailwind gradient classes, e.g. 'from-emerald-950 via-teal-900 to-slate-950'" },
+    "badge": { "type": "string", "description": "Category badge text, e.g. 'Hill Station • Western Ghats'" },
+    "accentColor": { "type": "string", "description": "Hex color code, e.g. '#10b981'" },
+    "summary": { "type": "string", "description": "High-level trip overview" },
+    "basecamp": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "location": { "type": "string" },
+        "distanceFromStation": { "type": "string" },
+        "checkIn": { "type": "string" },
+        "checkOut": { "type": "string" },
+        "arrivalStrategy": { "type": "string" },
+        "diningNote": { "type": "string" },
+        "coords": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+        "addressLocalScript": { "type": "string", "description": "Local language address for drivers" }
+      }
+    },
+    "transportPlan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "day": { "type": "string" },
+          "mode": { "type": "string" },
+          "icon": { "type": "string" },
+          "timing": { "type": "string" },
+          "purpose": { "type": "string" }
+        }
+      }
+    },
+    "mapCenter": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+    "mapZoom": { "type": "integer" },
+    "locations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "coords", "day"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "category": { "type": "string", "enum": ["stay", "nature", "viewpoint", "food", "culture", "transport", "shopping"] },
+          "coords": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+          "desc": { "type": "string" },
+          "day": { "type": "integer" },
+          "time": { "type": "string" },
+          "icon": { "type": "string" },
+          "color": { "type": "string" }
+        }
+      }
+    },
+    "itinerary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["dayNumber", "date", "title", "events"],
+        "properties": {
+          "dayNumber": { "type": "integer" },
+          "date": { "type": "string" },
+          "title": { "type": "string" },
+          "highlight": { "type": "string" },
+          "transportBadge": { "type": "string" },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["time", "title", "desc"],
+              "properties": {
+                "time": { "type": "string" },
+                "title": { "type": "string" },
+                "category": { "type": "string" },
+                "locationId": { "type": "string" },
+                "desc": { "type": "string" },
+                "tip": { "type": "string" },
+                "badge": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "packingList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "item": { "type": "string" },
+          "category": { "type": "string" },
+          "checked": { "type": "boolean" }
+        }
+      }
+    },
+    "emergencyContacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "phone": { "type": "string" },
+          "info": { "type": "string" }
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "totalEstimate": { "type": "string" },
+        "perPersonSplit": { "type": "string" },
+        "breakdown": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "item": { "type": "string" },
+              "cost": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

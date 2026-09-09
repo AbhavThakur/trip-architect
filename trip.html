@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#090d16">
+    <link rel="manifest" href="manifest.json">
+    
+    <title id="page-title">Travel Architect | Trip Companion</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 Pro CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: { 500: '#10b981', 600: '#059669', 700: '#047857' },
+                        gold: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' },
+                        darkbg: '#090d16',
+                        darkcard: '#111827',
+                        darkborder: '#1f2937'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { 
+            background-color: #090d16; 
+            color: #f1f5f9;
+            font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            min-height: 100vh;
+        }
+
+        .light-mode body { background-color: #f8fafc; color: #0f172a; }
+        .light-mode .bg-slate-900 { background-color: #ffffff !important; border-color: #e2e8f0 !important; }
+        .light-mode .bg-slate-950 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+        .light-mode .text-white { color: #0f172a !important; }
+        .light-mode .text-slate-300 { color: #475569 !important; }
+        .light-mode .border-slate-800 { border-color: #e2e8f0 !important; }
+
+        #map-container {
+            height: calc(100vh - 140px);
+            position: sticky;
+            top: 110px;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            border: 1px solid #1f2937;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        #map { width: 100%; height: 100%; z-index: 10; background: #090d16; }
+        .dark-map .leaflet-tile-pane {
+            filter: invert(100%) hue-rotate(180deg) brightness(88%) contrast(90%);
+        }
+
+        @media (max-width: 1024px) {
+            #map-container { height: 380px; position: relative; top: 0; margin-bottom: 1.5rem; }
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .custom-map-pin {
+            display: flex; align-items: center; justify-content: center;
+            width: 38px; height: 38px; border-radius: 50%; color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6), 0 0 0 2.5px #111827;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative; cursor: pointer;
+        }
+        .custom-map-pin:hover, .custom-map-pin.active-pin {
+            transform: scale(1.22) translateY(-4px);
+            z-index: 1000 !important;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.8), 0 0 0 3px #fbbf24;
+        }
+        .pin-badge {
+            position: absolute; top: -6px; right: -6px; background: #000000;
+            color: #fbbf24; font-size: 10px; font-weight: 800; width: 17px; height: 17px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            border: 1.5px solid #111827; font-family: monospace;
+        }
+        
+        .pin-rose { background: linear-gradient(135deg, #f43f5e, #be123c); }
+        .pin-emerald { background: linear-gradient(135deg, #10b981, #047857); }
+        .pin-cyan { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+        .pin-amber { background: linear-gradient(135deg, #f59e0b, #b45309); }
+        .pin-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .pin-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+
+        .leaflet-popup-content-wrapper {
+            padding: 0; border-radius: 1.25rem; overflow: hidden;
+            background: #111827; border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .leaflet-popup-content { margin: 0 !important; line-height: 1.4; width: 280px !important; }
+        .leaflet-container a.leaflet-popup-close-button {
+            top: 8px; right: 8px; color: #ffffff; width: 24px; height: 24px; border-radius: 50%;
+            background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
+        }
+
+        .timeline-card {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            border-left: 3px solid transparent;
+        }
+        .timeline-card:hover { transform: translateX(4px); border-left-color: #10b981; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col pb-safe">
+
+    <!-- 1. TOP COMMAND BAR -->
+    <header class="bg-slate-950 text-white sticky top-0 z-40 shadow-md border-b border-slate-800 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-3 py-2 flex items-center justify-between gap-1.5 text-xs">
+            
+            <!-- Left: Back to Hub + Destination Clock -->
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="index.html" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 rounded-lg flex items-center gap-1.5 text-[11px] font-bold active:scale-95 transition-all shadow-sm">
+                    <i class="fa-solid fa-arrow-left text-emerald-400"></i>
+                    <span>Trip Hub</span>
+                </a>
+
+                <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 text-[11px] font-mono">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="header-dest-label" class="text-slate-400">Time</span>
+                    <span id="live-clock" class="font-extrabold text-gold-400">--:--</span>
+                </div>
+            </div>
+
+            <!-- Right: Action Pills -->
+            <div class="flex items-center gap-1">
+                <button id="btn-driver-card" onclick="openDriverModal()" class="px-2 py-1 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow">
+                    <i class="fa-solid fa-taxi text-gold-300"></i> Driver Card
+                </button>
+                <button id="btn-emergency" onclick="openEmergencyModal()" class="px-2 py-1 bg-rose-700/80 hover:bg-rose-600 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow">
+                    <i class="fa-solid fa-phone text-rose-300"></i> SOS
+                </button>
+                <button onclick="toggleLightMode()" id="theme-btn" class="w-7 h-7 rounded-lg bg-slate-900 text-slate-300 flex items-center justify-center border border-slate-800 text-xs">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sub Hero Header -->
+        <div class="bg-slate-900/90 px-3 py-1.5 border-t border-slate-800 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-600 to-teal-800 text-white flex items-center justify-center font-bold text-xs shadow">
+                    <span id="hero-flag">✈️</span>
+                </div>
+                <div>
+                    <h1 id="hero-title" class="text-xs font-bold text-white leading-none">Loading Trip...</h1>
+                    <div id="hero-subtitle" class="text-[10px] text-gold-400 font-mono mt-0.5 font-semibold">
+                        --
+                    </div>
+                </div>
+            </div>
+
+            <span id="basecamp-badge" class="px-2.5 py-1 bg-slate-800 border border-slate-700 text-amber-300 font-bold rounded-xl text-[11px] truncate max-w-[200px]">
+                Basecamp
+            </span>
+        </div>
+    </header>
+
+    <!-- 2. NAVIGATION TABS -->
+    <nav class="bg-slate-900 border-b border-slate-800 px-4 sticky top-[73px] z-30 shadow-sm backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex gap-1 overflow-x-auto no-scrollbar py-2" id="nav-tabs">
+            <button onclick="switchTab('itinerary')" id="tab-btn-itinerary" class="tab-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white flex items-center gap-1.5">
+                <i class="fa-solid fa-route"></i> Itinerary & Map
+            </button>
+            <button onclick="switchTab('logistics')" id="tab-btn-logistics" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-hotel text-amber-400"></i> Basecamp & Transport
+            </button>
+            <button onclick="switchTab('checklist')" id="tab-btn-checklist" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-list-check text-emerald-400"></i> Checklist & Gear
+            </button>
+            <button onclick="switchTab('budget')" id="tab-btn-budget" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-calculator text-amber-400"></i> Budget & Details
+            </button>
+        </div>
+    </nav>
+
+    <!-- 3. MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto w-full px-3 sm:px-4 py-4 flex-1">
+        
+        <!-- Tab 1: Itinerary & Map -->
+        <div id="tab-content-itinerary" class="tab-content active">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <div class="lg:col-span-7 space-y-4">
+                    <!-- Day Switcher Pills -->
+                    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="day-filter-container">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <!-- Timeline Events Container -->
+                    <div id="timeline-container" class="space-y-6">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Leaflet Interactive Map -->
+                <div class="lg:col-span-5">
+                    <div id="map-container" class="dark-map">
+                        <div id="map"></div>
+                    </div>
+                    <div class="mt-2 text-center text-[11px] text-slate-400">
+                        <i class="fa-solid fa-circle-info text-emerald-400 mr-1"></i>
+                        <span>Click any marker or "Map" button on timeline to inspect and navigate.</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Tab 2: Basecamp & Transport -->
+        <div id="tab-content-logistics" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="logistics-container">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Tab 3: Checklist & Gear -->
+        <div id="tab-content-checklist" class="tab-content">
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 max-w-2xl mx-auto shadow-xl space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <div>
+                        <h3 class="text-base font-extrabold text-white">Pre-Departure & Gear Checklist</h3>
+                        <p class="text-xs text-slate-400">Real-time packing tracker with offline persistence</p>
+                    </div>
+                    <button onclick="resetPackingChecklist()" class="text-xs text-slate-400 hover:text-amber-400 px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset
+                    </button>
+                </div>
+
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                    <div class="flex justify-between items-center text-xs mb-1.5">
+                        <span class="font-bold text-slate-300">Packing Readiness</span>
+                        <span id="pack-percent" class="font-mono font-extrabold text-emerald-400">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                        <div id="pack-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div id="checklist-items" class="space-y-3">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Budget & Details -->
+        <div id="tab-content-budget" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="budget-container">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Driver Card Modal -->
+    <div id="driver-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeDriverModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-4">
+                <span class="w-12 h-12 rounded-2xl bg-brand-600/20 text-brand-400 flex items-center justify-center text-xl mx-auto mb-2 border border-brand-500/30">
+                    <i class="fa-solid fa-taxi"></i>
+                </span>
+                <h3 class="text-base font-extrabold text-white">Auto / Cab Driver Card</h3>
+                <p class="text-xs text-slate-400">Show this screen to any local driver</p>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 mb-4" id="driver-address-box">
+                <!-- Injected via JS -->
+            </div>
+            <a id="driver-nav-link" href="#" target="_blank" 
+               class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg">
+                <i class="fa-solid fa-diamond-turn-right"></i> Open Navigation in Google Maps
+            </a>
+        </div>
+    </div>
+
+    <!-- Emergency SOS Modal -->
+    <div id="emergency-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeEmergencyModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-base border border-rose-500/30">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-white">Emergency Contacts & Helplines</h3>
+                    <p class="text-xs text-slate-400">Direct dial local authorities & assistance</p>
+                </div>
+            </div>
+            <div class="space-y-2.5 text-xs" id="emergency-list">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Universal Dynamic Engine Script -->
+    <script>
+        let tripData = null;
+        let map = null, markers = {};
+
+        async function initTrip() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tripId = urlParams.get('id') || 'chikmagalur-2026';
+
+            // 1. Try to load from localStorage first (for custom trips)
+            const localSaved = localStorage.getItem(`trip_json_${tripId}`);
+            if (localSaved) {
+                try {
+                    tripData = JSON.parse(localSaved);
+                } catch(e) { console.error(e); }
+            }
+
+            // 2. Try to fetch from data/trips/${tripId}.json
+            if (!tripData) {
+                try {
+                    const res = await fetch(`data/trips/${tripId}.json`);
+                    if (res.ok) {
+                        tripData = await res.json();
+                    }
+                } catch (e) {
+                    console.warn(`Could not fetch data/trips/${tripId}.json:`, e);
+                }
+            }
+
+            // 3. Fallback error view
+            if (!tripData) {
+                document.body.innerHTML = `
+                    <div class="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+                        <i class="fa-solid fa-compass text-4xl text-amber-400 mb-3"></i>
+                        <h2 class="text-xl font-bold text-white mb-2">Trip Not Found</h2>
+                        <p class="text-xs text-slate-400 mb-4 max-w-sm">We couldn't load the details for ID: <code>${tripId}</code>.</p>
+                        <a href="index.html" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold">← Back to Trip Hub</a>
+                    </div>
+                `;
+                return;
+            }
+
+            renderTripHeader();
+            initMap();
+            renderItinerary();
+            renderLogistics();
+            renderChecklist();
+            renderBudget();
+            startLiveClock();
+        }
+
+        function renderTripHeader() {
+            document.getElementById('page-title').textContent = `${tripData.title} | Travel Architect`;
+            document.getElementById('hero-flag').textContent = tripData.flag || '✈️';
+            document.getElementById('hero-title').textContent = tripData.title;
+            document.getElementById('hero-subtitle').textContent = `⏳ ${tripData.dates} • ${tripData.travelers || ''} • ${tripData.badge || ''}`;
+            document.getElementById('header-dest-label').textContent = tripData.destination.split(',')[0];
+            
+            if (tripData.basecamp) {
+                document.getElementById('basecamp-badge').textContent = `🏨 ${tripData.basecamp.name}`;
+            } else {
+                document.getElementById('basecamp-badge').classList.add('hidden');
+                document.getElementById('btn-driver-card').classList.add('hidden');
+            }
+
+            if (!tripData.emergencyContacts || tripData.emergencyContacts.length === 0) {
+                document.getElementById('btn-emergency').classList.add('hidden');
+            }
+        }
+
+        function initMap() {
+            const center = tripData.mapCenter || (tripData.locations?.[0]?.coords) || [12.9716, 77.5946];
+            const zoom = tripData.mapZoom || 11;
+
+            map = L.map('map', { zoomControl: false }).setView(center, zoom);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            if (tripData.locations) {
+                tripData.locations.forEach((loc, idx) => {
+                    const iconHtml = `
+                        <div class="custom-map-pin ${loc.color || 'pin-emerald'}">
+                            <i class="fa-solid ${loc.icon || 'fa-location-dot'} text-xs"></i>
+                            <span class="pin-badge">${loc.day || idx + 1}</span>
+                        </div>
+                    `;
+                    const customIcon = L.divIcon({ html: iconHtml, className: '', iconSize: [38, 38], iconAnchor: [19, 19], popupAnchor: [0, -22] });
+                    const popup = `
+                        <div class="p-3 bg-slate-900 text-white rounded-xl">
+                            <span class="text-[10px] text-amber-400 uppercase font-mono font-bold block">Day ${loc.day} • ${loc.category || ''}</span>
+                            <h5 class="font-bold text-sm text-white mt-0.5 mb-1">${loc.name}</h5>
+                            <p class="text-xs text-slate-300 leading-snug mb-2">${loc.desc || ''}</p>
+                            <a href="https://www.google.com/maps/search/?api=1&query=${loc.coords[0]},${loc.coords[1]}" target="_blank"
+                               class="w-full py-1 bg-brand-600 text-white text-[11px] font-bold rounded flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-diamond-turn-right"></i> Navigate
+                            </a>
+                        </div>
+                    `;
+                    const marker = L.marker(loc.coords, { icon: customIcon }).bindPopup(popup).addTo(map);
+                    markers[loc.id] = { marker: marker, day: loc.day };
+                });
+            }
+        }
+
+        function focusMarker(id) {
+            if (markers[id]) {
+                map.flyTo(markers[id].marker.getLatLng(), 14, { duration: 0.8 });
+                setTimeout(() => markers[id].marker.openPopup(), 850);
+            }
+        }
+
+        function renderItinerary() {
+            const filterContainer = document.getElementById('day-filter-container');
+            const timelineContainer = document.getElementById('timeline-container');
+
+            if (!tripData.itinerary || tripData.itinerary.length === 0) {
+                timelineContainer.innerHTML = `<p class="text-xs text-slate-400">No itinerary details available.</p>`;
+                return;
+            }
+
+            let filterHtml = `
+                <button onclick="filterDay('all')" id="day-btn-all" class="day-filter-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-amber-400 border border-amber-500/40">
+                    All Days
+                </button>
+            `;
+            filterHtml += tripData.itinerary.map(d => `
+                <button onclick="filterDay(${d.dayNumber})" id="day-btn-${d.dayNumber}" class="day-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">
+                    Day ${d.dayNumber} ${d.transportBadge ? `(${d.transportBadge})` : ''}
+                </button>
+            `).join('');
+            filterContainer.innerHTML = filterHtml;
+
+            timelineContainer.innerHTML = tripData.itinerary.map(day => `
+                <div class="day-section" data-day="${day.dayNumber}">
+                    <div class="sticky top-[125px] z-20 bg-slate-950/90 backdrop-blur-md py-2 border-b border-slate-800 flex items-center justify-between mb-3">
+                        <div>
+                            <span class="text-[10px] font-mono font-extrabold text-emerald-400 uppercase">Day ${day.dayNumber} • ${day.date}</span>
+                            <h3 class="text-sm font-black text-white">${day.title}</h3>
+                        </div>
+                        ${day.highlight ? `
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-600/20 text-brand-400 border border-brand-500/30">
+                                ${day.highlight}
+                            </span>
+                        ` : ''}
+                    </div>
+
+                    <div class="space-y-3.5 pl-3 border-l-2 border-slate-800 ml-2">
+                        ${day.events.map(ev => `
+                            <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="text-xs font-mono font-bold text-amber-400">${ev.time}</span>
+                                    <div class="flex items-center gap-1.5">
+                                        ${ev.badge ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300">${ev.badge}</span>` : ''}
+                                        ${ev.locationId ? `
+                                            <button onclick="focusMarker('${ev.locationId}')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                                <i class="fa-solid fa-map-pin"></i> Map
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                <h4 class="text-sm font-bold text-white mb-1">${ev.title}</h4>
+                                <p class="text-xs text-slate-300 leading-relaxed whitespace-pre-line">${ev.desc}</p>
+                                ${ev.tip ? `
+                                    <div class="mt-2 text-[11px] text-amber-300 bg-amber-950/30 p-2 rounded-lg border border-amber-500/20">
+                                        💡 <strong>Tip:</strong> ${ev.tip}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterDay(day) {
+            document.querySelectorAll('.day-filter-btn').forEach(btn => btn.classList.remove('active', 'bg-slate-800', 'text-amber-400', 'border-amber-500/40'));
+            const activeBtn = document.getElementById(`day-btn-${day}`);
+            if (activeBtn) activeBtn.classList.add('active', 'bg-slate-800', 'text-amber-400', 'border-amber-500/40');
+
+            document.querySelectorAll('.day-section').forEach(sec => {
+                if (day === 'all' || sec.getAttribute('data-day') == day) {
+                    sec.style.display = 'block';
+                } else {
+                    sec.style.display = 'none';
+                }
+            });
+
+            Object.entries(markers).forEach(([id, mData]) => {
+                if (day === 'all' || mData.day == day) {
+                    mData.marker.addTo(map);
+                } else {
+                    mData.marker.remove();
+                }
+            });
+        }
+
+        function renderLogistics() {
+            const container = document.getElementById('logistics-container');
+            const basecamp = tripData.basecamp;
+            const transport = tripData.transportPlan;
+
+            container.innerHTML = `
+                ${basecamp ? `
+                    <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-800">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
+                                <i class="fa-solid fa-hotel"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-extrabold text-white">${basecamp.name}</h3>
+                                <p class="text-xs text-slate-400">${basecamp.location || ''}</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3.5 text-xs">
+                            ${basecamp.arrivalStrategy ? `
+                                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                                    <span class="text-emerald-400 font-bold block mb-1">
+                                        <i class="fa-solid fa-bullseye mr-1"></i> Arrival & Check-in Strategy
+                                    </span>
+                                    <p class="text-slate-300 leading-relaxed">${basecamp.arrivalStrategy}</p>
+                                </div>
+                            ` : ''}
+                            ${basecamp.diningNote ? `
+                                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                                    <span class="text-amber-400 font-bold block mb-1">
+                                        <i class="fa-solid fa-utensils mr-1"></i> Dining & Connectivity
+                                    </span>
+                                    <p class="text-slate-300 leading-relaxed">${basecamp.diningNote}</p>
+                                </div>
+                            ` : ''}
+                            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-slate-400">
+                                Check-in: <strong>${basecamp.checkIn || '12:00 PM'}</strong> • Check-out: <strong>${basecamp.checkOut || '11:00 AM'}</strong>
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${transport ? `
+                    <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-800">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/30">
+                                <i class="fa-solid fa-van-shuttle"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-extrabold text-white">Transport & Navigation</h3>
+                                <p class="text-xs text-slate-400">Engineered terrain logistics</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-xs">
+                            ${transport.map(t => `
+                                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-bold text-white">${t.day}</span>
+                                        <span class="text-[11px] text-amber-400 font-mono">${t.timing || ''}</span>
+                                    </div>
+                                    <span class="text-emerald-400 font-semibold block">${t.mode}</span>
+                                    <p class="text-slate-300 mt-1 leading-relaxed">${t.purpose}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist-items');
+            const list = tripData.packingList || [];
+            const key = `packing_${tripData.id}`;
+            const saved = JSON.parse(localStorage.getItem(key) || "{}");
+
+            let checkedCount = 0;
+            container.innerHTML = list.map(item => {
+                const checked = saved[item.id] !== undefined ? saved[item.id] : (item.checked || false);
+                if (checked) checkedCount++;
+                return `
+                    <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-slate-700 transition-colors">
+                        <input type="checkbox" onchange="toggleCheck('${item.id}', this.checked)" ${checked ? 'checked' : ''} class="mt-1 w-4 h-4 rounded text-brand-600 focus:ring-brand-500 bg-slate-800 border-slate-700">
+                        <div class="flex-1 text-xs">
+                            <span class="font-bold text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 uppercase font-mono mr-1.5">${item.category || 'Gear'}</span>
+                            <span class="${checked ? 'line-through text-slate-500' : 'text-slate-200'} font-medium">${item.item}</span>
+                        </div>
+                    </label>
+                `;
+            }).join('');
+
+            const percent = list.length > 0 ? Math.round((checkedCount / list.length) * 100) : 100;
+            document.getElementById('pack-percent').textContent = `${percent}% (${checkedCount}/${list.length})`;
+            document.getElementById('pack-progress-bar').style.width = `${percent}%`;
+        }
+
+        function toggleCheck(id, checked) {
+            const key = `packing_${tripData.id}`;
+            const saved = JSON.parse(localStorage.getItem(key) || "{}");
+            saved[id] = checked;
+            localStorage.setItem(key, JSON.stringify(saved));
+            renderChecklist();
+        }
+
+        function resetPackingChecklist() {
+            localStorage.removeItem(`packing_${tripData.id}`);
+            renderChecklist();
+        }
+
+        function renderBudget() {
+            const container = document.getElementById('budget-container');
+            const budget = tripData.budget;
+            const contacts = tripData.emergencyContacts;
+
+            container.innerHTML = `
+                ${budget ? `
+                    <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-800">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
+                                <i class="fa-solid fa-calculator"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-extrabold text-white">Estimated Budget</h3>
+                                <p class="text-xs text-slate-400">${budget.totalEstimate || 'Transport & activities'}</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-xs">
+                            ${budget.breakdown ? budget.breakdown.map(b => `
+                                <div class="flex justify-between items-center bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                                    <span class="text-slate-300">${b.item}</span>
+                                    <span class="font-mono font-bold text-white">${b.cost}</span>
+                                </div>
+                            `).join('') : ''}
+                            ${budget.perPersonSplit ? `
+                                <div class="bg-emerald-950/30 p-3 rounded-xl border border-emerald-500/30 text-center">
+                                    <span class="text-[11px] text-emerald-400 font-bold block mb-1">Per Person Split</span>
+                                    <span class="font-mono font-black text-emerald-300 text-sm">${budget.perPersonSplit}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${contacts ? `
+                    <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-800">
+                            <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-lg border border-rose-500/30">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-extrabold text-white">Emergency Contacts</h3>
+                                <p class="text-xs text-slate-400">Local emergency numbers & assistance</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            ${contacts.map(c => `
+                                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                                    <div>
+                                        <span class="font-bold text-white block">${c.name}</span>
+                                        <span class="text-[10px] text-slate-400">${c.info || ''}</span>
+                                    </div>
+                                    <a href="tel:${c.phone}" class="px-2.5 py-1 bg-emerald-600 text-white font-mono font-bold rounded-lg flex items-center gap-1">
+                                        <i class="fa-solid fa-phone text-[10px]"></i> ${c.phone}
+                                    </a>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            // Also populate the SOS modal
+            if (contacts) {
+                document.getElementById('emergency-list').innerHTML = contacts.map(c => `
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-white block">${c.name}</span>
+                            <span class="text-[10px] text-slate-400">${c.info || ''}</span>
+                        </div>
+                        <a href="tel:${c.phone}" class="px-2.5 py-1 bg-emerald-600 text-white font-mono font-bold rounded-lg flex items-center gap-1">
+                            <i class="fa-solid fa-phone text-[10px]"></i> ${c.phone}
+                        </a>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-brand-600', 'text-white');
+                btn.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'bg-brand-600', 'text-white');
+                activeBtn.classList.remove('text-slate-400');
+            }
+
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            const activeContent = document.getElementById(`tab-content-${tabId}`);
+            if (activeContent) activeContent.classList.add('active');
+
+            if (tabId === 'itinerary' && map) {
+                setTimeout(() => map.invalidateSize(), 200);
+            }
+        }
+
+        function startLiveClock() {
+            setInterval(() => {
+                document.getElementById('live-clock').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }, 1000);
+        }
+
+        function openDriverModal() {
+            if (!tripData.basecamp) return;
+            const b = tripData.basecamp;
+            document.getElementById('driver-address-box').innerHTML = `
+                ${b.addressLocalScript ? `
+                    <span class="text-[10px] text-slate-400 uppercase font-mono font-bold block mb-1">Local Script</span>
+                    <div class="text-base font-bold text-emerald-300 leading-relaxed mb-3">
+                        ${b.addressLocalScript}
+                    </div>
+                ` : ''}
+                <span class="text-[10px] text-slate-400 uppercase font-mono font-bold block mb-1">Address / Landmark</span>
+                <div class="text-xs font-semibold text-slate-200">
+                    ${b.name}, ${b.location} — ${b.distanceFromStation || ''}
+                </div>
+            `;
+            if (b.coords) {
+                document.getElementById('driver-nav-link').href = `https://www.google.com/maps/search/?api=1&query=${b.coords[0]},${b.coords[1]}`;
+            }
+            document.getElementById('driver-modal').classList.remove('hidden');
+        }
+        function closeDriverModal() { document.getElementById('driver-modal').classList.add('hidden'); }
+
+        function openEmergencyModal() { document.getElementById('emergency-modal').classList.remove('hidden'); }
+        function closeEmergencyModal() { document.getElementById('emergency-modal').classList.add('hidden'); }
+
+        function toggleLightMode() { document.documentElement.classList.toggle('light-mode'); }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTrip();
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            }
+        });
+    </script>
+</body>
+</html>

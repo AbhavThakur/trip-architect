@@ -92,6 +92,8 @@ function saveCustomTripToRegistry(trip) {
     if (custom) {
         try { list = JSON.parse(custom); } catch (e) { list = []; }
     }
+    // Remove if already exists with same id
+    list = list.filter(t => t.id !== trip.id);
     list.unshift(trip);
     localStorage.setItem("trip_architect_registry_custom", JSON.stringify(list));
 }

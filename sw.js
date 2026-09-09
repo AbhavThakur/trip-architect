@@ -1,10 +1,12 @@
-const CACHE_NAME = 'travel-architect-v1';
+const CACHE_NAME = 'travel-architect-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './trip.html',
   './chikmagalur_trip_architect.html',
   './vietnam_trip_architect_5_0.html',
   './trips_registry.js',
+  './data/trips/chikmagalur-2026.json',
   './manifest.json',
   'https://cdn.tailwindcss.com',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
@@ -15,7 +17,7 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      console.log('Caching offline travel assets');
+      console.log('Caching offline travel assets (v2)');
       return cache.addAll(ASSETS_TO_CACHE).catch(err => console.warn('Cache addAll error:', err));
     })
   );

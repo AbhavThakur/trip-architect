@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#090d16">
+    <meta name="description" content="Personal Travel Architect & Master Trip Hub">
+    <link rel="manifest" href="manifest.json">
+    
+    <title>Travel Architect | Personal Trip Hub</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 Pro CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: { 500: '#10b981', 600: '#059669', 700: '#047857' },
+                        gold: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' },
+                        darkbg: '#090d16',
+                        darkcard: '#111827',
+                        darkborder: '#1f2937'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { 
+            background-color: #090d16; 
+            color: #f1f5f9;
+            font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+            -webkit-tap-highlight-color: transparent;
+            min-height: 100vh;
+        }
+
+        .light-theme {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+        .light-theme .bg-slate-900 { background-color: #ffffff !important; border-color: #e2e8f0 !important; }
+        .light-theme .bg-slate-950 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+        .light-theme .text-white { color: #0f172a !important; }
+        .light-theme .text-slate-300, .light-theme .text-slate-400 { color: #475569 !important; }
+        .light-theme .border-slate-800 { border-color: #e2e8f0 !important; }
+
+        /* Liquid Glass & Bento 2.0 aesthetics */
+        .glass-card {
+            background: rgba(17, 24, 39, 0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.5);
+        }
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+        .light-theme .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.08);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes drawerSlide {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        .drawer-anim {
+            animation: drawerSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <!-- 1. TOP GLOBAL HUB BAR -->
+    <header class="bg-slate-950/95 sticky top-0 z-40 border-b border-slate-800 backdrop-blur-md px-3 sm:px-6 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            
+            <!-- Brand -->
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-indigo-600 text-slate-950 flex items-center justify-center font-black text-base shadow-lg shadow-emerald-950/40">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-black text-white tracking-wide uppercase font-display leading-none">
+                        Travel Architect
+                    </h1>
+                    <span class="text-[11px] text-emerald-400 font-mono font-medium">Personal Trip Hub & Command Center</span>
+                </div>
+            </div>
+
+            <!-- Global Search & Actions -->
+            <div class="flex items-center gap-2">
+                <!-- Search Input -->
+                <div class="relative hidden sm:block w-60">
+                    <i class="fa-solid fa-magnifying-glass text-slate-500 text-xs absolute left-3 top-2.5"></i>
+                    <input type="text" id="trip-search" oninput="filterTrips()" placeholder="Search trips, places, sights..." 
+                           class="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <!-- Budget & Split Calc Button -->
+                <button onclick="openBudgetModal()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-700/80 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95" title="Trip Budget & Split Calculator">
+                    <i class="fa-solid fa-calculator text-amber-400"></i>
+                    <span class="hidden md:inline">Budget Calc</span>
+                </button>
+
+                <!-- Plan New Trip Button -->
+                <button onclick="openPlanTripModal()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-lg active:scale-95 transition-all">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span class="hidden sm:inline">Add Trip</span>
+                </button>
+
+                <!-- Architecture & How-To Button -->
+                <button onclick="openHowItWorksModal()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" title="How multiple trips are managed">
+                    <i class="fa-solid fa-code-branch text-blue-400"></i>
+                    <span class="hidden lg:inline">How It Works</span>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button onclick="toggleTheme()" class="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700/80 flex items-center justify-center text-xs text-slate-300 hover:text-white transition-colors" title="Toggle Light/Dark Theme">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. MAIN HUB CONTENT -->
+    <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 py-6 flex-1 space-y-8">
+        
+        <!-- HERO DASHBOARD BANNER WITH BENTO 2.0 TOUCHES -->
+        <div class="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border border-slate-800 shadow-2xl">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="max-w-2xl space-y-2.5">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span>Upcoming: Sep 12–14, 2026</span>
+                        </span>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-slate-800/80 text-amber-300 border border-slate-700">
+                            ⛰️ 21°C • Mountain Mist • Alt: 1,090m
+                        </span>
+                    </div>
+
+                    <h2 class="text-2xl sm:text-3xl font-black text-white font-display leading-tight">
+                        Chikmagalur Coffee & Cloud Peaks
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        9:30 AM arrival strategy at Tresca Hotel, Jhari Falls 4x4 open jeep off-roading, Mullayanagiri peak (1,930m) trek, and 125cc scooty ridge cruising across Baba Budangiri & Z-Point.
+                    </p>
+                    <div class="pt-2 flex items-center gap-3 flex-wrap">
+                        <a href="chikmagalur_trip_architect.html" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold rounded-xl flex items-center gap-2 shadow-lg active:scale-95 transition-all">
+                            <i class="fa-solid fa-rocket text-amber-300"></i> Launch Chikmagalur Companion
+                        </a>
+                        <button onclick="previewTrip('chikmagalur-2026')" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 flex items-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-eye text-emerald-400"></i> Quick Itinerary Preview
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Counters -->
+                <div class="grid grid-cols-3 gap-3 shrink-0">
+                    <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 text-center min-w-[90px]">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Total Trips</span>
+                        <span id="stat-total" class="text-xl sm:text-2xl font-black text-white font-mono mt-0.5 block">2</span>
+                    </div>
+                    <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 text-center min-w-[90px]">
+                        <span class="text-[10px] uppercase font-bold text-emerald-400 block">Upcoming</span>
+                        <span id="stat-upcoming" class="text-xl sm:text-2xl font-black text-emerald-400 font-mono mt-0.5 block">1</span>
+                    </div>
+                    <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 text-center min-w-[90px]">
+                        <span class="text-[10px] uppercase font-bold text-amber-400 block">Archived</span>
+                        <span id="stat-past" class="text-xl sm:text-2xl font-black text-amber-400 font-mono mt-0.5 block">1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORY & FILTER TABS -->
+        <div class="flex items-center justify-between gap-3 border-b border-slate-800 pb-3 flex-wrap">
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                <button onclick="setFilter('all')" id="filter-all" class="filter-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-amber-400 border border-amber-500/40">
+                    All Trips (<span id="count-all">2</span>)
+                </button>
+                <button onclick="setFilter('upcoming')" id="filter-upcoming" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">
+                    Upcoming (<span id="count-upcoming">1</span>)
+                </button>
+                <button onclick="setFilter('past')" id="filter-past" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">
+                    Past / Memories (<span id="count-past">1</span>)
+                </button>
+                <button onclick="setFilter('domestic')" id="filter-domestic" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">
+                    Domestic & Hills
+                </button>
+                <button onclick="setFilter('international')" id="filter-international" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">
+                    International
+                </button>
+            </div>
+
+            <span class="text-xs text-slate-400 font-mono">Select a journey to launch its companion</span>
+        </div>
+
+        <!-- TRIP CARDS GRID -->
+        <div id="trips-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Populated dynamically via JS -->
+        </div>
+
+    </main>
+
+    <!-- 3. FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-6 px-4 text-xs text-slate-400 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>Personal Travel Architect • Offline-First PWA Ready</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="trip_template.html" target="_blank" class="hover:text-emerald-400 transition-colors">
+                    <i class="fa-solid fa-file-lines mr-1"></i> View Blank Template
+                </a>
+                <span>•</span>
+                <button onclick="openHowItWorksModal()" class="hover:text-amber-400 transition-colors">
+                    <i class="fa-solid fa-circle-question mr-1"></i> How to Add Trips
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =============================================================
+         SLIDE-OVER QUICK PREVIEW DRAWER
+         ============================================================= -->
+    <div id="preview-drawer" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex justify-end hidden">
+        <div class="bg-slate-900 border-l border-slate-800 w-full max-w-xl h-full p-6 overflow-y-auto drawer-anim flex flex-col justify-between shadow-2xl relative">
+            <div>
+                <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-2">
+                        <span id="drawer-flag" class="text-2xl">🇮🇳</span>
+                        <div>
+                            <h3 id="drawer-title" class="text-base font-extrabold text-white leading-tight">Trip Title</h3>
+                            <span id="drawer-dates" class="text-xs text-slate-400 font-mono">Dates</span>
+                        </div>
+                    </div>
+                    <button onclick="closeDrawer()" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4 text-xs">
+                    <!-- Basecamp & Transport -->
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <div class="text-amber-400 font-bold mb-1 flex items-center gap-1.5">
+                            <i class="fa-solid fa-hotel"></i> Basecamp & Stay
+                        </div>
+                        <p id="drawer-basecamp" class="text-slate-200 font-medium">Hotel Name</p>
+                        
+                        <div class="text-blue-400 font-bold mt-3 mb-1 flex items-center gap-1.5">
+                            <i class="fa-solid fa-van-shuttle"></i> Transport Strategy
+                        </div>
+                        <p id="drawer-transport" class="text-slate-300">Transport details</p>
+                    </div>
+
+                    <!-- Quick Itinerary Breakdown -->
+                    <div>
+                        <h4 class="font-extrabold text-white text-xs uppercase tracking-wider text-slate-400 mb-2">
+                            Day-by-Day Master Schedule
+                        </h4>
+                        <div id="drawer-itinerary-list" class="space-y-2">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Key Highlights -->
+                    <div>
+                        <h4 class="font-extrabold text-white text-xs uppercase tracking-wider text-slate-400 mb-2">
+                            Key Landmarks & Activities
+                        </h4>
+                        <div id="drawer-highlights-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drawer Bottom Launch Button -->
+            <div class="pt-4 mt-6 border-t border-slate-800 flex items-center gap-3">
+                <button onclick="closeDrawer()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs">
+                    Close Preview
+                </button>
+                <a id="drawer-launch-btn" href="#" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
+                    <i class="fa-solid fa-rocket text-amber-300"></i> Open Full Companion
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- =============================================================
+         BUDGET & SPLIT CALCULATOR MODAL
+         ============================================================= -->
+    <div id="budget-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeBudgetModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-base border border-amber-500/30">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-white">Chikmagalur Split Calculator</h3>
+                    <p class="text-xs text-slate-400">Estimate transport, jeep & food costs</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between items-center text-slate-300">
+                        <span>Day 1 Private Sightseeing Cab:</span>
+                        <span class="font-mono font-bold text-white">₹3,500</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-300">
+                        <span>Jhari Falls 4x4 Jeep (Fixed):</span>
+                        <span class="font-mono font-bold text-white">₹800</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-300">
+                        <span>Days 2 & 3 Scooty Rentals (~₹600/day):</span>
+                        <span class="font-mono font-bold text-white">₹1,200</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-300">
+                        <span>Scooty Fuel & Entry Fees:</span>
+                        <span class="font-mono font-bold text-white">₹600</span>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800 flex justify-between items-center text-amber-300 font-bold">
+                        <span>Total Shared Transport:</span>
+                        <span class="font-mono text-sm">₹6,100</span>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-950/30 p-3.5 rounded-xl border border-emerald-500/30 text-center">
+                    <span class="text-[11px] text-emerald-400 font-bold block mb-1">Per Person Split (Transport & Jeep)</span>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div class="bg-slate-900/80 p-2 rounded-lg border border-emerald-500/20">
+                            <span class="text-[10px] text-slate-400 block">For 2 Travelers</span>
+                            <span class="font-mono font-black text-emerald-300 text-sm">₹3,050 / person</span>
+                        </div>
+                        <div class="bg-slate-900/80 p-2 rounded-lg border border-emerald-500/20">
+                            <span class="text-[10px] text-slate-400 block">For 3 Travelers</span>
+                            <span class="font-mono font-black text-emerald-300 text-sm">₹2,033 / person</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =============================================================
+         PLAN NEW TRIP MODAL
+         ============================================================= -->
+    <div id="plan-trip-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+                <h3 class="text-base font-black text-white flex items-center gap-2">
+                    <i class="fa-solid fa-plane-departure text-emerald-400"></i> Add New Trip to Hub
+                </h3>
+                <button onclick="closePlanTripModal()" class="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleNewTripSubmit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-300 font-bold mb-1">Trip Name</label>
+                    <input type="text" id="form-title" placeholder="e.g. Coorg Plantation & Waterfalls" required 
+                           class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">Destination & Region</label>
+                        <input type="text" id="form-dest" placeholder="e.g. Coorg, Karnataka" required 
+                               class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">Flag Emoji</label>
+                        <input type="text" id="form-flag" placeholder="e.g. 🇮🇳 or ⛰️" value="✈️" 
+                               class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">Dates</label>
+                        <input type="text" id="form-dates" placeholder="e.g. Oct 24–27, 2026" required 
+                               class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">Status</label>
+                        <select id="form-status" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="upcoming">Upcoming Expedition</option>
+                            <option value="past">Past / Archived Journey</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 font-bold mb-1">HTML File URL / Filename</label>
+                    <input type="text" id="form-url" placeholder="e.g. coorg_trip_architect.html (optional)" 
+                           class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <span class="text-[10px] text-slate-500 mt-0.5 block">You can duplicate `trip_template.html` and name it as this file.</span>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 font-bold mb-1">Basecamp / Hotel</label>
+                    <input type="text" id="form-basecamp" placeholder="e.g. Tamara Luxury Resort, Madikeri" 
+                           class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 font-bold mb-1">Summary / Highlights</label>
+                    <textarea id="form-summary" rows="2" placeholder="Key highlights, transport mode, trails..." 
+                              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                </div>
+
+                <div class="pt-3 border-t border-slate-800 flex items-center justify-end gap-2">
+                    <button type="button" onclick="closePlanTripModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg active:scale-95 transition-all">
+                        <i class="fa-solid fa-check"></i> Add Trip Card
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =============================================================
+         ARCHITECTURE & HOW IT WORKS MODAL
+         ============================================================= -->
+    <div id="how-it-works-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-xl p-6 shadow-2xl relative">
+            <button onclick="closeHowItWorksModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm border border-amber-500/30">
+                    <i class="fa-solid fa-code-branch"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-white">How Multiple Trips Are Managed</h3>
+                    <p class="text-xs text-slate-400">Clean, scalable, offline-first architecture</p>
+                </div>
+            </div>
+
+            <div class="space-y-3.5 text-xs text-slate-300 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                    <h4 class="font-bold text-emerald-400 text-sm mb-1">1. Master Hub (`index.html`)</h4>
+                    <p>The Hub is your master landing deck. It presents high-level trip cards, upcoming countdowns, stats, and a quick preview drawer. It connects all your journeys in one unified portal.</p>
+                </div>
+
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                    <h4 class="font-bold text-amber-400 text-sm mb-1">2. Dedicated Trip HTML Files</h4>
+                    <p>Each major journey is its own standalone HTML application with custom capabilities:</p>
+                    <ul class="list-disc list-inside mt-1 space-y-1 text-slate-400">
+                        <li><strong class="text-slate-200">`vietnam_trip_architect_5_0.html`:</strong> 8-day international itinerary, FX currency converter, 9-seater limousine matrix, pure veg dining, Vietnamese audio cards.</li>
+                        <li><strong class="text-slate-200">`chikmagalur_trip_architect.html`:</strong> 3-day weekend hill itinerary, 4x4 off-road jeep guide, 125cc scooty hill power rules, Tresca 9:30 AM arrival strategy, Kannada driver address card.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                    <h4 class="font-bold text-blue-400 text-sm mb-1">3. How to Add Your Next Trip</h4>
+                    <p>Whenever you plan a new trip (e.g. *Goa, Ladakh, Europe*), choose either:</p>
+                    <ul class="list-disc list-inside mt-1 space-y-1 text-slate-400">
+                        <li><strong class="text-slate-200">Method A (One Click in Browser):</strong> Click "+ Add Trip" in the top bar, fill in the details, and it immediately appears in your Hub.</li>
+                        <li><strong class="text-slate-200">Method B (New HTML Companion):</strong> Copy `trip_template.html` to `your_trip.html`, add your custom map pins & timeline, and add one entry to `trips_registry.js`.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="trips_registry.js"></script>
+    <script>
+        let currentFilter = 'all';
+        let allTrips = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            allTrips = getAllTrips();
+            renderTrips();
+            updateCounts();
+            registerServiceWorker();
+        });
+
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => console.log('PWA Service Worker registered'))
+                    .catch(err => console.log('SW registration note:', err));
+            }
+        }
+
+        function renderTrips() {
+            const container = document.getElementById('trips-grid');
+            const searchVal = (document.getElementById('trip-search')?.value || '').toLowerCase().trim();
+
+            let filtered = allTrips;
+
+            if (currentFilter === 'upcoming') filtered = filtered.filter(t => t.status === 'upcoming');
+            if (currentFilter === 'past') filtered = filtered.filter(t => t.status === 'past');
+            if (currentFilter === 'domestic') filtered = filtered.filter(t => t.category === 'domestic');
+            if (currentFilter === 'international') filtered = filtered.filter(t => t.category === 'international');
+
+            if (searchVal) {
+                filtered = filtered.filter(t => 
+                    t.title.toLowerCase().includes(searchVal) || 
+                    t.destination.toLowerCase().includes(searchVal) ||
+                    t.summary.toLowerCase().includes(searchVal)
+                );
+            }
+
+            container.innerHTML = filtered.map(trip => createTripCardHtml(trip)).join('');
+        }
+
+        function createTripCardHtml(trip) {
+            return `
+                <div class="glass-card rounded-2xl overflow-hidden shadow-xl border border-slate-800 flex flex-col justify-between group hover:border-slate-700 transition-all duration-300">
+                    <div class="bg-gradient-to-r ${trip.heroGradient || 'from-slate-900 to-indigo-950'} p-6 relative">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-black/40 text-amber-300 backdrop-blur-md border border-white/10">
+                                ${trip.badge || 'Expedition'}
+                            </span>
+                            <span class="text-3xl">${trip.flag}</span>
+                        </div>
+                        <h3 class="text-xl font-black text-white group-hover:text-emerald-300 transition-colors">
+                            ${trip.title}
+                        </h3>
+                        <p class="text-xs text-slate-300 mt-1 flex items-center gap-1.5 font-medium">
+                            <i class="fa-solid fa-location-dot text-emerald-400"></i> ${trip.destination}
+                        </p>
+                    </div>
+
+                    <div class="p-6 flex-1 flex flex-col justify-between gap-4">
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                                    <span class="text-slate-400 block text-[10px] uppercase font-semibold">Travel Dates</span>
+                                    <span class="font-bold text-slate-200 mt-0.5 block">${trip.dates}</span>
+                                </div>
+                                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                                    <span class="text-slate-400 block text-[10px] uppercase font-semibold">Travelers</span>
+                                    <span class="font-bold text-slate-200 mt-0.5 block">${trip.travelers}</span>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-300 leading-relaxed line-clamp-2">
+                                ${trip.summary}
+                            </p>
+
+                            <!-- Key Highlights Chips -->
+                            ${trip.highlights ? `
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    ${trip.highlights.slice(0, 3).map(h => `
+                                        <span class="px-2 py-1 rounded-lg bg-slate-950 text-slate-300 border border-slate-800 text-[10px] flex items-center gap-1">
+                                            <i class="fa-solid ${h.icon || 'fa-tag'} text-emerald-400"></i> ${h.title}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="pt-4 border-t border-slate-800 flex items-center gap-2">
+                            <button onclick="previewTrip('${trip.id}')" class="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-all">
+                                <i class="fa-solid fa-eye text-slate-400"></i> Preview
+                            </button>
+                            <a href="${trip.url || '#'}" class="flex-1 py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95">
+                                <i class="fa-solid fa-rocket text-amber-300"></i> Launch Trip Architect
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'bg-slate-800', 'text-amber-400', 'border-amber-500/40'));
+            const active = document.getElementById(`filter-${filter}`);
+            if (active) active.classList.add('active', 'bg-slate-800', 'text-amber-400', 'border-amber-500/40');
+            renderTrips();
+        }
+
+        function filterTrips() {
+            renderTrips();
+        }
+
+        function updateCounts() {
+            const upcoming = allTrips.filter(t => t.status === 'upcoming').length;
+            const past = allTrips.filter(t => t.status === 'past').length;
+
+            document.getElementById('stat-total').textContent = allTrips.length;
+            document.getElementById('stat-upcoming').textContent = upcoming;
+            document.getElementById('stat-past').textContent = past;
+
+            document.getElementById('count-all').textContent = allTrips.length;
+            document.getElementById('count-upcoming').textContent = upcoming;
+            document.getElementById('count-past').textContent = past;
+        }
+
+        /* Slide-over Preview Drawer */
+        function previewTrip(tripId) {
+            const trip = allTrips.find(t => t.id === tripId);
+            if (!trip) return;
+
+            document.getElementById('drawer-flag').textContent = trip.flag;
+            document.getElementById('drawer-title').textContent = trip.title;
+            document.getElementById('drawer-dates').textContent = trip.dates;
+            document.getElementById('drawer-basecamp').textContent = trip.basecamp || 'Custom Accommodations';
+            document.getElementById('drawer-transport').textContent = trip.transport || 'Self-guided / local transit';
+            document.getElementById('drawer-launch-btn').setAttribute('href', trip.url || '#');
+
+            const itinList = document.getElementById('drawer-itinerary-list');
+            if (trip.quickItinerary) {
+                itinList.innerHTML = trip.quickItinerary.map(item => `
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <span class="font-bold text-amber-400 text-[11px] block">${item.day}</span>
+                        <p class="text-slate-300 text-xs mt-0.5">${item.title}</p>
+                    </div>
+                `).join('');
+            } else {
+                itinList.innerHTML = `<p class="text-slate-400">Detailed schedule available in the full companion app.</p>`;
+            }
+
+            const hList = document.getElementById('drawer-highlights-list');
+            if (trip.highlights) {
+                hList.innerHTML = trip.highlights.map(h => `
+                    <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 flex items-center gap-2">
+                        <i class="fa-solid ${h.icon || 'fa-location-dot'} text-emerald-400 text-xs shrink-0"></i>
+                        <span class="text-slate-200 text-[11px] truncate">${h.title}</span>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('preview-drawer').classList.remove('hidden');
+        }
+
+        function closeDrawer() {
+            document.getElementById('preview-drawer').classList.add('hidden');
+        }
+
+        /* Budget Modal */
+        function openBudgetModal() { document.getElementById('budget-modal').classList.remove('hidden'); }
+        function closeBudgetModal() { document.getElementById('budget-modal').classList.add('hidden'); }
+
+        /* Plan New Trip Modal */
+        function openPlanTripModal() {
+            document.getElementById('plan-trip-modal').classList.remove('hidden');
+        }
+        function closePlanTripModal() {
+            document.getElementById('plan-trip-modal').classList.add('hidden');
+        }
+
+        function handleNewTripSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('form-title').value;
+            const dest = document.getElementById('form-dest').value;
+            const flag = document.getElementById('form-flag').value || '✈️';
+            const dates = document.getElementById('form-dates').value;
+            const status = document.getElementById('form-status').value;
+            const url = document.getElementById('form-url').value || 'trip_template.html';
+            const basecamp = document.getElementById('form-basecamp').value || dest;
+            const summary = document.getElementById('form-summary').value || `Trip to ${dest}`;
+
+            const newTrip = {
+                id: `trip-${Date.now()}`,
+                title: title,
+                destination: dest,
+                flag: flag,
+                status: status,
+                category: "domestic",
+                dates: dates,
+                daysCount: 3,
+                travelers: "Travelers",
+                heroGradient: "from-blue-950 via-slate-900 to-teal-950",
+                badge: status === 'upcoming' ? 'Upcoming Expedition' : 'Archived Trip',
+                accentColor: "#3b82f6",
+                url: url,
+                summary: summary,
+                basecamp: basecamp,
+                transport: "Local Transport",
+                highlights: [
+                    { icon: "fa-map-pin", title: dest, desc: "Key location" }
+                ],
+                quickItinerary: [
+                    { day: "Day 1", title: "Arrival & explore" }
+                ]
+            };
+
+            saveCustomTripToRegistry(newTrip);
+            allTrips = getAllTrips();
+            closePlanTripModal();
+            renderTrips();
+            updateCounts();
+        }
+
+        /* How It Works Modal */
+        function openHowItWorksModal() {
+            document.getElementById('how-it-works-modal').classList.remove('hidden');
+        }
+        function closeHowItWorksModal() {
+            document.getElementById('how-it-works-modal').classList.add('hidden');
+        }
+
+        /* Theme Toggle */
+        function toggleTheme() {
+            document.documentElement.classList.toggle('light-theme');
+            const icon = document.getElementById('theme-icon');
+            if (document.documentElement.classList.contains('light-theme')) {
+                icon.className = "fa-solid fa-sun text-amber-400";
+            } else {
+                icon.className = "fa-solid fa-moon";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "travel-architect-hub",
+  "version": "1.0.0",
+  "description": "Personal Travel Architect & Master Multi-Trip Hub for Offline & Mobile Expeditions",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve . -l 3000",
+    "start": "npx serve . -l 3000"
+  },
+  "keywords": [
+    "travel",
+    "itinerary",
+    "offline-pwa",
+    "leaflet-maps",
+    "travel-planner",
+    "travel-companion"
+  ],
+  "author": "",
+  "license": "MIT"
+}

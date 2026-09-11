@@ -649,19 +649,62 @@
 
         <!-- TAB 9: BUDGET & EXPENSES -->
         <div id="tab-budget" class="tab-content space-y-3.5">
-            <div class="bg-gradient-to-r from-purple-950 to-slate-900 text-white rounded-3xl p-4 sm:p-5 border border-purple-800 shadow-xl flex justify-between items-center">
-                <div>
-                    <span class="px-2.5 py-0.5 bg-purple-500/20 text-purple-300 text-[10px] font-bold rounded-full uppercase">Finance</span>
-                    <h2 class="text-lg font-bold font-display mt-1.5">Budget & Spend Splitter</h2>
+            <!-- Executive Budget Overview Card -->
+            <div class="bg-gradient-to-r from-purple-950 via-slate-900 to-slate-950 text-white rounded-3xl p-4 sm:p-5 border border-purple-800/70 shadow-xl space-y-3">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="px-2.5 py-0.5 bg-purple-500/20 text-purple-300 text-[10px] font-bold rounded-full uppercase tracking-wider">Interactive Finance Hub</span>
+                        <h2 class="text-lg sm:text-xl font-bold font-display mt-1">Budget & Actual Spend Splitter</h2>
+                        <p class="text-slate-400 text-xs mt-0.5">5 Adults Expedition (DEL & BLR Flights Included)</p>
+                    </div>
+                    <div class="text-right">
+                        <span id="budget-grand-total" class="text-2xl font-black text-amber-400 font-mono">₹4,06,000</span>
+                        <span id="budget-per-person" class="block text-[11px] text-slate-300 font-medium">~₹81,200 / adult</span>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <span class="text-xl font-black text-gold-400 font-display">₹4,06,000</span>
-                    <span class="block text-[10px] text-slate-400">~₹81,200 / adult</span>
+
+                <!-- Status Sub-breakdown Stats -->
+                <div class="grid grid-cols-3 gap-2 pt-2 border-t border-purple-900/50 text-[11px]">
+                    <div class="bg-purple-900/30 rounded-xl p-2.5 border border-purple-800/40">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold">Booked / Paid</span>
+                        <span id="budget-actual-total" class="text-emerald-400 font-bold font-mono text-xs sm:text-sm">₹0</span>
+                    </div>
+                    <div class="bg-purple-900/30 rounded-xl p-2.5 border border-purple-800/40">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold">Estimated</span>
+                        <span id="budget-estimated-total" class="text-amber-400 font-bold font-mono text-xs sm:text-sm">₹4,06,000</span>
+                    </div>
+                    <div class="bg-purple-900/30 rounded-xl p-2.5 border border-purple-800/40">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold">On-Trip Spends</span>
+                        <span id="budget-logged-total" class="text-cyan-400 font-bold font-mono text-xs sm:text-sm">₹0</span>
+                    </div>
                 </div>
             </div>
-            <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden">
-                <div class="overflow-x-auto"><table class="w-full text-xs text-left"><tbody id="budget-items-tbody" class="divide-y divide-slate-100 dark:divide-darkborder"></tbody></table></div>
+
+            <!-- Master Budget Table with Actions -->
+            <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden shadow-sm">
+                <div class="bg-slate-900 text-white px-3.5 py-2.5 flex justify-between items-center text-xs">
+                    <div class="font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-purple-400"></i>
+                        <span>Trip Cost Items & Bookings</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="resetBudgetToDefaults()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[10px] font-semibold transition-all" title="Reset all amounts to default initial estimates">
+                            <i class="fa-solid fa-arrow-rotate-left mr-1"></i> Reset
+                        </button>
+                        <button onclick="openAddBudgetItemModal()" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[10px] font-bold shadow transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Add Item
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <tbody id="budget-items-tbody" class="divide-y divide-slate-100 dark:divide-darkborder"></tbody>
+                    </table>
+                </div>
             </div>
+
+            <!-- Live On-Trip Spends -->
             <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-3.5">
                 <div class="flex justify-between items-center mb-2.5">
                     <h3 class="font-bold text-xs sm:text-sm"><i class="fa-solid fa-receipt text-purple-600 mr-1"></i> Live On-Trip Spends</h3>
@@ -893,6 +936,58 @@
                     <a id="quote-send-wa-btn" href="https://wa.me/84964058978" target="_blank" class="px-3.5 py-1.5 bg-emerald-600 text-white rounded-xl font-bold shadow flex items-center gap-1.5"><i class="fa-brands fa-whatsapp"></i> Send on WhatsApp</a>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- EDIT / ADD BUDGET ITEM MODAL -->
+    <div id="budget-item-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="if(event.target === this) closeBudgetItemModal()">
+        <div class="bg-white dark:bg-darkcard rounded-t-3xl sm:rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-200 dark:border-darkborder bottom-sheet-anim">
+            <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 sm:hidden"></div>
+            <div class="flex justify-between items-center pb-2.5 border-b border-slate-100 dark:border-darkborder">
+                <h3 id="budget-modal-title" class="font-bold text-xs sm:text-sm"><i class="fa-solid fa-pen-to-square text-purple-600 mr-1.5"></i> Edit Budget Item</h3>
+                <button onclick="closeBudgetItemModal()" class="text-slate-400 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="budget-item-form" onsubmit="saveBudgetItem(event)" class="mt-3 space-y-3 text-xs">
+                <input type="hidden" id="budget-item-index" value="-1">
+                <div>
+                    <label class="font-bold block mb-1">Item Title:</label>
+                    <input type="text" id="budget-item-title" required placeholder="e.g., International Flights (DEL & BLR)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 font-bold outline-none">
+                </div>
+                <div>
+                    <label class="font-bold block mb-1">Details & Booking Notes:</label>
+                    <input type="text" id="budget-item-details" placeholder="e.g., 5 return tickets (VietJet / Air India)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="font-bold block mb-1">Total Cost (INR ₹):</label>
+                        <input type="number" id="budget-item-total" required min="0" step="50" placeholder="140000" oninput="updateBudgetItemPerPersonPreview()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 font-mono font-bold outline-none">
+                    </div>
+                    <div>
+                        <label class="font-bold block mb-1">Per Adult (~/ 5):</label>
+                        <div id="budget-item-pp-preview" class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 font-mono font-bold text-slate-600 dark:text-slate-300">
+                            ₹0
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="font-bold block mb-1">Status / Booking State:</label>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button type="button" onclick="selectBudgetStatus('booked')" id="bstatus-booked" class="bstatus-btn py-2 px-1 rounded-xl text-center font-bold text-[11px] border border-emerald-500 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
+                            ✓ Actual / Booked
+                        </button>
+                        <button type="button" onclick="selectBudgetStatus('paid')" id="bstatus-paid" class="bstatus-btn py-2 px-1 rounded-xl text-center font-bold text-[11px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                            💳 Paid
+                        </button>
+                        <button type="button" onclick="selectBudgetStatus('estimated')" id="bstatus-estimated" class="bstatus-btn py-2 px-1 rounded-xl text-center font-bold text-[11px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                            ⏳ Estimated
+                        </button>
+                    </div>
+                </div>
+                <div class="pt-2 flex gap-2">
+                    <button type="button" onclick="closeBudgetItemModal()" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl font-bold">Cancel</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold shadow-lg">Save Changes</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1235,19 +1330,34 @@
             { category: "Mulberry Silk", items: "100% pure silk scarves", location: "Hàng Gai Street", price: "₹400 – ₹1,200", rule: "Packs completely flat." }
         ];
 
-        const budgetData = [
-            { item: "International Flights (DEL & BLR)", details: "5 return tickets", total: 140000, pp: 28000 },
-            { item: "Domestic Flights (HAN ⇄ DAD)", details: "5 round-trip tickets (VN Airlines / VietJet)", total: 35000, pp: 7000 },
-            { item: "Vietnam E-Visas", details: "$25/person for 5 pax (Gov Portal)", total: 10500, pp: 2100 },
-            { item: "Hanoi Hotels (3 Nights Total)", details: "La Siesta Classic (Double + Triple Suites)", total: 33000, pp: 6600 },
-            { item: "Hoi An Garden Resort (2 Nights)", details: "La Siesta Resort (Double + Grand Suites)", total: 24000, pp: 4800 },
-            { item: "Da Nang Beachfront Hotel (2 Nights)", details: "TMS Hotel Ocean View (Double + Triple Suites)", total: 22000, pp: 4400 },
-            { item: "9-Seater Private DCar Limousines", details: "All 9 private transfers (including Ninh Binh Full Day)", total: 38000, pp: 7600 },
-            { item: "Ninh Binh Day Tour & Boat Tickets", details: "Hoa Lu entry + Tam Coc Sampan rowboat fees for 5 pax", total: 12500, pp: 2500 },
-            { item: "Ba Na Hills Cable Car & Bridge Tickets", details: "5 Klook cable car + Golden bridge entry passes", total: 18500, pp: 3700 },
-            { item: "Sightseeing, Puppets & Lantern Boats", details: "Water puppets VIP, Hoi An lantern boat, Marble Mt elevator", total: 9500, pp: 1900 },
-            { item: "Pure Veg & Indian Dining / Cafes", details: "Sadhu, Dalcheeni, Baba's Kitchen, Ưu Đàm Chay & Egg Coffee", total: 42000, pp: 8400 }
+        const defaultBudgetData = [
+            { item: "International Flights (DEL & BLR)", details: "5 return tickets", total: 140000, pp: 28000, status: "estimated" },
+            { item: "Domestic Flights (HAN ⇄ DAD)", details: "5 round-trip tickets (VN Airlines / VietJet)", total: 35000, pp: 7000, status: "estimated" },
+            { item: "Vietnam E-Visas", details: "$25/person for 5 pax (Gov Portal)", total: 10500, pp: 2100, status: "estimated" },
+            { item: "Hanoi Hotels (3 Nights Total)", details: "La Siesta Classic (Double + Triple Suites)", total: 33000, pp: 6600, status: "estimated" },
+            { item: "Hoi An Garden Resort (2 Nights)", details: "La Siesta Resort (Double + Grand Suites)", total: 24000, pp: 4800, status: "estimated" },
+            { item: "Da Nang Beachfront Hotel (2 Nights)", details: "TMS Hotel Ocean View (Double + Triple Suites)", total: 22000, pp: 4400, status: "estimated" },
+            { item: "9-Seater Private DCar Limousines", details: "All 9 private transfers (including Ninh Binh Full Day)", total: 38000, pp: 7600, status: "estimated" },
+            { item: "Ninh Binh Day Tour & Boat Tickets", details: "Hoa Lu entry + Tam Coc Sampan rowboat fees for 5 pax", total: 12500, pp: 2500, status: "estimated" },
+            { item: "Ba Na Hills Cable Car & Bridge Tickets", details: "5 Klook cable car + Golden bridge entry passes", total: 18500, pp: 3700, status: "estimated" },
+            { item: "Sightseeing, Puppets & Lantern Boats", details: "Water puppets VIP, Hoi An lantern boat, Marble Mt elevator", total: 9500, pp: 1900, status: "estimated" },
+            { item: "Pure Veg & Indian Dining / Cafes", details: "Sadhu, Dalcheeni, Baba's Kitchen, Ưu Đàm Chay & Egg Coffee", total: 42000, pp: 8400, status: "estimated" }
         ];
+
+        function getActiveBudgetData() {
+            const stored = safeGetStorage('vietnam_budget_items', null);
+            if (Array.isArray(stored) && stored.length > 0) {
+                return stored;
+            }
+            return JSON.parse(JSON.stringify(defaultBudgetData));
+        }
+
+        function saveActiveBudgetData(data) {
+            safeSetStorage('vietnam_budget_items', data);
+            renderBudgetTable();
+        }
+
+        let budgetData = getActiveBudgetData();
 
         function safeGetStorage(key, defaultVal) {
             try {
@@ -2039,14 +2149,185 @@ Please provide your best package quote in VND. Thank you!`;
             });
         }
 
+        let currentBudgetStatus = 'booked';
+
+        function selectBudgetStatus(status) {
+            currentBudgetStatus = status;
+            ['booked', 'paid', 'estimated'].forEach(s => {
+                const btn = document.getElementById(`bstatus-${s}`);
+                if (!btn) return;
+                if (s === status) {
+                    btn.className = 'bstatus-btn py-2 px-1 rounded-xl text-center font-bold text-[11px] border border-purple-500 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300';
+                } else {
+                    btn.className = 'bstatus-btn py-2 px-1 rounded-xl text-center font-bold text-[11px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400';
+                }
+            });
+        }
+
+        function updateBudgetItemPerPersonPreview() {
+            const totalVal = parseFloat(document.getElementById('budget-item-total').value) || 0;
+            const previewEl = document.getElementById('budget-item-pp-preview');
+            if (previewEl) {
+                previewEl.textContent = `₹${Math.round(totalVal / 5).toLocaleString('en-IN')}`;
+            }
+        }
+
+        function openAddBudgetItemModal() {
+            document.getElementById('budget-modal-title').innerHTML = `<i class="fa-solid fa-plus text-purple-600 mr-1.5"></i> Add Custom Budget Item`;
+            document.getElementById('budget-item-index').value = '-1';
+            document.getElementById('budget-item-title').value = '';
+            document.getElementById('budget-item-details').value = '';
+            document.getElementById('budget-item-total').value = '';
+            document.getElementById('budget-item-pp-preview').textContent = '₹0';
+            selectBudgetStatus('estimated');
+            document.getElementById('budget-item-modal').classList.remove('hidden');
+        }
+
+        function openEditBudgetItemModal(index) {
+            const items = getActiveBudgetData();
+            const item = items[index];
+            if (!item) return;
+            document.getElementById('budget-modal-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-purple-600 mr-1.5"></i> Edit Budget Item`;
+            document.getElementById('budget-item-index').value = index;
+            document.getElementById('budget-item-title').value = item.item || '';
+            document.getElementById('budget-item-details').value = item.details || '';
+            document.getElementById('budget-item-total').value = item.total || 0;
+            updateBudgetItemPerPersonPreview();
+            selectBudgetStatus(item.status || 'estimated');
+            document.getElementById('budget-item-modal').classList.remove('hidden');
+        }
+
+        function closeBudgetItemModal() {
+            document.getElementById('budget-item-modal').classList.add('hidden');
+        }
+
+        function saveBudgetItem(e) {
+            if (e) e.preventDefault();
+            const idx = parseInt(document.getElementById('budget-item-index').value, 10);
+            const title = document.getElementById('budget-item-title').value.trim();
+            const details = document.getElementById('budget-item-details').value.trim();
+            const total = parseFloat(document.getElementById('budget-item-total').value) || 0;
+            const pp = Math.round(total / 5);
+
+            if (!title) {
+                alert('Please enter an item title');
+                return;
+            }
+
+            const items = getActiveBudgetData();
+            const newItem = {
+                item: title,
+                details: details,
+                total: total,
+                pp: pp,
+                status: currentBudgetStatus
+            };
+
+            if (idx >= 0 && idx < items.length) {
+                items[idx] = newItem;
+            } else {
+                items.push(newItem);
+            }
+
+            saveActiveBudgetData(items);
+            closeBudgetItemModal();
+        }
+
+        function deleteBudgetItem(idx) {
+            const items = getActiveBudgetData();
+            if (!items[idx]) return;
+            if (confirm(`Delete "${items[idx].item}" from budget list?`)) {
+                items.splice(idx, 1);
+                saveActiveBudgetData(items);
+            }
+        }
+
+        function resetBudgetToDefaults() {
+            if (confirm('Reset budget to default initial estimates (₹4,06,000 total)? Any custom edits will be replaced.')) {
+                safeSetStorage('vietnam_budget_items', defaultBudgetData);
+                renderBudgetTable();
+            }
+        }
+
         function renderBudgetTable() {
             const tbody = document.getElementById('budget-items-tbody');
+            if (!tbody) return;
+            const items = getActiveBudgetData();
             tbody.innerHTML = '';
-            budgetData.forEach(b => {
+
+            let grandTotal = 0;
+            let bookedTotal = 0;
+            let estimatedTotal = 0;
+
+            items.forEach((b, idx) => {
+                const total = Number(b.total) || 0;
+                const pp = Number(b.pp) || Math.round(total / 5);
+                const status = b.status || 'estimated';
+                grandTotal += total;
+
+                if (status === 'booked' || status === 'paid') {
+                    bookedTotal += total;
+                } else {
+                    estimatedTotal += total;
+                }
+
+                let badgeHtml = '';
+                if (status === 'booked') {
+                    badgeHtml = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300"><i class="fa-solid fa-check mr-0.5"></i> Actual / Booked</span>`;
+                } else if (status === 'paid') {
+                    badgeHtml = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300"><i class="fa-solid fa-receipt mr-0.5"></i> Paid</span>`;
+                } else {
+                    badgeHtml = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300"><i class="fa-regular fa-clock mr-0.5"></i> Estimated</span>`;
+                }
+
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800"><td class="p-2.5"><strong>${b.item}</strong><br><span class="text-slate-500 text-[10px]">${b.details}</span></td><td class="p-2.5 text-right font-bold whitespace-nowrap">₹${b.total.toLocaleString('en-IN')}</td></tr>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <td class="p-2.5 align-middle">
+                            <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                                <strong class="text-slate-900 dark:text-slate-100">${b.item}</strong>
+                                ${badgeHtml}
+                            </div>
+                            <span class="text-slate-500 text-[10px] block">${b.details || 'No notes'}</span>
+                        </td>
+                        <td class="p-2.5 text-right whitespace-nowrap align-middle">
+                            <div class="font-bold text-slate-900 dark:text-slate-100 font-mono">₹${total.toLocaleString('en-IN')}</div>
+                            <div class="text-[10px] text-slate-400">~₹${pp.toLocaleString('en-IN')} / adult</div>
+                        </td>
+                        <td class="p-2.5 text-right whitespace-nowrap align-middle w-16">
+                            <div class="flex items-center justify-end gap-1">
+                                <button onclick="openEditBudgetItemModal(${idx})" class="p-1.5 text-purple-600 hover:bg-purple-100 dark:hover:bg-purple-950 rounded-lg transition-colors" title="Edit Item & Amount">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button onclick="deleteBudgetItem(${idx})" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors" title="Delete Item">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                 `;
             });
+
+            // Update header summary numbers
+            const grandTotalEl = document.getElementById('budget-grand-total');
+            const ppEl = document.getElementById('budget-per-person');
+            const actualTotalEl = document.getElementById('budget-actual-total');
+            const estTotalEl = document.getElementById('budget-estimated-total');
+            const loggedTotalEl = document.getElementById('budget-logged-total');
+
+            if (grandTotalEl) grandTotalEl.textContent = `₹${grandTotal.toLocaleString('en-IN')}`;
+            if (ppEl) ppEl.textContent = `~₹${Math.round(grandTotal / 5).toLocaleString('en-IN')} / adult`;
+            if (actualTotalEl) actualTotalEl.textContent = `₹${bookedTotal.toLocaleString('en-IN')}`;
+            if (estTotalEl) estTotalEl.textContent = `₹${estimatedTotal.toLocaleString('en-IN')}`;
+
+            // Compute logged on-trip spends
+            const logs = safeGetStorage('vietnam_expenses', []) || [];
+            let totalSpentInr = 0;
+            if (Array.isArray(logs)) {
+                logs.forEach(exp => {
+                    totalSpentInr += (parseFloat(exp.inr) || 0);
+                });
+            }
+            if (loggedTotalEl) loggedTotalEl.textContent = `₹${Math.round(totalSpentInr).toLocaleString('en-IN')}`;
         }
 
         function renderRestaurantDirectory() {
@@ -2158,6 +2439,7 @@ Please provide your best package quote in VND. Thank you!`;
             safeSetStorage('vietnam_expenses', logs);
             closeAddExpenseModal();
             renderLoggedExpenses();
+            renderBudgetTable();
         }
 
         function deleteExpense(idx) {
@@ -2165,6 +2447,7 @@ Please provide your best package quote in VND. Thank you!`;
             logs.splice(idx, 1);
             safeSetStorage('vietnam_expenses', logs);
             renderLoggedExpenses();
+            renderBudgetTable();
         }
 
         function calculateBargain() {

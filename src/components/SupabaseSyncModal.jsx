@@ -131,7 +131,7 @@ create policy "Public trips full access" on trips for all using (true) with chec
 
           {/* Test connection result */}
           {testResult && (
-            <div className={"p-3 rounded-xl border text-xs flex items-start gap-2 " + (testResult.success ? "bg-emerald-950/30 border-emerald-500/40 text-emerald-300" : "bg-rose-950/30 border-rose-500/40 text-rose-300")}>
+            <div className={"p-3 rounded-xl border text-xs flex items-start gap-2 " + (testResult.success ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-500/40 text-emerald-900 dark:text-emerald-300" : "bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-500/40 text-rose-900 dark:text-rose-300")}>
               {testResult.success ? <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" /> : <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />}
               <div>
                 <p className="font-bold">{testResult.success ? "Connection successful!" : "Connection error"}</p>
@@ -145,7 +145,7 @@ create policy "Public trips full access" on trips for all using (true) with chec
             <button
               onClick={handleTest}
               disabled={testing}
-              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold transition-all flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 font-bold transition-all flex items-center gap-1.5 border border-slate-200 dark:border-slate-700"
             >
               <RefreshCw className={"w-3.5 h-3.5 " + (testing ? "animate-spin" : "")} />
               <span>{testing ? "Testing..." : "Test Connection"}</span>
@@ -161,7 +161,7 @@ create policy "Public trips full access" on trips for all using (true) with chec
             {enabled && (
               <button
                 onClick={handleDisable}
-                className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-rose-950/40 hover:text-rose-400 text-slate-400 font-bold transition-all"
+                className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 dark:bg-slate-800 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 dark:text-slate-400 font-bold transition-all border border-slate-200 dark:border-slate-700"
               >
                 Disable
               </button>
@@ -171,9 +171,9 @@ create policy "Public trips full access" on trips for all using (true) with chec
 
         {/* Database Seed Section */}
         {enabled && (
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-300 flex items-center gap-1.5">
                 <Database className="w-3.5 h-3.5 text-indigo-400" />
                 Upload Local Trips to Supabase
               </span>
@@ -193,8 +193,8 @@ create policy "Public trips full access" on trips for all using (true) with chec
         )}
 
         {/* SQL Migration Accordion */}
-        <div className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-850 space-y-2 text-xs">
-          <div className="flex items-center justify-between text-slate-400">
+        <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-850 space-y-2 text-xs">
+          <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
             <span className="font-bold flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
               10-Second SQL Setup in Supabase
@@ -207,7 +207,7 @@ create policy "Public trips full access" on trips for all using (true) with chec
               <span>{copiedSql ? "Copied SQL!" : "Copy SQL"}</span>
             </button>
           </div>
-          <pre className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[10px] text-slate-400 font-mono overflow-x-auto select-all">
+          <pre className="bg-slate-900 text-slate-100 dark:bg-slate-950 dark:text-slate-400 p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 text-[10px] font-mono overflow-x-auto select-all">
             {sqlSnippet}
           </pre>
         </div>

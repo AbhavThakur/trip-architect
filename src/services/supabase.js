@@ -6,15 +6,37 @@ const STORAGE_ENABLED_KEY = "travel_architect_supabase_enabled";
 
 let supabaseClient = null;
 
+// Best Practice Helper: clean URLs that accidentally include /rest/v1 or trailing slashes
+export function cleanSupabaseUrl(rawUrl) {
+  if (!rawUrl) return "";
+  return rawUrl.trim().replace(/\/rest\/v1\/?$/, "").replace(/\/+$/, "");
+}
+
 export function getSupabaseConfig() {
-  const url = localStorage.getItem(STORAGE_URL_KEY) || import.meta.env?.VITE_SUPABASE_URL || "";
-  const key = localStorage.getItem(STORAGE_KEY_KEY) || import.meta.env?.VITE_SUPABASE_ANON_KEY || "";
+  const rawUrl = localStorage.getItem(STORAGE_URL_KEY) || import.meta.env?.VITE_SUPABASE_URL || "";
+  const key = localStorage.getItem(STORAGE_KEY_KEY) || 
+    import.meta.env?.VITE_SUPABASE_ANON_KEY || 
+    import.meta.env?.VITE_SUPABASE_PUBLISHABLE_KEY || 
+    "";
+  
+  const url = cleanSupabaseUrl(rawUrl);
   const enabled = localStorage.getItem(STORAGE_ENABLED_KEY) !== "false" && !!(url && key);
+
+  // Best Practice Validation check: Warn if a secret key is exposed in browser
+  if (key && (key.startsWith("sb_secret_") || key.includes("service_role"))) {
+    console.error(
+      "[Supabase Security Alert] A SECRET / service_role key was provided in client code! " +
+      "According to Supabase documentation, secret keys bypass Row Level Security and must NEVER be used in frontend browsers. " +
+      "Please switch to your Publishable ('sb_publishable_...') or Anon key."
+    );
+  }
+
   return { url, key, enabled };
 }
 
 export function setSupabaseConfig(url, key, enabled = true) {
-  if (url) localStorage.setItem(STORAGE_URL_KEY, url.trim());
+  const cleanedUrl = cleanSupabaseUrl(url);
+  if (cleanedUrl) localStorage.setItem(STORAGE_URL_KEY, cleanedUrl);
   else localStorage.removeItem(STORAGE_URL_KEY);
 
   if (key) localStorage.setItem(STORAGE_KEY_KEY, key.trim());
@@ -34,18 +56,34 @@ export function getClient() {
     });
     return supabaseClient;
   } catch (err) {
-    console.warn("Supabase init error:", err);
+    console.warn("Supabase client initialization error:", err);
     return null;
   }
 }
 
 export async function testSupabaseConnection(testUrl, testKey) {
   try {
-    const client = createClient(testUrl.trim(), testKey.trim());
+    const cleanedUrl = cleanSupabaseUrl(testUrl);
+    if (!cleanedUrl || !testKey) {
+      return { success: false, error: "Please enter both Project URL and API Key." };
+    }
+
+    if (testKey.trim().startsWith("sb_secret_")) {
+      return {
+        success: false,
+        error: "Security Warning: You entered a Secret Key (sb_secret_...). Supabase blocks secret keys in browsers. Please use your Publishable key (sb_publishable_...) or Anon key."
+      };
+    }
+
+    const client = createClient(cleanedUrl, testKey.trim());
     const { data, error } = await client.from("trips").select("id").limit(1);
     if (error) {
       if (error.code === "42P01") {
-        return { success: false, code: "TABLE_NOT_FOUND", error: "Table 'trips' does not exist yet. Please run the SQL migration." };
+        return { 
+          success: false, 
+          code: "TABLE_NOT_FOUND", 
+          error: "Connected to project, but 'trips' table does not exist. Run the SQL migration script from SUPABASE_SETUP_GUIDE.md." 
+        };
       }
       return { success: false, error: error.message };
     }
@@ -72,7 +110,7 @@ export async function fetchTripFromCloud(tripId, fallbackData) {
         return { data: data.data, source: "cloud", updatedAt: data.updated_at };
       }
     } catch (e) {
-      console.warn("Cloud fetch failed, using local cache:", e);
+      console.warn("Cloud fetch failed, falling back to local cache:", e);
     }
   }
 

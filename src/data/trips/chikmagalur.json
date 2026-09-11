@@ -114,27 +114,67 @@
         {
           "time": "09:30 AM",
           "title": "Arrival at KSRTC Stand & Bag Drop at Tresca",
-          "desc": "2-min auto to hotel, cloakroom drop, change into hill clothes."
+          "desc": "2-min auto to hotel, cloakroom drop, change into hill clothes.",
+          "coords": [
+            13.3182,
+            75.7788
+          ],
+          "category": "Hotel",
+          "color": "pin-rose",
+          "icon": "hotel",
+          "name": "Arrival at KSRTC Stand & Bag Drop at Tresca"
         },
         {
           "time": "10:30 AM",
           "title": "Breakfast at Vishnu Delicacy & Cab Pickup",
-          "desc": "Authentic Mangalore buns, filter coffee, board private sightseeing cab."
+          "desc": "Authentic Mangalore buns, filter coffee, board private sightseeing cab.",
+          "coords": [
+            13.3195,
+            75.7765
+          ],
+          "category": "Food",
+          "color": "pin-amber",
+          "icon": "utensils",
+          "name": "Breakfast at Vishnu Delicacy & Cab Pickup"
         },
         {
           "time": "12:00 PM",
           "title": "Jhari (Buttermilk) Falls 4x4 Jeep Off-road",
-          "desc": "Board 4x4 open jeep down bumpy dirt trails to the roaring estate waterfall."
+          "desc": "Board 4x4 open jeep down bumpy dirt trails to the roaring estate waterfall.",
+          "coords": [
+            13.4116,
+            75.7663
+          ],
+          "category": "Nature",
+          "color": "pin-cyan",
+          "icon": "water",
+          "name": "Jhari (Buttermilk) Falls 4x4 Jeep Off-road"
         },
         {
           "time": "03:30 PM",
           "title": "Mullayanagiri Peak Ascent (1,930m)",
-          "desc": "Ascend Karnataka's highest peak along windy ridge path."
+          "desc": "Ascend Karnataka's highest peak along windy ridge path.",
+          "coords": [
+            13.3361,
+            75.7631
+          ],
+          "category": "Food",
+          "color": "pin-amber",
+          "icon": "utensils",
+          "name": "Mullayanagiri Peak Ascent (1,930m)"
         },
         {
           "time": "05:30 PM",
           "title": "Hirekolale Lake Sunset",
-          "desc": "Tranquil artificial lake surrounded by Western Ghats slopes."
+          "desc": "Tranquil artificial lake surrounded by Western Ghats slopes.",
+          "coords": [
+            13.3911,
+            75.7214
+          ],
+          "category": "Peak",
+          "color": "pin-emerald",
+          "icon": "mountain",
+          "name": "Hirekolale Lake Sunset"
         }
       ]
     },
@@ -146,22 +186,54 @@
         {
           "time": "09:00 AM",
           "title": "125cc Scooty Rental Pickup",
-          "desc": "Inspect brakes/tyres, take helmet, deposit ID, fill fuel at Indian Oil."
+          "desc": "Inspect brakes/tyres, take helmet, deposit ID, fill fuel at Indian Oil.",
+          "coords": [
+            13.3155,
+            75.773
+          ],
+          "category": "Transport",
+          "color": "pin-blue",
+          "icon": "motorcycle",
+          "name": "125cc Scooty Rental Pickup"
         },
         {
           "time": "10:30 AM",
           "title": "Baba Budangiri Shrine & Caves",
-          "desc": "Ride winding roads through dense green canopy to ancient shrine."
+          "desc": "Ride winding roads through dense green canopy to ancient shrine.",
+          "coords": [
+            13.4241,
+            75.7672
+          ],
+          "category": "Nature",
+          "color": "pin-emerald",
+          "icon": "person-hiking",
+          "name": "Baba Budangiri Shrine & Caves"
         },
         {
           "time": "01:30 PM",
           "title": "Kemmangundi & Z-Point Ridge Hike",
-          "desc": "Spectacular 3km scenic ridge walk looking down over deep valleys."
+          "desc": "Spectacular 3km scenic ridge walk looking down over deep valleys.",
+          "coords": [
+            13.3195,
+            75.7765
+          ],
+          "category": "Food",
+          "color": "pin-amber",
+          "icon": "utensils",
+          "name": "Kemmangundi & Z-Point Ridge Hike"
         },
         {
           "time": "05:30 PM",
           "title": "Town Caffee Estate Tasting",
-          "desc": "Artisan pour-overs and hot coffee sipping."
+          "desc": "Artisan pour-overs and hot coffee sipping.",
+          "coords": [
+            13.3276,
+            75.7766
+          ],
+          "category": "Culture",
+          "color": "pin-amber",
+          "icon": "mug-hot",
+          "name": "Town Caffee Estate Tasting"
         }
       ]
     },
@@ -173,22 +245,54 @@
         {
           "time": "10:00 AM",
           "title": "Belur Chennakeshava Temple Visit",
-          "desc": "Marvel at soapstone carvings and Hoysala architectural genius."
+          "desc": "Marvel at soapstone carvings and Hoysala architectural genius.",
+          "coords": [
+            13.3182,
+            75.7788
+          ],
+          "category": "Hotel",
+          "color": "pin-rose",
+          "icon": "hotel",
+          "name": "Belur Chennakeshava Temple Visit"
         },
         {
           "time": "03:00 PM",
           "title": "Coffee Board Museum & RG Road Shopping",
-          "desc": "Panduranga Arabica/Robusta coffee powder, green cardamom, black pepper."
+          "desc": "Panduranga Arabica/Robusta coffee powder, green cardamom, black pepper.",
+          "coords": [
+            13.1623,
+            75.8601
+          ],
+          "category": "Heritage",
+          "color": "pin-purple",
+          "icon": "gopuram",
+          "name": "Coffee Board Museum & RG Road Shopping"
         },
         {
           "time": "08:30 PM",
           "title": "Scooty Return & Dinner",
-          "desc": "Settle scooty deposit, leisurely South Indian dinner at Town Caffee."
+          "desc": "Settle scooty deposit, leisurely South Indian dinner at Town Caffee.",
+          "coords": [
+            13.3175,
+            75.7745
+          ],
+          "category": "Shopping",
+          "color": "pin-blue",
+          "icon": "bag-shopping",
+          "name": "Scooty Return & Dinner"
         },
         {
           "time": "10:30 PM",
           "title": "Board KSRTC AC Sleeper Bus to BLR",
-          "desc": "Board night bus back to Bengaluru (arrives ~05:00 AM Tue)."
+          "desc": "Board night bus back to Bengaluru (arrives ~05:00 AM Tue).",
+          "coords": [
+            13.3149,
+            75.7722
+          ],
+          "category": "Transport",
+          "color": "pin-blue",
+          "icon": "bus",
+          "name": "Board KSRTC AC Sleeper Bus to BLR"
         }
       ]
     }

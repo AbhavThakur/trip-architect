@@ -6,12 +6,16 @@ import TripDetailPage from "./pages/TripDetailPage";
 import PinLockModal from "./components/PinLockModal";
 import EmergencySosModal from "./components/EmergencySosModal";
 import InstallPromptModal from "./components/InstallPromptModal";
+import SupabaseSyncModal from "./components/SupabaseSyncModal";
+import { getSupabaseConfig } from "./services/supabase";
 
 export default function App() {
   const [trips, setTrips] = useState([]);
   const [selectedTripId, setSelectedTripId] = useState(null);
   const [isSosOpen, setIsSosOpen] = useState(false);
   const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [isCloudSynced, setIsCloudSynced] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isIos, setIsIos] = useState(false);
 
@@ -19,12 +23,15 @@ export default function App() {
     const loadedTrips = getRegisteredTrips();
     setTrips(loadedTrips);
 
-    // Initial route check from URL query param ?trip=... or hash #/trip/...
+    // Supabase config check
+    const cfg = getSupabaseConfig();
+    setIsCloudSynced(cfg.enabled);
+
+    // Initial route check from URL query param ?trip=...
     function handleRoute() {
       const params = new URLSearchParams(window.location.search);
       const tripParam = params.get("trip");
       if (tripParam) {
-        // support partial match, e.g. ?trip=vietnam or ?trip=chikmagalur
         const paramLower = tripParam.toLowerCase();
         const match = loadedTrips.find((t) => {
           const idLower = t.id.toLowerCase();
@@ -101,6 +108,8 @@ export default function App() {
         }}
         onInstallPrompt={handleInstallClick}
         canInstall={true}
+        onOpenSyncModal={() => setIsSyncModalOpen(true)}
+        isCloudSynced={isCloudSynced}
       />
 
       {/* Main View Area */}
@@ -118,6 +127,17 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* Supabase Cloud Sync Modal */}
+      <SupabaseSyncModal
+        isOpen={isSyncModalOpen}
+        onClose={() => setIsSyncModalOpen(false)}
+        allTrips={trips}
+        onSyncSuccess={() => {
+          const cfg = getSupabaseConfig();
+          setIsCloudSynced(cfg.enabled);
+        }}
+      />
 
       {/* PIN Security Overlay */}
       <PinLockModal />

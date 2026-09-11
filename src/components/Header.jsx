@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Compass, AlertCircle, Lock, Download, ArrowLeft, Clock } from "lucide-react";
+import { Compass, AlertCircle, Lock, Download, ArrowLeft, Clock, Cloud, CloudOff } from "lucide-react";
 
-export default function Header({ currentTrip, onBack, onOpenSos, onLock, onInstallPrompt, canInstall }) {
+export default function Header({
+  currentTrip,
+  onBack,
+  onOpenSos,
+  onLock,
+  onInstallPrompt,
+  canInstall,
+  onOpenSyncModal,
+  isCloudSynced
+}) {
   const [localTime, setLocalTime] = useState("");
   const [istTime, setIstTime] = useState("");
 
   useEffect(() => {
     function updateClocks() {
       const now = new Date();
-      // IST (UTC+5:30)
       setIstTime(now.toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" }));
 
       if (currentTrip?.category === "international" && currentTrip?.destination?.toLowerCase().includes("vietnam")) {
-        // Vietnam (UTC+7:00)
         setLocalTime(now.toLocaleTimeString("en-US", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit" }));
       } else {
         setLocalTime(now.toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" }));
@@ -53,7 +60,7 @@ export default function Header({ currentTrip, onBack, onOpenSos, onLock, onInsta
           </div>
         </div>
 
-        {/* Center: Dual Timezone Clocks (if international) */}
+        {/* Center: Dual Timezone Clocks */}
         {currentTrip?.category === "international" && localTime ? (
           <div className="hidden md:flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-xl border border-slate-800 text-[11px] font-mono">
             <Clock className="w-3.5 h-3.5 text-amber-400" />
@@ -65,8 +72,22 @@ export default function Header({ currentTrip, onBack, onOpenSos, onLock, onInsta
           </div>
         ) : null}
 
-        {/* Right: Actions (PWA Install, SOS, Lock) */}
+        {/* Right: Actions (Cloud Sync, PWA Install, SOS, Lock) */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Cloud Sync Status Button */}
+          <button
+            onClick={onOpenSyncModal}
+            className={"px-2.5 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all " + (
+              isCloudSynced
+                ? "bg-emerald-950/60 hover:bg-emerald-900/70 text-emerald-300 border-emerald-500/40"
+                : "bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800"
+            )}
+            title={isCloudSynced ? "Supabase Cloud Sync Connected" : "Local Mode (Click to connect Supabase)"}
+          >
+            {isCloudSynced ? <Cloud className="w-3.5 h-3.5 text-emerald-400" /> : <CloudOff className="w-3.5 h-3.5 text-amber-400" />}
+            <span className="hidden sm:inline">{isCloudSynced ? "Synced" : "Cloud"}</span>
+          </button>
+
           {canInstall && (
             <button
               onClick={onInstallPrompt}

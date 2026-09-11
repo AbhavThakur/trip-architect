@@ -305,6 +305,7 @@
                                     <p class="text-xs text-slate-300 leading-relaxed">
                                         Arrive at KSRTC Stand. Take a 2-min auto (850m) to Tresca A Luxury Hotel. Drop bags at 24-hr reception cloakroom, freshen up in lobby washroom, and change into comfortable hill clothes.
                                     </p>
+                                    <div id="day1-transit-banner"></div>
                                     <div class="mt-2 text-[11px] text-amber-300 bg-amber-950/30 p-2 rounded-lg border border-amber-500/20">
                                         💡 <strong>Strategy:</strong> Standard check-in is 12 PM. Head straight out without carrying bags!
                                     </div>
@@ -535,8 +536,9 @@
                                     </div>
                                     <h4 class="text-sm font-bold text-white mb-1">Board Overnight AC Sleeper Bus to BLR</h4>
                                     <p class="text-xs text-slate-300 leading-relaxed">
-                                        Walk/auto to KSRTC Stand. Board 11:00 PM AC Sleeper bus back to Bengaluru. Arrives Tuesday ~05:00 AM.
+                                        Walk/auto to KSRTC Stand. Board 10:30 PM AC Sleeper bus back to Bengaluru. Arrives Tuesday ~05:00 AM.
                                     </p>
+                                    <div id="day3-transit-banner"></div>
                                 </div>
                             </div>
                         </div>
@@ -560,19 +562,49 @@
         <!-- =============================================================
              TAB 2: BASECAMP & HYBRID TRANSPORT LOGISTICS
              ============================================================= -->
-        <div id="tab-content-logistics" class="tab-content">
+        <div id="tab-content-logistics" class="tab-content space-y-6">
+            
+            <!-- Logistics Command Bar -->
+            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Transit & Logistics Vault
+                    </span>
+                    <h2 class="text-xl font-black text-white font-display mt-1">Going, Return & Mountain Mobility Hub</h2>
+                    <p class="text-xs text-slate-300 mt-0.5">Outbound journey from BLR, return sleeper bus, and local 4x4 Jeep + 125cc Scooty rentals</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openEditTransitModal('outbound')" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow-lg flex items-center gap-1.5 active:scale-95 transition-all">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Going Leg
+                    </button>
+                    <button onclick="openEditTransitModal('returnTrip')" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow-lg flex items-center gap-1.5 active:scale-95 transition-all">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Return
+                    </button>
+                </div>
+            </div>
+
+            <!-- Outbound & Return Transit Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="transit-cards-grid">
+                <!-- Dynamically populated via renderTransitCards() -->
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 <!-- Tresca Hotel Breakdown -->
                 <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
-                    <div class="flex items-center gap-3 pb-3 border-b border-slate-800">
-                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
-                            <i class="fa-solid fa-hotel"></i>
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
+                                <i class="fa-solid fa-hotel"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-extrabold text-white">Tresca A Luxury Hotel</h3>
+                                <p class="text-xs text-slate-400">RG Road, Vijayapura (Opp. Renukacharya Kalyana Mantapa)</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-base font-extrabold text-white">Tresca A Luxury Hotel</h3>
-                            <p class="text-xs text-slate-400">RG Road, Vijayapura (Opp. Renukacharya Kalyana Mantapa)</p>
-                        </div>
+                        <button onclick="openTaxiModal()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold rounded-lg text-xs border border-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-language"></i> Kannada Card
+                        </button>
                     </div>
 
                     <div class="space-y-3.5 text-xs">
@@ -605,16 +637,21 @@
                     </div>
                 </div>
 
-                <!-- Hybrid Transport Matrix -->
+                <!-- Hybrid In-Trip Transport Matrix -->
                 <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
-                    <div class="flex items-center gap-3 pb-3 border-b border-slate-800">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/30">
-                            <i class="fa-solid fa-van-shuttle"></i>
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/30">
+                                <i class="fa-solid fa-van-shuttle"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-extrabold text-white">Local Mountain Mobility</h3>
+                                <p class="text-xs text-slate-400">Engineered for mountain hairpins & freedom</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-base font-extrabold text-white">Hybrid Transport Structure</h3>
-                            <p class="text-xs text-slate-400">Engineered for mountain hairpins & freedom</p>
-                        </div>
+                        <button onclick="openScootyModal()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-blue-400 font-bold rounded-lg text-xs border border-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-motorcycle"></i> Scooty Rules
+                        </button>
                     </div>
 
                     <div class="space-y-3 text-xs">
@@ -625,7 +662,7 @@
                             </div>
                             <span class="text-emerald-400 font-semibold block">🚖 Private Sightseeing Cab + 4x4 Jeep</span>
                             <p class="text-slate-300 mt-1 leading-relaxed">
-                                Handles hotel pickup at Tresca, steep hairpins, Jhari Falls jeep point, Mullayanagiri climb, and Hirekolale sunset.
+                                Handles hotel pickup at Tresca, steep hairpins, Jhari Falls jeep point (~₹800), Mullayanagiri climb (1,930m), and Hirekolale sunset.
                             </p>
                         </div>
 
@@ -643,7 +680,7 @@
                         <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="font-bold text-white">Monday (Day 3)</span>
-                                <span class="text-[11px] text-amber-400 font-mono">Return 08:30 PM • Bus 11 PM</span>
+                                <span class="text-[11px] text-amber-400 font-mono">Return 08:30 PM • Bus 10:30 PM</span>
                             </div>
                             <span class="text-purple-400 font-semibold block">🛵 Scooty + 🚌 Overnight AC Sleeper Bus</span>
                             <p class="text-slate-300 mt-1 leading-relaxed">
@@ -858,6 +895,106 @@
         </div>
     </div>
 
+    <!-- Edit Transit Modal -->
+    <div id="edit-transit-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeEditTransitModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base border border-emerald-500/30">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-white">Edit Journey & Transit Logistics</h3>
+                    <p class="text-xs text-slate-400">Bus, Train, Self-Drive or Cab timings & PNRs</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <!-- Journey Direction Selector -->
+                <div>
+                    <label class="font-bold block mb-1 text-slate-300">Select Journey Leg:</label>
+                    <select id="edit-transit-leg" onchange="loadTransitEditForm()" class="w-full bg-slate-950 p-2.5 rounded-xl font-bold border border-slate-700 text-white">
+                        <option value="outbound">Going Leg: Bengaluru ➔ Chikmagalur (Sep 11–12)</option>
+                        <option value="returnTrip">Return Leg: Chikmagalur ➔ Bengaluru (Sep 14–15)</option>
+                    </select>
+                </div>
+
+                <!-- Mode Selector Pills -->
+                <div>
+                    <label class="font-bold block mb-1 text-slate-300">Transport Mode:</label>
+                    <div class="grid grid-cols-4 gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800 text-center font-bold text-[11px]">
+                        <button type="button" id="cmg-mode-bus" onclick="setTransitMode('bus')" class="py-1.5 rounded-lg bg-emerald-600 text-white transition-colors">🚌 Bus</button>
+                        <button type="button" id="cmg-mode-train" onclick="setTransitMode('train')" class="py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors">🚆 Train</button>
+                        <button type="button" id="cmg-mode-selfdrive" onclick="setTransitMode('selfdrive')" class="py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors">🚗 Car</button>
+                        <button type="button" id="cmg-mode-cab" onclick="setTransitMode('cab')" class="py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors">🚖 Cab</button>
+                    </div>
+                    <input type="hidden" id="edit-transit-mode" value="bus">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Operator / Service / Train:</span>
+                        <input type="text" id="edit-transit-operator" placeholder="e.g. KSRTC Airavat Club Class" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-white">
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Vehicle / Train / Bus No:</span>
+                        <input type="text" id="edit-transit-vehicleno" placeholder="e.g. KA-01-F-9920 / 12079" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 font-mono text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Boarding Point / Station:</span>
+                        <input type="text" id="edit-transit-from" placeholder="e.g. Bengaluru Majestic / Silk Board" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-white font-semibold">
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Drop Point / Station:</span>
+                        <input type="text" id="edit-transit-to" placeholder="e.g. Chikmagalur KSRTC Stand" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-white font-semibold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Departure Date & Time:</span>
+                        <input type="text" id="edit-transit-dept" placeholder="e.g. 11:00 PM (Sep 11)" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-white font-mono">
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Arrival Time:</span>
+                        <input type="text" id="edit-transit-arr" placeholder="e.g. 06:30 AM (Sep 12)" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-white font-mono">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">PNR / Booking Ref:</span>
+                        <input type="text" id="edit-transit-pnr" placeholder="e.g. KSRTC-BLR-892" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 font-mono font-bold text-emerald-400">
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Seat / Berth Numbers:</span>
+                        <input type="text" id="edit-transit-seats" placeholder="e.g. Lower Berths 12 & 13" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 font-mono text-amber-300">
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-[10px] text-slate-400 block mb-0.5">Travel Notes / Instructions:</span>
+                    <input type="text" id="edit-transit-notes" placeholder="e.g. Highway Paakashala dinner stop. 2-min auto to Tresca Hotel." class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-slate-300">
+                </div>
+
+                <div class="pt-2 flex items-center justify-between">
+                    <button type="button" onclick="resetChikmagalurTransitLeg()" class="text-rose-400 text-xs font-bold hover:underline">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset Leg
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="closeEditTransitModal()" class="px-3.5 py-1.5 bg-slate-800 text-slate-300 rounded-xl font-bold">Cancel</button>
+                        <button type="button" onclick="saveEditedTransit()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-lg">Save Journey</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Hotel Strategy Modal -->
     <div id="hotel-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
@@ -953,6 +1090,321 @@
                     markers[key].remove();
                 }
             });
+        }
+
+
+        // =============================================================
+        // DOMESTIC TRANSIT LOGISTICS ENGINE (GOING & RETURNING)
+        // =============================================================
+        const defaultChikmagalurTransit = {
+            outbound: {
+                title: "Going Journey: Bengaluru ➔ Chikmagalur",
+                mode: "bus",
+                modeLabel: "Overnight AC Sleeper Bus",
+                operator: "KSRTC Airavat Club Class Multi-Axle",
+                vehicleNo: "KA-01-F-9920",
+                pnr: "KSRTC-BLR-892",
+                seats: "Lower Berths 12 & 13",
+                date: "Fri, Sep 11, 2026",
+                from: "Bengaluru (Majestic / Silk Board)",
+                deptTime: "11:00 PM (Sep 11)",
+                to: "Chikmagalur (KSRTC Main Stand)",
+                arrTime: "06:30 AM / 09:30 AM (Sep 12)",
+                duration: "5h 30m – 6h 30m (245 km)",
+                notes: "Highway food stop at Paakashala Yediyur on NH 75. 2-min auto from bus stand to Tresca Hotel. Luggage drop at 24-hr cloakroom."
+            },
+            returnTrip: {
+                title: "Return Journey: Chikmagalur ➔ Bengaluru",
+                mode: "bus",
+                modeLabel: "Overnight AC Sleeper Bus",
+                operator: "KSRTC Airavat Multi-Axle",
+                vehicleNo: "KA-18-F-4411",
+                pnr: "KSRTC-RET-441",
+                seats: "Upper Berths 18 & 19",
+                date: "Mon, Sep 14, 2026",
+                from: "Chikmagalur (KSRTC Main Stand)",
+                deptTime: "10:30 PM (Sep 14)",
+                to: "Bengaluru (Majestic / Silk Board)",
+                arrTime: "05:00 AM (Tue Sep 15)",
+                duration: "5h 30m (245 km via Hassan)",
+                notes: "Settle scooty deposit by 08:30 PM, dinner on RG Road, board 10:30 PM sleeper. Coffee packages in cabin."
+            }
+        };
+
+        function getChikmagalurTransit() {
+            try {
+                const saved = localStorage.getItem('cmg_custom_transit');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    return {
+                        outbound: { ...defaultChikmagalurTransit.outbound, ...(parsed.outbound || {}) },
+                        returnTrip: { ...defaultChikmagalurTransit.returnTrip, ...(parsed.returnTrip || {}) }
+                    };
+                }
+            } catch (e) {}
+            return defaultChikmagalurTransit;
+        }
+
+        function copyCmgText(text, msg = "Copied!") {
+            navigator.clipboard.writeText(text).then(() => alert(msg));
+        }
+
+        function renderTransitCards() {
+            const transit = getChikmagalurTransit();
+            const container = document.getElementById('transit-cards-grid');
+            if (!container) return;
+
+            const out = transit.outbound;
+            const ret = transit.returnTrip;
+
+            function getModeIcon(mode) {
+                if (mode === 'train') return 'fa-train text-amber-400';
+                if (mode === 'selfdrive') return 'fa-car text-blue-400';
+                if (mode === 'cab') return 'fa-taxi text-yellow-400';
+                return 'fa-bus text-emerald-400';
+            }
+
+            container.innerHTML = `
+                <!-- Outbound Going Card -->
+                <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 hover:border-emerald-500/40 transition-all">
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-sm border border-emerald-500/30">
+                                <i class="fa-solid ${getModeIcon(out.mode)}"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400 block">Outbound • Going Journey</span>
+                                <h3 class="text-sm font-black text-white">${out.from.split('(')[0]} ➔ ${out.to.split('(')[0]}</h3>
+                            </div>
+                        </div>
+                        <button onclick="openEditTransitModal('outbound')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-bold border border-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square text-[10px]"></i> Edit
+                        </button>
+                    </div>
+
+                    <!-- Route Flow Pill -->
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-2 text-xs">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">Boarding</span>
+                                <strong class="text-white">${out.from}</strong>
+                                <span class="font-mono text-emerald-400 font-bold block mt-0.5">${out.deptTime}</span>
+                            </div>
+                            <div class="text-center px-2">
+                                <span class="text-[10px] text-slate-500 block font-mono">${out.duration || '245 km'}</span>
+                                <div class="w-16 h-0.5 bg-gradient-to-r from-emerald-500 to-teal-400 my-1"></div>
+                                <span class="text-[9px] text-slate-400 uppercase font-bold">${out.modeLabel || out.mode}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] text-slate-400 block">Arrival</span>
+                                <strong class="text-white">${out.to}</strong>
+                                <span class="font-mono text-amber-400 font-bold block mt-0.5">${out.arrTime}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                            <span class="text-[10px] text-slate-400 block">Operator / Service</span>
+                            <strong class="text-slate-200 text-[11px] block mt-0.5 truncate">${out.operator}</strong>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">PNR / Ticket Ref</span>
+                                <strong class="text-emerald-400 font-mono text-[11px] block mt-0.5">${out.pnr || 'N/A'}</strong>
+                            </div>
+                            ${out.pnr ? `<button onclick="copyCmgText('${out.pnr}', 'PNR copied!')" class="text-slate-400 hover:text-white p-1" title="Copy PNR"><i class="fa-regular fa-copy text-xs"></i></button>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs flex justify-between items-center">
+                        <span>Seats / Berths: <strong class="text-amber-300 font-mono">${out.seats || 'General'}</strong></span>
+                        <span class="text-slate-400 text-[11px]"><i class="fa-solid fa-calendar-day mr-1"></i> ${out.date}</span>
+                    </div>
+
+                    ${out.notes ? `
+                        <p class="text-[11px] text-slate-400 bg-slate-950/60 p-2 rounded-lg border border-slate-800/60 leading-relaxed">
+                            <i class="fa-solid fa-circle-info text-emerald-400 mr-1"></i> ${out.notes}
+                        </p>
+                    ` : ''}
+                </div>
+
+                <!-- Return Journey Card -->
+                <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 hover:border-indigo-500/40 transition-all">
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-500/20 flex items-center justify-center text-sm border border-indigo-500/30">
+                                <i class="fa-solid ${getModeIcon(ret.mode)}"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-400 block">Return • Homebound Journey</span>
+                                <h3 class="text-sm font-black text-white">${ret.from.split('(')[0]} ➔ ${ret.to.split('(')[0]}</h3>
+                            </div>
+                        </div>
+                        <button onclick="openEditTransitModal('returnTrip')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-bold border border-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square text-[10px]"></i> Edit
+                        </button>
+                    </div>
+
+                    <!-- Route Flow Pill -->
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-2 text-xs">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">Boarding</span>
+                                <strong class="text-white">${ret.from}</strong>
+                                <span class="font-mono text-indigo-400 font-bold block mt-0.5">${ret.deptTime}</span>
+                            </div>
+                            <div class="text-center px-2">
+                                <span class="text-[10px] text-slate-500 block font-mono">${ret.duration || '245 km'}</span>
+                                <div class="w-16 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-400 my-1"></div>
+                                <span class="text-[9px] text-slate-400 uppercase font-bold">${ret.modeLabel || ret.mode}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] text-slate-400 block">Drop Point</span>
+                                <strong class="text-white">${ret.to}</strong>
+                                <span class="font-mono text-amber-400 font-bold block mt-0.5">${ret.arrTime}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                            <span class="text-[10px] text-slate-400 block">Operator / Service</span>
+                            <strong class="text-slate-200 text-[11px] block mt-0.5 truncate">${ret.operator}</strong>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">PNR / Ticket Ref</span>
+                                <strong class="text-indigo-400 font-mono text-[11px] block mt-0.5">${ret.pnr || 'N/A'}</strong>
+                            </div>
+                            ${ret.pnr ? `<button onclick="copyCmgText('${ret.pnr}', 'PNR copied!')" class="text-slate-400 hover:text-white p-1" title="Copy PNR"><i class="fa-regular fa-copy text-xs"></i></button>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs flex justify-between items-center">
+                        <span>Seats / Berths: <strong class="text-amber-300 font-mono">${ret.seats || 'General'}</strong></span>
+                        <span class="text-slate-400 text-[11px]"><i class="fa-solid fa-calendar-day mr-1"></i> ${ret.date}</span>
+                    </div>
+
+                    ${ret.notes ? `
+                        <p class="text-[11px] text-slate-400 bg-slate-950/60 p-2 rounded-lg border border-slate-800/60 leading-relaxed">
+                            <i class="fa-solid fa-circle-info text-indigo-400 mr-1"></i> ${ret.notes}
+                        </p>
+                    ` : ''}
+                </div>
+            `;
+
+            // Update Itinerary Banners
+            const day1Banner = document.getElementById('day1-transit-banner');
+            if (day1Banner) {
+                day1Banner.innerHTML = `
+                    <div class="mt-2.5 p-2.5 bg-emerald-950/40 rounded-xl border border-emerald-500/30 text-xs space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-emerald-300 flex items-center gap-1.5"><i class="fa-solid ${getModeIcon(out.mode)}"></i> Going Transit (${out.modeLabel || out.mode})</span>
+                            <button onclick="openEditTransitModal('outbound')" class="text-[10px] text-emerald-400 underline font-bold">Edit [${out.pnr || 'Transit'}]</button>
+                        </div>
+                        <div class="text-[11px] text-slate-300">${out.operator} • Boarded: <strong>${out.from}</strong> (${out.deptTime}) ➔ Landed: <strong>${out.to}</strong> (${out.arrTime})</div>
+                        <div class="text-[10px] text-slate-400">Seats: <strong class="text-amber-300 font-mono">${out.seats}</strong> • PNR: <span class="font-mono text-emerald-400 font-bold">${out.pnr}</span></div>
+                    </div>
+                `;
+            }
+
+            const day3Banner = document.getElementById('day3-transit-banner');
+            if (day3Banner) {
+                day3Banner.innerHTML = `
+                    <div class="mt-2.5 p-2.5 bg-indigo-950/40 rounded-xl border border-indigo-500/30 text-xs space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-indigo-300 flex items-center gap-1.5"><i class="fa-solid ${getModeIcon(ret.mode)}"></i> Return Transit (${ret.modeLabel || ret.mode})</span>
+                            <button onclick="openEditTransitModal('returnTrip')" class="text-[10px] text-indigo-400 underline font-bold">Edit [${ret.pnr || 'Transit'}]</button>
+                        </div>
+                        <div class="text-[11px] text-slate-300">${ret.operator} • Boarding: <strong>${ret.from}</strong> (${ret.deptTime}) ➔ Drop: <strong>${ret.to}</strong> (${ret.arrTime})</div>
+                        <div class="text-[10px] text-slate-400">Seats: <strong class="text-amber-300 font-mono">${ret.seats}</strong> • PNR: <span class="font-mono text-indigo-400 font-bold">${ret.pnr}</span></div>
+                    </div>
+                `;
+            }
+        }
+
+        function openEditTransitModal(leg = 'outbound') {
+            document.getElementById('edit-transit-leg').value = leg;
+            loadTransitEditForm();
+            document.getElementById('edit-transit-modal').classList.remove('hidden');
+        }
+
+        function closeEditTransitModal() {
+            document.getElementById('edit-transit-modal').classList.add('hidden');
+        }
+
+        function setTransitMode(mode) {
+            document.getElementById('edit-transit-mode').value = mode;
+            ['bus', 'train', 'selfdrive', 'cab'].forEach(m => {
+                const btn = document.getElementById(`cmg-mode-${m}`);
+                if (btn) {
+                    if (m === mode) {
+                        btn.className = "py-1.5 rounded-lg bg-emerald-600 text-white font-bold transition-colors";
+                    } else {
+                        btn.className = "py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors";
+                    }
+                }
+            });
+        }
+
+        function loadTransitEditForm() {
+            const leg = document.getElementById('edit-transit-leg').value;
+            const transit = getChikmagalurTransit();
+            const item = transit[leg] || defaultChikmagalurTransit[leg];
+            if (!item) return;
+
+            setTransitMode(item.mode || 'bus');
+            document.getElementById('edit-transit-operator').value = item.operator || '';
+            document.getElementById('edit-transit-vehicleno').value = item.vehicleNo || '';
+            document.getElementById('edit-transit-from').value = item.from || '';
+            document.getElementById('edit-transit-to').value = item.to || '';
+            document.getElementById('edit-transit-dept').value = item.deptTime || '';
+            document.getElementById('edit-transit-arr').value = item.arrTime || '';
+            document.getElementById('edit-transit-pnr').value = item.pnr || '';
+            document.getElementById('edit-transit-seats').value = item.seats || '';
+            document.getElementById('edit-transit-notes').value = item.notes || '';
+        }
+
+        function saveEditedTransit() {
+            const leg = document.getElementById('edit-transit-leg').value;
+            const transit = getChikmagalurTransit();
+            const mode = document.getElementById('edit-transit-mode').value;
+
+            let modeLabel = 'Overnight AC Sleeper Bus';
+            if (mode === 'train') modeLabel = 'Express Train (via Birur/Kadur)';
+            else if (mode === 'selfdrive') modeLabel = 'Self-Drive Car (NH 75)';
+            else if (mode === 'cab') modeLabel = 'Outstation Private Cab';
+
+            transit[leg] = {
+                ...(transit[leg] || defaultChikmagalurTransit[leg]),
+                mode,
+                modeLabel,
+                operator: document.getElementById('edit-transit-operator').value.trim(),
+                vehicleNo: document.getElementById('edit-transit-vehicleno').value.trim(),
+                from: document.getElementById('edit-transit-from').value.trim(),
+                to: document.getElementById('edit-transit-to').value.trim(),
+                deptTime: document.getElementById('edit-transit-dept').value.trim(),
+                arrTime: document.getElementById('edit-transit-arr').value.trim(),
+                pnr: document.getElementById('edit-transit-pnr').value.trim(),
+                seats: document.getElementById('edit-transit-seats').value.trim(),
+                notes: document.getElementById('edit-transit-notes').value.trim()
+            };
+
+            localStorage.setItem('cmg_custom_transit', JSON.stringify(transit));
+            closeEditTransitModal();
+            renderTransitCards();
+        }
+
+        function resetChikmagalurTransitLeg() {
+            const leg = document.getElementById('edit-transit-leg').value;
+            if (confirm("Reset this journey leg to default KSRTC schedule?")) {
+                const transit = getChikmagalurTransit();
+                transit[leg] = { ...defaultChikmagalurTransit[leg] };
+                localStorage.setItem('cmg_custom_transit', JSON.stringify(transit));
+                loadTransitEditForm();
+                renderTransitCards();
+            }
         }
 
         function switchTab(tabId) {
@@ -1054,6 +1506,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            renderTransitCards();
             initMap();
             startLiveClock();
             renderChecklist();

@@ -23,6 +23,13 @@ const TRIPS_REGISTRY = [
         summary: "3-day weekend escape across lush coffee plantations, rugged 4x4 jeep trails to roaring waterfalls, highest peak trekking at Mullayanagiri (1,930m), and scenic ridge cruising on 125cc scooties.",
         basecamp: "Tresca A Luxury Hotel (RG Road, 850m from KSRTC Stand)",
         transport: "Private Cab + 4x4 Jeep + 125cc Scooty + Overnight Sleeper Bus",
+        transitMode: "Overnight Sleeper Bus (KSRTC Airavat)",
+        features: [
+            { icon: "fa-route", label: "Going & Return Transit Matrix" },
+            { icon: "fa-calculator", label: "Custom Split Budget" },
+            { icon: "fa-map-location-dot", label: "Offline Maps & Elevation" },
+            { icon: "fa-clipboard-check", label: "Mountain Packing Checklist" }
+        ],
         highlights: [
             { icon: "fa-mountain", title: "Mullayanagiri Peak", desc: "Highest point in Karnataka (1,930m) along windy ridge" },
             { icon: "fa-water", title: "Jhari (Buttermilk) Falls", desc: "4x4 Open Jeep off-road descent into estate falls" },
@@ -33,7 +40,7 @@ const TRIPS_REGISTRY = [
         quickItinerary: [
             { day: "Day 1 (Sat Sep 12)", title: "Arrival at 9:30 AM, Bag Drop at Tresca, Private Cab to Jhari Falls & Mullayanagiri Peak Sunset" },
             { day: "Day 2 (Sun Sep 13)", title: "125cc Scooty pickup, Baba Budangiri, Z-Point Ridge Trail, Coffee Board Museum & Pour-overs" },
-            { day: "Day 3 (Mon Sep 14)", title: "Belur Hoysala Temple / Aldur Canopy, MG Road spice shopping, 11 PM AC Sleeper bus to BLR" }
+            { day: "Day 3 (Mon Sep 14)", title: "Belur Hoysala Temple / Aldur Canopy, MG Road spice shopping, 10:30 PM AC Sleeper bus to BLR" }
         ]
     },
     {
@@ -55,6 +62,13 @@ const TRIPS_REGISTRY = [
         summary: "Comprehensive multi-city journey featuring Hanoi Old Quarter street egg coffee, emerald waters of Ha Long Bay overnight cruise, Ba Na Hills Golden Bridge, and lantern-lit Hoi An ancient town.",
         basecamp: "Luxury City Hotels + 5-Star Ha Long Bay Balcony Cruise",
         transport: "VIP Airport Transfers + 9-Seater Private Limousine + Domestic Flight",
+        transitMode: "Multi-Leg Flights (DEL/BLR ➔ BKK/DMK ➔ HAN)",
+        features: [
+            { icon: "fa-plane-departure", label: "DEL/BLR Connecting Flight Matrix" },
+            { icon: "fa-calculator", label: "Dynamic Per-Pax Split Budget" },
+            { icon: "fa-volume-high", label: "Veg Dining Vietnamese Audio Cards" },
+            { icon: "fa-shield-halved", label: "Passport, Visa & Backup Sync" }
+        ],
         highlights: [
             { icon: "fa-city", title: "Hanoi Old Quarter", desc: "Centuries-old heritage, street egg coffee & French Quarter" },
             { icon: "fa-ship", title: "Ha Long Bay Cruise", desc: "Overnight luxury cruise through limestone karst pinnacles" },
@@ -96,4 +110,17 @@ function saveCustomTripToRegistry(trip) {
     list = list.filter(t => t.id !== trip.id);
     list.unshift(trip);
     localStorage.setItem("trip_architect_registry_custom", JSON.stringify(list));
+}
+
+function deleteCustomTripFromRegistry(tripId) {
+    const custom = localStorage.getItem("trip_architect_registry_custom");
+    if (custom) {
+        try {
+            let list = JSON.parse(custom);
+            list = list.filter(t => t.id !== tripId);
+            localStorage.setItem("trip_architect_registry_custom", JSON.stringify(list));
+        } catch (e) {
+            console.error("Failed to delete custom trip", e);
+        }
+    }
 }

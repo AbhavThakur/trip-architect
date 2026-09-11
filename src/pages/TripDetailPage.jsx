@@ -81,6 +81,24 @@ export default function TripDetailPage({
     setTimeout(() => setSaveIndicator(""), 3000);
   };
 
+  const handleSaveHotels = async (newHotels) => {
+    const nextTrip = { ...trip, hotels: newHotels, stays: newHotels };
+    setTrip(nextTrip);
+    setSaveIndicator("Saving Stays...");
+    const res = await saveTripToCloud(nextTrip.id, nextTrip);
+    setSaveIndicator(res.source === "cloud_saved" ? "Saved to Supabase!" : "Saved Locally");
+    setTimeout(() => setSaveIndicator(""), 3000);
+  };
+
+  const handleSaveFlights = async (newFlights) => {
+    const nextTrip = { ...trip, flights: newFlights };
+    setTrip(nextTrip);
+    setSaveIndicator("Saving Flights...");
+    const res = await saveTripToCloud(nextTrip.id, nextTrip);
+    setSaveIndicator(res.source === "cloud_saved" ? "Saved to Supabase!" : "Saved Locally");
+    setTimeout(() => setSaveIndicator(""), 3000);
+  };
+
   const handleSaveBudget = async (newBudget) => {
     const nextTrip = { ...trip, budget: newBudget };
     setTrip(nextTrip);
@@ -322,12 +340,12 @@ export default function TripDetailPage({
         )}
 
         {activeTab === "stays" && (
-          <StaysDirectory stays={trip.stays} hotels={trip.hotels} />
+          <StaysDirectory stays={trip.stays} hotels={trip.hotels} onSaveHotels={handleSaveHotels} tripId={trip.id} />
         )}
 
         {activeTab === "mobility" && (
           <div className="space-y-6">
-            {hasFlights && <FlightMatrix flights={trip.flights} />}
+            {hasFlights && <FlightMatrix flights={trip.flights} onSaveFlights={handleSaveFlights} tripId={trip.id} />}
             {hasTransit && <TransitLogistics transit={trip.transit} />}
           </div>
         )}

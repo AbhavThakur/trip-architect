@@ -14,7 +14,8 @@ import {
   Car,
   Shield,
   HeartPulse,
-  UserCheck
+  UserCheck,
+  Scale
 } from "lucide-react";
 
 export default function Header({
@@ -28,7 +29,7 @@ export default function Header({
   isCloudSynced,
   onOpenFx,
   onOpenTaxi,
-  onOpenDocs,
+  onOpenDocs, onOpenLostSos, onOpenLuggage,
   seniorMode,
   onToggleSeniorMode,
   theme,
@@ -176,6 +177,29 @@ export default function Header({
             {isCloudSynced ? <Cloud className="w-3 h-3 text-emerald-400" /> : <CloudOff className="w-3 h-3 text-amber-400" />}
             <span className="hidden sm:inline">{isCloudSynced ? "Synced" : "Cloud"}</span>
           </button>
+
+          {/* Lost SOS Beacon */}
+          {onOpenLostSos && (
+            <button
+              onClick={onOpenLostSos}
+              className="w-7 h-7 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg flex items-center justify-center text-xs active:scale-95 transition-all shadow-sm"
+              title="Lost SOS Beacon (Show to locals & Share GPS)"
+            >
+              <Compass className="w-3.5 h-3.5" />
+            </button>
+          )}
+
+          {/* Luggage Weight Calculator */}
+          {onOpenLuggage && (
+            <button
+              onClick={onOpenLuggage}
+              className="px-2 py-1 bg-purple-950/70 hover:bg-purple-900 text-purple-300 border border-purple-500/40 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all shadow-sm"
+              title="Souvenir & Baggage Weight Estimator (25kg allowance)"
+            >
+              <Scale className="w-3 h-3 text-purple-400" />
+              <span className="hidden lg:inline">Luggage</span>
+            </button>
+          )}
 
           {/* Lock Vault */}
           <button

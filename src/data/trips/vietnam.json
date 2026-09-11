@@ -70,44 +70,172 @@
   },
   "flights": [
     {
-      "sector": "Delhi Parents Inbound",
+      "key": "del_han",
+      "sector": "Delhi Parents Inbound (DEL ➔ HAN)",
+      "passengers": "2 Parents (Delhi)",
       "pax": "2 Parents",
       "isConnecting": true,
-      "route": "DEL ➔ BKK ➔ HAN",
-      "leg1": "DEL (Delhi T3) ➔ BKK (Suvarnabhumi) • IndiGo 6E 1053 • 23:30 (Dec 3) ➔ 05:15 AM (Dec 4)",
-      "layover": "Bangkok (BKK) • 2h 15m (Wheelchair assistance / Int'l transit)",
-      "leg2": "BKK ➔ HAN (Noi Bai T2) • Vietnam Airlines VN 610 • 07:30 AM (Dec 4) ➔ 09:25 AM (Dec 4)",
-      "pnr": "VN-DEL-784"
+      "airline": "IndiGo + Vietnam Airlines",
+      "flightNo": "6E 1053 ➔ VN 610",
+      "pnr": "VN-DEL-784",
+      "dept": "23:30 (Dec 3)",
+      "arr": "09:25 AM (Dec 4)",
+      "totalDuration": "7h 30m",
+      "notes": "Wheelchair assistance requested at Bangkok transit hub",
+      "from": "DEL (Delhi T3)",
+      "to": "HAN (Hanoi Noi Bai T2)",
+      "leg1": {
+        "from": "DEL (Delhi T3)",
+        "to": "BKK (Bangkok Suvarnabhumi)",
+        "airline": "IndiGo",
+        "flightNo": "6E 1053",
+        "dept": "23:30 (Dec 3)",
+        "arr": "05:15 AM (Dec 4)",
+        "duration": "4h 15m"
+      },
+      "layover": {
+        "airport": "BKK (Bangkok Suvarnabhumi)",
+        "city": "Bangkok",
+        "duration": "2h 15m",
+        "note": "International transit terminal / Baggage through-checked"
+      },
+      "leg2": {
+        "from": "BKK (Bangkok Suvarnabhumi)",
+        "to": "HAN (Hanoi Noi Bai T2)",
+        "airline": "Vietnam Airlines",
+        "flightNo": "VN 610",
+        "dept": "07:30 AM (Dec 4)",
+        "arr": "09:25 AM (Dec 4)",
+        "duration": "1h 55m"
+      }
     },
     {
-      "sector": "Bengaluru Adults Inbound",
+      "key": "blr_han",
+      "sector": "Bengaluru Adults Inbound (BLR ➔ HAN)",
+      "passengers": "3 Adults (Bengaluru)",
       "pax": "3 Adults",
       "isConnecting": true,
-      "route": "BLR ➔ DMK ➔ HAN",
-      "leg1": "BLR (Bengaluru T2) ➔ DMK (Don Mueang) • Thai AirAsia FD 138 • 23:10 (Dec 3) ➔ 04:30 AM (Dec 4)",
-      "layover": "Bangkok (DMK) • 2h 45m (Through-checked baggage to Hanoi T2)",
-      "leg2": "DMK ➔ HAN (Noi Bai T2) • Thai AirAsia FD 642 • 07:15 AM (Dec 4) ➔ 08:45 AM (Dec 4)",
-      "pnr": "AA-BLR-921"
+      "airline": "Thai AirAsia",
+      "flightNo": "FD 138 ➔ FD 642",
+      "pnr": "AA-BLR-921",
+      "dept": "23:10 (Dec 3)",
+      "arr": "08:45 AM (Dec 4)",
+      "totalDuration": "8h 05m",
+      "notes": "Baggage through-checked to Hanoi T2",
+      "from": "BLR (Bengaluru T2)",
+      "to": "HAN (Hanoi Noi Bai T2)",
+      "leg1": {
+        "from": "BLR (Bengaluru T2)",
+        "to": "DMK (Bangkok Don Mueang)",
+        "airline": "Thai AirAsia",
+        "flightNo": "FD 138",
+        "dept": "23:10 (Dec 3)",
+        "arr": "04:30 AM (Dec 4)",
+        "duration": "3h 50m"
+      },
+      "layover": {
+        "airport": "DMK (Bangkok Don Mueang)",
+        "city": "Bangkok",
+        "duration": "2h 45m",
+        "note": "Don Mueang International Transit Hub"
+      },
+      "leg2": {
+        "from": "DMK (Bangkok Don Mueang)",
+        "to": "HAN (Hanoi Noi Bai T2)",
+        "airline": "Thai AirAsia",
+        "flightNo": "FD 642",
+        "dept": "07:15 AM (Dec 4)",
+        "arr": "08:45 AM (Dec 4)",
+        "duration": "1h 30m"
+      }
     },
     {
-      "sector": "Hanoi ➔ Da Nang Domestic Transfer",
+      "key": "han_dad",
+      "sector": "Hanoi ➔ Da Nang Domestic (HAN ➔ DAD)",
+      "passengers": "5 Adults (All)",
       "pax": "5 Travelers",
       "isConnecting": false,
-      "route": "HAN ➔ DAD",
-      "leg1": "HAN (Noi Bai T1) ➔ DAD (Da Nang T1) • Vietnam Airlines VN 167 • 12:45 PM (Dec 6) ➔ 14:10 PM",
-      "layover": null,
-      "leg2": null,
-      "pnr": "VN-HAN-552"
+      "airline": "Vietnam Airlines",
+      "flightNo": "VN 171",
+      "pnr": "VN-DOM-332",
+      "dept": "14:30 (Dec 6)",
+      "arr": "15:50 (Dec 6)",
+      "totalDuration": "1h 20m",
+      "from": "HAN (Hanoi T1 Domestic)",
+      "to": "DAD (Da Nang)",
+      "notes": "Direct domestic sector (1h 20m non-stop)"
     },
     {
-      "sector": "Da Nang ➔ Hanoi Return Transfer",
+      "key": "dad_han",
+      "sector": "Da Nang ➔ Hanoi Return Domestic (DAD ➔ HAN)",
+      "passengers": "5 Adults (All)",
       "pax": "5 Travelers",
       "isConnecting": false,
-      "route": "DAD ➔ HAN",
-      "leg1": "DAD (Da Nang T1) ➔ HAN (Noi Bai T1) • Vietnam Airlines VN 172 • 10:15 AM (Dec 10) ➔ 11:40 AM",
-      "layover": null,
-      "leg2": null,
-      "pnr": "VN-DAD-891"
+      "airline": "Vietnam Airlines",
+      "flightNo": "VN 178",
+      "pnr": "VN-DOM-664",
+      "dept": "13:30 (Dec 10)",
+      "arr": "14:50 (Dec 10)",
+      "totalDuration": "1h 20m",
+      "from": "DAD (Da Nang)",
+      "to": "HAN (Hanoi T1 Domestic)",
+      "notes": "Direct domestic return flight (1h 20m non-stop)"
+    },
+    {
+      "key": "han_del",
+      "sector": "Hanoi ➔ Delhi Return (HAN ➔ DEL)",
+      "passengers": "2 Parents (Delhi Return)",
+      "pax": "2 Parents",
+      "isConnecting": false,
+      "airline": "Vietnam Airlines",
+      "flightNo": "VN 971",
+      "pnr": "VN-RET-118",
+      "dept": "19:10 (Dec 11)",
+      "arr": "22:15 (Dec 11)",
+      "totalDuration": "4h 35m",
+      "from": "HAN (Noi Bai T2)",
+      "to": "DEL (Delhi T3)",
+      "notes": "Direct non-stop return flight for parents"
+    },
+    {
+      "key": "han_blr",
+      "sector": "Hanoi ➔ Bengaluru Return (HAN ➔ BLR)",
+      "passengers": "3 Adults (Bengaluru Return)",
+      "pax": "3 Adults",
+      "isConnecting": true,
+      "airline": "Thai AirAsia",
+      "flightNo": "FD 643 ➔ FD 137",
+      "pnr": "AA-RET-559",
+      "dept": "17:45 (Dec 11)",
+      "arr": "22:30 (Dec 11)",
+      "totalDuration": "6h 15m",
+      "from": "HAN (Noi Bai T2)",
+      "to": "BLR (Bengaluru T2)",
+      "notes": "Connecting flight via Bangkok DMK",
+      "leg1": {
+        "from": "HAN (Noi Bai T2)",
+        "to": "DMK (Bangkok Don Mueang)",
+        "airline": "Thai AirAsia",
+        "flightNo": "FD 643",
+        "dept": "17:45 (Dec 11)",
+        "arr": "19:35 (Dec 11)",
+        "duration": "1h 50m"
+      },
+      "layover": {
+        "airport": "DMK (Bangkok Don Mueang)",
+        "city": "Bangkok",
+        "duration": "1h 40m",
+        "note": "Quick international transit"
+      },
+      "leg2": {
+        "from": "DMK (Bangkok Don Mueang)",
+        "to": "BLR (Bengaluru T2)",
+        "airline": "Thai AirAsia",
+        "flightNo": "FD 137",
+        "dept": "21:15 (Dec 11)",
+        "arr": "22:30 (Dec 11)",
+        "duration": "3h 45m"
+      }
     }
   ],
   "limousine": {
@@ -121,31 +249,171 @@
     "total": 385000,
     "currency": "INR",
     "paxCount": 5,
+    "items": [
+      {
+        "item": "International Flights (DEL & BLR)",
+        "details": "5 return tickets (2 DEL Parents + 3 BLR Adults)",
+        "total": 140000,
+        "pax": 5,
+        "category": "flights",
+        "date": "2026-12-03",
+        "status": "estimated"
+      },
+      {
+        "item": "Domestic Flights (HAN ⇄ DAD)",
+        "details": "5 round-trip tickets (VN Airlines / VietJet)",
+        "total": 35000,
+        "pax": 5,
+        "category": "flights",
+        "date": "2026-12-06",
+        "status": "estimated"
+      },
+      {
+        "item": "Vietnam E-Visas",
+        "details": "/person for 5 pax (Gov Portal)",
+        "total": 10500,
+        "pax": 5,
+        "category": "visas",
+        "date": "2026-11-05",
+        "status": "estimated"
+      },
+      {
+        "item": "Hanoi Hotels (3 Nights Total)",
+        "details": "La Siesta Classic (Double + Triple Suites)",
+        "total": 33000,
+        "pax": 5,
+        "category": "stays",
+        "date": "2026-12-03",
+        "status": "estimated"
+      },
+      {
+        "item": "Hoi An Garden Resort (2 Nights)",
+        "details": "La Siesta Resort (Double + Grand Suites)",
+        "total": 24000,
+        "pax": 5,
+        "category": "stays",
+        "date": "2026-12-06",
+        "status": "estimated"
+      },
+      {
+        "item": "Da Nang Beachfront Hotel (2 Nights)",
+        "details": "TMS Hotel Ocean View (Double + Triple Suites)",
+        "total": 22000,
+        "pax": 5,
+        "category": "stays",
+        "date": "2026-12-08",
+        "status": "estimated"
+      },
+      {
+        "item": "9-Seater Private DCar Limousines",
+        "details": "All 9 private transfers (including Ninh Binh Full Day)",
+        "total": 38000,
+        "pax": 5,
+        "category": "transport",
+        "date": "2026-12-04",
+        "status": "estimated"
+      },
+      {
+        "item": "Ninh Binh Day Tour & Boat Tickets",
+        "details": "Hoa Lu entry + Tam Coc Sampan rowboat fees for 5 pax",
+        "total": 12500,
+        "pax": 5,
+        "category": "tours",
+        "date": "2026-12-05",
+        "status": "estimated"
+      },
+      {
+        "item": "Ba Na Hills Cable Car & Bridge Tickets",
+        "details": "5 Klook cable car + Golden bridge entry passes",
+        "total": 18500,
+        "pax": 5,
+        "category": "tours",
+        "date": "2026-12-08",
+        "status": "estimated"
+      },
+      {
+        "item": "Sightseeing, Puppets & Lantern Boats",
+        "details": "Water puppets VIP, Hoi An lantern boat, Marble Mt elevator",
+        "total": 9500,
+        "pax": 5,
+        "category": "tours",
+        "date": "2026-12-04",
+        "status": "estimated"
+      },
+      {
+        "item": "Pure Veg & Indian Dining / Cafes",
+        "details": "Sadhu, Dalcheeni, Baba's Kitchen, Ưu Đàm Chay & Egg Coffee",
+        "total": 42000,
+        "pax": 5,
+        "category": "food",
+        "date": "2026-12-03",
+        "status": "estimated"
+      }
+    ],
     "categories": [
       {
-        "name": "Flights (International & Domestic)",
-        "amount": 165000,
-        "icon": "plane"
+        "key": "flights",
+        "name": "Flights",
+        "icon": "plane",
+        "color": "indigo"
       },
       {
-        "name": "Hotels & 5-Star Cruise",
-        "amount": 115000,
-        "icon": "hotel"
+        "key": "stays",
+        "name": "Stays",
+        "icon": "hotel",
+        "color": "blue"
       },
       {
-        "name": "VIP Private Transfers & Limousines",
-        "amount": 42000,
-        "icon": "car"
+        "key": "transport",
+        "name": "Cabs & Limo",
+        "icon": "car",
+        "color": "sky"
       },
       {
-        "name": "Dining & Curated Vegetarian Food",
-        "amount": 38000,
-        "icon": "utensils"
+        "key": "tours",
+        "name": "Tours & Tickets",
+        "icon": "ticket",
+        "color": "amber"
       },
       {
-        "name": "Sightseeing, Cable Cars & Entry Fees",
-        "amount": 25000,
-        "icon": "ticket"
+        "key": "food",
+        "name": "Food & Dining",
+        "icon": "utensils",
+        "color": "emerald"
+      },
+      {
+        "key": "visas",
+        "name": "Visas & Docs",
+        "icon": "shield",
+        "color": "rose"
+      },
+      {
+        "key": "misc",
+        "name": "Shopping & Misc",
+        "icon": "shopping-bag",
+        "color": "purple"
+      }
+    ],
+    "expenses": [
+      {
+        "id": "exp_1",
+        "title": "Egg Coffee at Cafe Giảng (5 cups)",
+        "vnd": 175,
+        "inr": 580,
+        "category": "Food",
+        "payer": "Self",
+        "pax": 5,
+        "date": "2026-12-04"
+      },
+      {
+        "id": "exp_2",
+        "title": "Water Puppets Snack & Coconut Water",
+        "vnd": 120,
+        "inr": 400,
+        "category": "Food",
+        "payer": "BLR",
+        "pax": 5,
+        "date": "2026-12-04"
       }
     ]
   },

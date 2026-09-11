@@ -10,6 +10,8 @@ import SupabaseSyncModal from "./components/SupabaseSyncModal";
 import TaxiCardModal from "./components/TaxiCardModal";
 import DocsVaultModal from "./components/DocsVaultModal";
 import CurrencyConverter from "./components/CurrencyConverter";
+import LuggageModal from "./components/LuggageModal";
+import LostSosModal from "./components/LostSosModal";
 import { getSupabaseConfig } from "./services/supabase";
 import { X, Coins } from "lucide-react";
 
@@ -22,6 +24,8 @@ export default function App() {
   const [isTaxiModalOpen, setIsTaxiModalOpen] = useState(false);
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
   const [isFxModalOpen, setIsFxModalOpen] = useState(false);
+  const [isLuggageModalOpen, setIsLuggageModalOpen] = useState(false);
+  const [isLostSosModalOpen, setIsLostSosModalOpen] = useState(false);
   const [isCloudSynced, setIsCloudSynced] = useState(false);
   const [seniorMode, setSeniorMode] = useState(false);
   const [theme, setTheme] = useState("dark");
@@ -157,6 +161,8 @@ export default function App() {
         onOpenFx={() => setIsFxModalOpen(true)}
         onOpenTaxi={() => setIsTaxiModalOpen(true)}
         onOpenDocs={() => setIsDocsModalOpen(true)}
+        onOpenLostSos={() => setIsLostSosModalOpen(true)}
+        onOpenLuggage={() => setIsLuggageModalOpen(true)}
         seniorMode={seniorMode}
         onToggleSeniorMode={toggleSeniorMode}
         theme={theme}
@@ -172,6 +178,8 @@ export default function App() {
             seniorMode={seniorMode}
             onOpenTaxi={() => setIsTaxiModalOpen(true)}
             onOpenDocs={() => setIsDocsModalOpen(true)}
+        onOpenLostSos={() => setIsLostSosModalOpen(true)}
+        onOpenLuggage={() => setIsLuggageModalOpen(true)}
             onOpenFx={() => setIsFxModalOpen(true)}
           />
         ) : (
@@ -229,6 +237,18 @@ export default function App() {
 
       {/* PIN Security Overlay */}
       <PinLockModal />
+
+      {/* Luggage Weight Estimator Modal */}
+      <LuggageModal
+        isOpen={isLuggageModalOpen}
+        onClose={() => setIsLuggageModalOpen(false)}
+      />
+
+      {/* Lost SOS Beacon Modal */}
+      <LostSosModal
+        isOpen={isLostSosModalOpen}
+        onClose={() => setIsLostSosModalOpen(false)}
+      />
 
       {/* Universal Emergency SOS Modal */}
       <EmergencySosModal

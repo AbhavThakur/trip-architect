@@ -65,7 +65,7 @@
                 <!-- Virtual Numpad Grid -->
                 <div class="grid grid-cols-3 gap-2.5 max-w-[260px] mx-auto">
                     ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => `
-                        <button type="button" onclick="window.vaultSecurity.handleDigit()" class="h-12 rounded-2xl bg-slate-800/90 hover:bg-slate-700 text-white font-black text-lg shadow active:scale-95 transition-all border border-slate-700/60 focus:outline-none select-none">
+                        <button type="button" onclick="window.vaultSecurity.handleDigit(${num})" class="h-12 rounded-2xl bg-slate-800/90 hover:bg-slate-700 text-white font-black text-lg shadow active:scale-95 transition-all border border-slate-700/60 focus:outline-none select-none">
                             ${num}
                         </button>
                     `).join("")}

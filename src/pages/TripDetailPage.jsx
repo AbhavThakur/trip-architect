@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import {
   Calendar, MapPin, Users, Plane, Bus, Building,
   Calculator, ClipboardCheck, Volume2, ArrowLeft,
-  Share2, Compass, AlertCircle, Cloud, CheckCircle
+  Share2, Compass, AlertCircle, Cloud, CheckCircle,
+  ShoppingBag, Shield, Coins, Sparkles, UserCheck
 } from "lucide-react";
 
 import ItineraryTimeline from "../components/ItineraryTimeline";
@@ -13,13 +14,22 @@ import SplitBudget from "../components/SplitBudget";
 import PackingChecklist from "../components/PackingChecklist";
 import VegDiningAudio from "../components/VegDiningAudio";
 import CurrencyConverter from "../components/CurrencyConverter";
+import LimousineHub from "../components/LimousineHub";
+import ShoppingGuide from "../components/ShoppingGuide";
 import BottomNav from "../components/BottomNav";
 import { fetchTripFromCloud, saveTripToCloud, subscribeToTripUpdates } from "../services/supabase";
 
-export default function TripDetailPage({ trip: initialTrip, onBack }) {
+export default function TripDetailPage({
+  trip: initialTrip,
+  onBack,
+  seniorMode = false,
+  onOpenTaxi,
+  onOpenDocs,
+  onOpenFx
+}) {
   const [trip, setTrip] = useState(initialTrip);
   const [activeTab, setActiveTab] = useState("itinerary");
-  const [syncStatus, setSyncStatus] = useState("loading"); // "cloud" | "cache" | "static"
+  const [syncStatus, setSyncStatus] = useState("loading");
   const [saveIndicator, setSaveIndicator] = useState("");
 
   // Load from Supabase or local cache
@@ -32,7 +42,6 @@ export default function TripDetailPage({ trip: initialTrip, onBack }) {
       }
     });
 
-    // Realtime live subscription
     const unsub = subscribeToTripUpdates(initialTrip.id, (freshData) => {
       if (isMounted && freshData) {
         setTrip(freshData);
@@ -47,7 +56,6 @@ export default function TripDetailPage({ trip: initialTrip, onBack }) {
     };
   }, [initialTrip.id]);
 
-  // Update a single stop
   const handleUpdateStop = async (dayIdx, stopIdx, updatedStop) => {
     const nextTrip = JSON.parse(JSON.stringify(trip));
     const targetDay = nextTrip.itinerary[dayIdx];
@@ -69,21 +77,28 @@ export default function TripDetailPage({ trip: initialTrip, onBack }) {
     setTrip(nextTrip);
     setSaveIndicator("Saving to Cloud...");
     const res = await saveTripToCloud(nextTrip.id, nextTrip);
-    if (res.source === "cloud_saved") {
-      setSaveIndicator("Saved to Supabase Cloud!");
-    } else {
-      setSaveIndicator("Saved Locally (Offline)");
-    }
+    setSaveIndicator(res.source === "cloud_saved" ? "Saved to Supabase!" : "Saved Locally");
+    setTimeout(() => setSaveIndicator(""), 3000);
+  };
+
+  const handleSaveBudget = async (newBudget) => {
+    const nextTrip = { ...trip, budget: newBudget };
+    setTrip(nextTrip);
+    setSaveIndicator("Saving Budget...");
+    const res = await saveTripToCloud(nextTrip.id, nextTrip);
+    setSaveIndicator(res.source === "cloud_saved" ? "Saved to Supabase!" : "Saved Locally");
     setTimeout(() => setSaveIndicator(""), 3000);
   };
 
   const hasFlights = trip.flights && trip.flights.length > 0;
   const hasTransit = !!trip.transit;
+  const hasLimo = trip.limoTransfers && trip.limoTransfers.length > 0;
+  const hasShopping = trip.shopping && trip.shopping.length > 0;
   const hasVegDining = !!trip.vegDining;
   const hasCurrency = !!trip.currency;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto w-full px-3 sm:px-4 py-4 sm:py-6 pb-20 lg:pb-8">
+    <div className="space-y-6 max-w-7xl mx-auto w-full px-3 sm:px-4 py-4 sm:py-6 pb-24 lg:pb-8">
       {/* Trip Hero Banner */}
       <div className={"relative overflow-hidden rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-800 bg-gradient-to-br " + (trip.heroGradient || "from-slate-900 to-slate-950")}>
         <div className="relative z-10 space-y-4">
@@ -97,15 +112,22 @@ export default function TripDetailPage({ trip: initialTrip, onBack }) {
                 {trip.status === "upcoming" ? "Upcoming Expedition" : "Past Journey"}
               </span>
 
-              {/* Cloud / Local Sync Badge */}
+              {/* Cloud Sync Status Pill */}
               <span className={"px-2 py-0.5 rounded-full text-[11px] font-mono font-bold border flex items-center gap-1 " + (
                 syncStatus === "cloud"
                   ? "bg-emerald-950/70 text-emerald-300 border-emerald-500/40"
                   : "bg-slate-900/80 text-amber-300 border-slate-700"
               )}>
                 <Cloud className="w-3 h-3" />
-                <span>{syncStatus === "cloud" ? "Supabase Cloud" : "Local Device"}</span>
+                <span>{syncStatus === "cloud" ? "Supabase Synced" : "Local Storage"}</span>
               </span>
+
+              {seniorMode && (
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
+                  <UserCheck className="w-3 h-3" />
+                  <span>Senior Pace Active</span>
+                </span>
+              )}
 
               {saveIndicator && (
                 <span className="text-xs font-mono font-bold text-amber-300 animate-pulse bg-black/60 px-2 py-0.5 rounded-md border border-amber-500/30">
@@ -156,7 +178,7 @@ export default function TripDetailPage({ trip: initialTrip, onBack }) {
         </div>
       </div>
 
-      {/* Desktop Navigation Tab Pills */}
+      {/* Desktop Navigation Tabs (All 9 Tabs) */}
       <div className="hidden lg:flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-800 scrollbar-none">
         <button
           onClick={() => setActiveTab("itinerary")}
@@ -167,20 +189,20 @@ export default function TripDetailPage({ trip: initialTrip, onBack }) {
           )}
         >
           <Calendar className="w-3.5 h-3.5" />
-          <span>Itinerary ({trip.itinerary ? trip.itinerary.length : 0} Days)</span>
+          <span>Itinerary & Map</span>
         </button>
 
-        {(hasFlights || hasTransit) && (
+        {trip.checklist && (
           <button
-            onClick={() => setActiveTab("mobility")}
+            onClick={() => setActiveTab("checklist")}
             className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-              activeTab === "mobility"
+              activeTab === "checklist"
                 ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
                 : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
             )}
           >
-            {hasFlights ? <Plane className="w-3.5 h-3.5" /> : <Bus className="w-3.5 h-3.5" />}
-            <span>{hasFlights ? "Flights & PNRs" : "Sleeper Bus & Transit"}</span>
+            <ClipboardCheck className="w-3.5 h-3.5" />
+            <span>Pre-Departure Checklist</span>
           </button>
         )}
 
@@ -194,7 +216,63 @@ export default function TripDetailPage({ trip: initialTrip, onBack }) {
             )}
           >
             <Building className="w-3.5 h-3.5" />
-            <span>Stays & Vouchers</span>
+            <span>Hotels & Stays</span>
+          </button>
+        )}
+
+        {(hasFlights || hasTransit) && (
+          <button
+            onClick={() => setActiveTab("mobility")}
+            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+              activeTab === "mobility"
+                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
+                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+            )}
+          >
+            {hasFlights ? <Plane className="w-3.5 h-3.5" /> : <Bus className="w-3.5 h-3.5" />}
+            <span>{hasFlights ? "Flight Matrix & PNRs" : "Sleeper Bus & Transit"}</span>
+          </button>
+        )}
+
+        {hasLimo && (
+          <button
+            onClick={() => setActiveTab("limo")}
+            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+              activeTab === "limo"
+                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
+                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+            )}
+          >
+            <Bus className="w-3.5 h-3.5 text-emerald-400" />
+            <span>9-Seater Limousine Hub</span>
+          </button>
+        )}
+
+        {hasVegDining && (
+          <button
+            onClick={() => setActiveTab("dining")}
+            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+              activeTab === "dining"
+                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
+                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+            )}
+          >
+            <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Veg Dining & Audio</span>
+          </button>
+        )}
+
+        {hasShopping && (
+          <button
+            onClick={() => setActiveTab("shopping")}
+            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+              activeTab === "shopping"
+                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
+                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+            )}
+          >
+            <ShoppingBag className="w-3.5 h-3.5 text-pink-400" />
+            <span>Shopping & 50% Bargaining</span>
           </button>
         )}
 
@@ -207,36 +285,22 @@ export default function TripDetailPage({ trip: initialTrip, onBack }) {
                 : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
             )}
           >
-            <Calculator className="w-3.5 h-3.5" />
+            <Calculator className="w-3.5 h-3.5 text-purple-400" />
             <span>Split Budget</span>
           </button>
         )}
 
-        {trip.checklist && (
+        {hasCurrency && (
           <button
-            onClick={() => setActiveTab("checklist")}
+            onClick={() => setActiveTab("tools")}
             className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-              activeTab === "checklist"
+              activeTab === "tools"
                 ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
                 : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
             )}
           >
-            <ClipboardCheck className="w-3.5 h-3.5" />
-            <span>Packing Checklist</span>
-          </button>
-        )}
-
-        {(hasVegDining || hasCurrency) && (
-          <button
-            onClick={() => setActiveTab("veg_fx")}
-            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-              activeTab === "veg_fx"
-                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
-            )}
-          >
-            <Volume2 className="w-3.5 h-3.5" />
-            <span>Veg Audio & FX</span>
+            <Coins className="w-3.5 h-3.5 text-gold-400" />
+            <span>Tools & FX</span>
           </button>
         )}
       </div>
@@ -248,7 +312,17 @@ export default function TripDetailPage({ trip: initialTrip, onBack }) {
             days={trip.itinerary}
             tripTitle={trip.title}
             onUpdateStop={handleUpdateStop}
+            seniorMode={seniorMode}
+            onOpenTaxi={onOpenTaxi}
           />
+        )}
+
+        {activeTab === "checklist" && (
+          <PackingChecklist tripId={trip.id} checklist={trip.checklist} />
+        )}
+
+        {activeTab === "stays" && (
+          <StaysDirectory stays={trip.stays} hotels={trip.hotels} />
         )}
 
         {activeTab === "mobility" && (
@@ -258,22 +332,25 @@ export default function TripDetailPage({ trip: initialTrip, onBack }) {
           </div>
         )}
 
-        {activeTab === "stays" && (
-          <StaysDirectory stays={trip.stays} hotels={trip.hotels} />
+        {activeTab === "limo" && (
+          <LimousineHub limoTransfers={trip.limoTransfers} />
+        )}
+
+        {activeTab === "dining" && (
+          <VegDiningAudio vegDining={trip.vegDining} />
+        )}
+
+        {activeTab === "shopping" && (
+          <ShoppingGuide shopping={trip.shopping} />
         )}
 
         {activeTab === "budget" && (
-          <SplitBudget budget={trip.budget} />
+          <SplitBudget budget={trip.budget} onSaveBudget={handleSaveBudget} />
         )}
 
-        {activeTab === "checklist" && (
-          <PackingChecklist tripId={trip.id} checklist={trip.checklist} />
-        )}
-
-        {activeTab === "veg_fx" && (
+        {activeTab === "tools" && (
           <div className="space-y-6">
             {hasCurrency && <CurrencyConverter currency={trip.currency} />}
-            {hasVegDining && <VegDiningAudio vegDining={trip.vegDining} />}
           </div>
         )}
       </div>

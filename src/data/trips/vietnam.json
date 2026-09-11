@@ -1554,7 +1554,57 @@
       }
     ]
   },
-  "shopping": null,
+  "shopping": [
+    {
+      "category": "Electronics & Tech",
+      "items": "Keychron keyboards, GaN chargers",
+      "location": "FPT Shop / TopZone",
+      "price": "10-20% below India MRP",
+      "rule": "Claim 8.5% VAT refund at HAN T2."
+    },
+    {
+      "category": "First-Copy Shoes",
+      "items": "New Balance (550, 9060), Sambas",
+      "location": "Hang Dau Street",
+      "price": "₹1,300 - ₹2,200",
+      "rule": "Start bargaining at 50%."
+    },
+    {
+      "category": "Sportswear",
+      "items": "North Face Gore-Tex jackets",
+      "location": "Dinh Liet Street",
+      "price": "₹1,150 - ₹1,800",
+      "rule": "Test YKK metal zippers."
+    },
+    {
+      "category": "Custom Tailoring",
+      "items": "Custom linen suits & blazers",
+      "location": "Hoi An (Yaly / Bebe)",
+      "price": "Blazers: ₹2k; Suits: ₹7k",
+      "rule": "24h delivery to resort."
+    },
+    {
+      "category": "Grade 1 Cashews",
+      "items": "Roasted salted (Loai 1)",
+      "location": "Han Market / WinMart",
+      "price": "₹500 - ₹700 / kg",
+      "rule": "Look for Loai 1 vacuum pack."
+    },
+    {
+      "category": "Coffee & Phin",
+      "items": "Trung Nguyen Legend No. 4/5",
+      "location": "WinMart / Hang Buom",
+      "price": "₹300 - ₹600 / 500g",
+      "rule": "Fixed government price."
+    },
+    {
+      "category": "Mulberry Silk",
+      "items": "100% pure silk scarves",
+      "location": "Hang Gai Street",
+      "price": "₹400 - ₹1,200",
+      "rule": "Packs completely flat."
+    }
+  ],
   "emergency": {
     "police": "113",
     "ambulance": "115",
@@ -1586,5 +1636,116 @@
       "tollFreeIndia": "1800 209 5858",
       "claimsEmail": "travelclaims@bajajallianz.co.in"
     }
-  }
+  },
+  "limoTransfers": [
+    {
+      "leg": "Transfer 1",
+      "date": "Fri, Dec 4 (~09:30 AM)",
+      "route": "Noi Bai Airport (HAN T2) -> Hanoi Old Quarter Hotel",
+      "duration": "45 mins",
+      "costVnd": "450k VND",
+      "costInr": "₹1,485"
+    },
+    {
+      "leg": "Transfer 2",
+      "date": "Sat, Dec 5 (~08:00 AM)",
+      "route": "Hanoi Hotel -> Ninh Binh (Hoa Lu & Tam Coc) -> Hanoi Hotel (Full Day)",
+      "duration": "Full Day",
+      "costVnd": "2.0M VND",
+      "costInr": "₹6,600"
+    },
+    {
+      "leg": "Transfer 3",
+      "date": "Sun, Dec 6 (~11:30 AM)",
+      "route": "Hanoi Hotel -> Noi Bai Airport Domestic T1",
+      "duration": "40 mins",
+      "costVnd": "450k VND",
+      "costInr": "₹1,485"
+    },
+    {
+      "leg": "Transfer 4",
+      "date": "Sun, Dec 6 (~04:30 PM)",
+      "route": "Da Nang Airport (DAD) -> Hoi An Resort",
+      "duration": "35 mins",
+      "costVnd": "400k VND",
+      "costInr": "₹1,320"
+    },
+    {
+      "leg": "Transfer 5",
+      "date": "Mon, Dec 7 (~09:30 AM)",
+      "route": "Hoi An Resort -> Coconut Forest -> Hoi An",
+      "duration": "15 mins",
+      "costVnd": "300k VND",
+      "costInr": "₹990"
+    },
+    {
+      "leg": "Transfer 6",
+      "date": "Tue, Dec 8 (~08:30 AM)",
+      "route": "Hoi An Resort -> Ba Na Hills -> Da Nang Beach Hotel",
+      "duration": "Full Day",
+      "costVnd": "1.3M VND",
+      "costInr": "₹4,290"
+    },
+    {
+      "leg": "Transfer 7",
+      "date": "Wed, Dec 9 (~09:00 AM)",
+      "route": "Da Nang Hotel -> Marble Mt -> Non Nuoc -> Da Nang Hotel",
+      "duration": "25 mins",
+      "costVnd": "500k VND",
+      "costInr": "₹1,650"
+    },
+    {
+      "leg": "Transfer 8",
+      "date": "Thu, Dec 10 (~11:30 AM)",
+      "route": "Da Nang Hotel -> DAD Airport + HAN T1 -> Hanoi Old Quarter",
+      "duration": "45 mins",
+      "costVnd": "700k VND",
+      "costInr": "₹2,310"
+    },
+    {
+      "leg": "Transfer 9",
+      "date": "Fri, Dec 11 (~03:30 PM)",
+      "route": "Hanoi Old Quarter -> Noi Bai Airport T2 International",
+      "duration": "40 mins",
+      "costVnd": "450k VND",
+      "costInr": "₹1,485"
+    }
+  ],
+  "familyDocs": [
+    {
+      "name": "Parent 1 (Father, Delhi)",
+      "passport": "Z1234567",
+      "exp": "2030-05-15",
+      "evisa": "E26120301",
+      "notes": "Noi Bai Entry Verified"
+    },
+    {
+      "name": "Parent 2 (Mother, Delhi)",
+      "passport": "Z7654321",
+      "exp": "2031-08-20",
+      "evisa": "E26120302",
+      "notes": "Noi Bai Entry Verified"
+    },
+    {
+      "name": "Adult 1 (Lead, Bengaluru)",
+      "passport": "P9876543",
+      "exp": "2032-11-10",
+      "evisa": "E26120303",
+      "notes": "Noi Bai Entry Verified"
+    },
+    {
+      "name": "Adult 2 (Bengaluru)",
+      "passport": "P5432198",
+      "exp": "2033-01-25",
+      "evisa": "E26120304",
+      "notes": "Noi Bai Entry Verified"
+    },
+    {
+      "name": "Adult 3 (Bengaluru)",
+      "passport": "P1122334",
+      "exp": "2029-09-18",
+      "evisa": "E26120305",
+      "notes": "Noi Bai Entry Verified"
+    }
+  ]
 }

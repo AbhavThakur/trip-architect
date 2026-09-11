@@ -654,12 +654,12 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <span class="px-2.5 py-0.5 bg-purple-500/20 text-purple-300 text-[10px] font-bold rounded-full uppercase tracking-wider">Interactive Finance Hub</span>
-                        <h2 class="text-lg sm:text-xl font-bold font-display mt-1">Budget & Actual Spend Splitter</h2>
-                        <p class="text-slate-400 text-xs mt-0.5">5 Adults Expedition (DEL & BLR Flights Included)</p>
+                        <h2 class="text-lg sm:text-xl font-bold font-display mt-1">Budget & Spend Splitter</h2>
+                        <p class="text-slate-400 text-xs mt-0.5">Flexible Pax Split (5 All / 3 BLR / 2 DEL) • Category & Date Engine</p>
                     </div>
                     <div class="text-right">
                         <span id="budget-grand-total" class="text-2xl font-black text-amber-400 font-mono">₹4,06,000</span>
-                        <span id="budget-per-person" class="block text-[11px] text-slate-300 font-medium">~₹81,200 / adult</span>
+                        <span id="budget-per-person" class="block text-[11px] text-slate-300 font-medium">~₹81,200 / adult (5 Pax Total)</span>
                     </div>
                 </div>
 
@@ -678,10 +678,30 @@
                         <span id="budget-logged-total" class="text-cyan-400 font-bold font-mono text-xs sm:text-sm">₹0</span>
                     </div>
                 </div>
+
+                <!-- Group Split Breakdown Row -->
+                <div class="pt-2 border-t border-purple-900/40 grid grid-cols-3 gap-2 text-[10px]">
+                    <div class="bg-slate-900/70 rounded-xl p-2 border border-slate-800">
+                        <span class="text-slate-400 block font-bold text-[10px]">🤝 Shared (5 Pax)</span>
+                        <span id="split-shared-total" class="text-white font-mono font-bold text-xs">₹0</span>
+                        <span id="split-shared-pp" class="block text-slate-400 text-[9px] mt-0.5">(₹0 / head)</span>
+                    </div>
+                    <div class="bg-slate-900/70 rounded-xl p-2 border border-slate-800">
+                        <span class="text-purple-400 block font-bold text-[10px]">🧑 BLR (3 Pax)</span>
+                        <span id="split-blr-total" class="text-white font-mono font-bold text-xs">₹0</span>
+                        <span id="split-blr-pp" class="block text-purple-300 text-[9px] mt-0.5">(₹0 / head)</span>
+                    </div>
+                    <div class="bg-slate-900/70 rounded-xl p-2 border border-slate-800">
+                        <span class="text-indigo-400 block font-bold text-[10px]">👨 DEL (2 Pax)</span>
+                        <span id="split-del-total" class="text-white font-mono font-bold text-xs">₹0</span>
+                        <span id="split-del-pp" class="block text-indigo-300 text-[9px] mt-0.5">(₹0 / head)</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Master Budget Table with Actions -->
+            <!-- Master Budget Table & Category Filter Deck -->
             <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden shadow-sm">
+                <!-- Header with Action Buttons -->
                 <div class="bg-slate-900 text-white px-3.5 py-2.5 flex justify-between items-center text-xs">
                     <div class="font-bold flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-purple-400"></i>
@@ -695,6 +715,41 @@
                             <i class="fa-solid fa-plus"></i> Add Item
                         </button>
                     </div>
+                </div>
+
+                <!-- Category Filter Pills Bar -->
+                <div class="p-2.5 border-b border-slate-100 dark:border-darkborder bg-slate-50/70 dark:bg-darkcard flex items-center gap-1.5 overflow-x-auto text-[11px]">
+                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap pl-1">Filter:</span>
+                    <button onclick="filterBudgetCategory('all')" id="bfilter-all" class="bfilter-btn px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-all bg-purple-600 text-white shadow-sm">
+                        All (<span id="bcount-all">11</span>)
+                    </button>
+                    <button onclick="filterBudgetCategory('flights')" id="bfilter-flights" class="bfilter-btn px-2 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-plane text-indigo-500"></i> Flights (<span id="bcount-flights">0</span>)
+                    </button>
+                    <button onclick="filterBudgetCategory('stays')" id="bfilter-stays" class="bfilter-btn px-2 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-hotel text-blue-500"></i> Stays (<span id="bcount-stays">0</span>)
+                    </button>
+                    <button onclick="filterBudgetCategory('transport')" id="bfilter-transport" class="bfilter-btn px-2 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-van-shuttle text-sky-500"></i> Cabs (<span id="bcount-transport">0</span>)
+                    </button>
+                    <button onclick="filterBudgetCategory('tours')" id="bfilter-tours" class="bfilter-btn px-2 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-ticket text-amber-500"></i> Tours (<span id="bcount-tours">0</span>)
+                    </button>
+                    <button onclick="filterBudgetCategory('food')" id="bfilter-food" class="bfilter-btn px-2 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-utensils text-emerald-500"></i> Food (<span id="bcount-food">0</span>)
+                    </button>
+                    <button onclick="filterBudgetCategory('visas')" id="bfilter-visas" class="bfilter-btn px-2 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-passport text-rose-500"></i> Visas (<span id="bcount-visas">0</span>)
+                    </button>
+                    <button onclick="filterBudgetCategory('misc')" id="bfilter-misc" class="bfilter-btn px-2 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-bag-shopping text-purple-500"></i> Misc (<span id="bcount-misc">0</span>)
+                    </button>
+                </div>
+
+                <!-- Subtotal Status Banner when filtered -->
+                <div id="budget-filter-subtotal-bar" class="px-3.5 py-1.5 bg-purple-50 dark:bg-purple-950/40 border-b border-purple-100 dark:border-purple-900/50 text-[11px] text-purple-700 dark:text-purple-300 flex justify-between items-center hidden">
+                    <span id="budget-filter-label" class="font-semibold">Showing all items</span>
+                    <span id="budget-filter-subtotal" class="font-mono font-bold">Subtotal: ₹0</span>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -941,7 +996,7 @@
 
     <!-- EDIT / ADD BUDGET ITEM MODAL -->
     <div id="budget-item-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="if(event.target === this) closeBudgetItemModal()">
-        <div class="bg-white dark:bg-darkcard rounded-t-3xl sm:rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-200 dark:border-darkborder bottom-sheet-anim">
+        <div class="bg-white dark:bg-darkcard rounded-t-3xl sm:rounded-3xl max-w-lg w-full p-5 shadow-2xl border border-slate-200 dark:border-darkborder max-h-[90vh] overflow-y-auto bottom-sheet-anim">
             <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 sm:hidden"></div>
             <div class="flex justify-between items-center pb-2.5 border-b border-slate-100 dark:border-darkborder">
                 <h3 id="budget-modal-title" class="font-bold text-xs sm:text-sm"><i class="fa-solid fa-pen-to-square text-purple-600 mr-1.5"></i> Edit Budget Item</h3>
@@ -949,26 +1004,93 @@
             </div>
             <form id="budget-item-form" onsubmit="saveBudgetItem(event)" class="mt-3 space-y-3 text-xs">
                 <input type="hidden" id="budget-item-index" value="-1">
+                <input type="hidden" id="budget-item-category" value="flights">
+
+                <!-- 1. Category Selector Pills -->
                 <div>
-                    <label class="font-bold block mb-1">Item Title:</label>
-                    <input type="text" id="budget-item-title" required placeholder="e.g., International Flights (DEL & BLR)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 font-bold outline-none">
+                    <label class="font-bold block mb-1 text-slate-700 dark:text-slate-300">Category:</label>
+                    <div class="grid grid-cols-4 sm:grid-cols-7 gap-1" id="budget-category-pills">
+                        <button type="button" onclick="selectBudgetCategory('flights')" id="bcat-flights" class="bcat-btn p-1.5 rounded-xl text-center font-bold text-[10px] border border-purple-500 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 shadow-sm">
+                            <i class="fa-solid fa-plane block text-xs mb-0.5"></i> Flights
+                        </button>
+                        <button type="button" onclick="selectBudgetCategory('stays')" id="bcat-stays" class="bcat-btn p-1.5 rounded-xl text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                            <i class="fa-solid fa-hotel block text-xs mb-0.5"></i> Stays
+                        </button>
+                        <button type="button" onclick="selectBudgetCategory('transport')" id="bcat-transport" class="bcat-btn p-1.5 rounded-xl text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                            <i class="fa-solid fa-van-shuttle block text-xs mb-0.5"></i> Cabs
+                        </button>
+                        <button type="button" onclick="selectBudgetCategory('tours')" id="bcat-tours" class="bcat-btn p-1.5 rounded-xl text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                            <i class="fa-solid fa-ticket block text-xs mb-0.5"></i> Tours
+                        </button>
+                        <button type="button" onclick="selectBudgetCategory('food')" id="bcat-food" class="bcat-btn p-1.5 rounded-xl text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                            <i class="fa-solid fa-utensils block text-xs mb-0.5"></i> Food
+                        </button>
+                        <button type="button" onclick="selectBudgetCategory('visas')" id="bcat-visas" class="bcat-btn p-1.5 rounded-xl text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                            <i class="fa-solid fa-passport block text-xs mb-0.5"></i> Visas
+                        </button>
+                        <button type="button" onclick="selectBudgetCategory('misc')" id="bcat-misc" class="bcat-btn p-1.5 rounded-xl text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                            <i class="fa-solid fa-bag-shopping block text-xs mb-0.5"></i> Misc
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label class="font-bold block mb-1">Details & Booking Notes:</label>
-                    <input type="text" id="budget-item-details" placeholder="e.g., 5 return tickets (VietJet / Air India)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none">
-                </div>
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div>
-                        <label class="font-bold block mb-1">Total Cost (INR ₹):</label>
-                        <input type="number" id="budget-item-total" required min="0" step="50" placeholder="140000" oninput="updateBudgetItemPerPersonPreview()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 font-mono font-bold outline-none">
+
+                <!-- 2. Item Title & Date -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div class="sm:col-span-2">
+                        <label class="font-bold block mb-1">Expense Title:</label>
+                        <input type="text" id="budget-item-title" required placeholder="e.g., BLR Flights (3 Adults)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 font-bold outline-none">
                     </div>
                     <div>
-                        <label class="font-bold block mb-1">Per Adult (~/ 5):</label>
-                        <div id="budget-item-pp-preview" class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 font-mono font-bold text-slate-600 dark:text-slate-300">
-                            ₹0
+                        <label class="font-bold block mb-1">Date (Optional):</label>
+                        <input type="date" id="budget-item-date" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2 font-mono outline-none text-xs">
+                    </div>
+                </div>
+
+                <!-- Quick Date Presets -->
+                <div class="flex items-center gap-1 overflow-x-auto pb-1 text-[10px]">
+                    <span class="text-slate-400 whitespace-nowrap font-medium">Quick Dates:</span>
+                    <button type="button" onclick="setBudgetDatePreset('2026-12-03')" class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-950 rounded text-slate-600 dark:text-slate-300 whitespace-nowrap">Dec 3</button>
+                    <button type="button" onclick="setBudgetDatePreset('2026-12-04')" class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-950 rounded text-slate-600 dark:text-slate-300 whitespace-nowrap">Dec 4</button>
+                    <button type="button" onclick="setBudgetDatePreset('2026-12-05')" class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-950 rounded text-slate-600 dark:text-slate-300 whitespace-nowrap">Dec 5</button>
+                    <button type="button" onclick="setBudgetDatePreset('2026-12-06')" class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-950 rounded text-slate-600 dark:text-slate-300 whitespace-nowrap">Dec 6</button>
+                    <button type="button" onclick="setBudgetDatePreset('2026-12-08')" class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-950 rounded text-slate-600 dark:text-slate-300 whitespace-nowrap">Dec 8</button>
+                    <button type="button" onclick="setBudgetDatePreset('2026-12-10')" class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-purple-950 rounded text-slate-600 dark:text-slate-300 whitespace-nowrap">Dec 10</button>
+                    <button type="button" onclick="setBudgetDatePreset('')" class="px-1.5 py-0.5 text-slate-400 hover:text-red-500 whitespace-nowrap">Clear</button>
+                </div>
+
+                <!-- 3. Details & Booking Notes -->
+                <div>
+                    <label class="font-bold block mb-1">Details & Booking Notes:</label>
+                    <input type="text" id="budget-item-details" placeholder="e.g., VietJet Return flights for 3 Bangalore passengers" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none">
+                </div>
+
+                <!-- 4. Total Cost and Person Split (Pax) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="font-bold block mb-1">Total Cost (INR ₹):</label>
+                        <input type="number" id="budget-item-total" required min="0" step="50" placeholder="e.g. 84000" oninput="updateBudgetItemPerPersonPreview()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 font-mono font-bold text-sm outline-none text-purple-600 dark:text-purple-400">
+                    </div>
+                    <div>
+                        <label class="font-bold block mb-1">Split Across (Pax / Persons):</label>
+                        <div class="flex items-center gap-1.5">
+                            <input type="number" id="budget-item-pax" required min="1" max="50" value="5" oninput="updateBudgetItemPerPersonPreview()" class="w-16 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2 font-mono font-bold text-center outline-none">
+                            <div class="grid grid-cols-4 gap-1 flex-1">
+                                <button type="button" onclick="setBudgetItemPax(5)" id="bpax-btn-5" class="bpax-btn py-1 px-1 rounded-lg text-center font-bold text-[10px] border border-purple-500 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300">5 (All)</button>
+                                <button type="button" onclick="setBudgetItemPax(3)" id="bpax-btn-3" class="bpax-btn py-1 px-1 rounded-lg text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">3 (BLR)</button>
+                                <button type="button" onclick="setBudgetItemPax(2)" id="bpax-btn-2" class="bpax-btn py-1 px-1 rounded-lg text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">2 (DEL)</button>
+                                <button type="button" onclick="setBudgetItemPax(1)" id="bpax-btn-1" class="bpax-btn py-1 px-1 rounded-lg text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400">1 (Solo)</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Live Per-Person Preview Alert Box -->
+                <div id="budget-item-pp-alert" class="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 flex items-center justify-between">
+                    <span class="text-slate-600 dark:text-slate-300 text-xs font-semibold">Per-Person Share:</span>
+                    <span id="budget-item-pp-preview" class="font-mono font-bold text-purple-700 dark:text-purple-300 text-xs sm:text-sm">₹0 / person (for 5 pax)</span>
+                </div>
+
+                <!-- 5. Booking Status -->
                 <div>
                     <label class="font-bold block mb-1">Status / Booking State:</label>
                     <div class="grid grid-cols-3 gap-1.5">
@@ -983,6 +1105,7 @@
                         </button>
                     </div>
                 </div>
+
                 <div class="pt-2 flex gap-2">
                     <button type="button" onclick="closeBudgetItemModal()" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl font-bold">Cancel</button>
                     <button type="submit" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold shadow-lg">Save Changes</button>
@@ -1330,26 +1453,78 @@
             { category: "Mulberry Silk", items: "100% pure silk scarves", location: "Hàng Gai Street", price: "₹400 – ₹1,200", rule: "Packs completely flat." }
         ];
 
+        const BUDGET_CATEGORIES = {
+            flights: { label: "Flights", icon: "fa-plane", textColor: "text-indigo-500", badgeBg: "bg-indigo-50 dark:bg-indigo-950/70 border-indigo-200 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300" },
+            stays: { label: "Stays", icon: "fa-hotel", textColor: "text-blue-500", badgeBg: "bg-blue-50 dark:bg-blue-950/70 border-blue-200 dark:border-blue-800/60 text-blue-700 dark:text-blue-300" },
+            transport: { label: "Cabs & Limo", icon: "fa-van-shuttle", textColor: "text-sky-500", badgeBg: "bg-sky-50 dark:bg-sky-950/70 border-sky-200 dark:border-sky-800/60 text-sky-700 dark:text-sky-300" },
+            tours: { label: "Tours & Tickets", icon: "fa-ticket", textColor: "text-amber-500", badgeBg: "bg-amber-50 dark:bg-amber-950/70 border-amber-200 dark:border-amber-800/60 text-amber-700 dark:text-amber-300" },
+            food: { label: "Food & Dining", icon: "fa-utensils", textColor: "text-emerald-500", badgeBg: "bg-emerald-50 dark:bg-emerald-950/70 border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300" },
+            visas: { label: "Visas & Docs", icon: "fa-passport", textColor: "text-rose-500", badgeBg: "bg-rose-50 dark:bg-rose-950/70 border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300" },
+            misc: { label: "Shopping & Misc", icon: "fa-bag-shopping", textColor: "text-purple-500", badgeBg: "bg-purple-50 dark:bg-purple-950/70 border-purple-200 dark:border-purple-800/60 text-purple-700 dark:text-purple-300" }
+        };
+
         const defaultBudgetData = [
-            { item: "International Flights (DEL & BLR)", details: "5 return tickets", total: 140000, pp: 28000, status: "estimated" },
-            { item: "Domestic Flights (HAN ⇄ DAD)", details: "5 round-trip tickets (VN Airlines / VietJet)", total: 35000, pp: 7000, status: "estimated" },
-            { item: "Vietnam E-Visas", details: "$25/person for 5 pax (Gov Portal)", total: 10500, pp: 2100, status: "estimated" },
-            { item: "Hanoi Hotels (3 Nights Total)", details: "La Siesta Classic (Double + Triple Suites)", total: 33000, pp: 6600, status: "estimated" },
-            { item: "Hoi An Garden Resort (2 Nights)", details: "La Siesta Resort (Double + Grand Suites)", total: 24000, pp: 4800, status: "estimated" },
-            { item: "Da Nang Beachfront Hotel (2 Nights)", details: "TMS Hotel Ocean View (Double + Triple Suites)", total: 22000, pp: 4400, status: "estimated" },
-            { item: "9-Seater Private DCar Limousines", details: "All 9 private transfers (including Ninh Binh Full Day)", total: 38000, pp: 7600, status: "estimated" },
-            { item: "Ninh Binh Day Tour & Boat Tickets", details: "Hoa Lu entry + Tam Coc Sampan rowboat fees for 5 pax", total: 12500, pp: 2500, status: "estimated" },
-            { item: "Ba Na Hills Cable Car & Bridge Tickets", details: "5 Klook cable car + Golden bridge entry passes", total: 18500, pp: 3700, status: "estimated" },
-            { item: "Sightseeing, Puppets & Lantern Boats", details: "Water puppets VIP, Hoi An lantern boat, Marble Mt elevator", total: 9500, pp: 1900, status: "estimated" },
-            { item: "Pure Veg & Indian Dining / Cafes", details: "Sadhu, Dalcheeni, Baba's Kitchen, Ưu Đàm Chay & Egg Coffee", total: 42000, pp: 8400, status: "estimated" }
+            { item: "International Flights (DEL & BLR)", details: "5 return tickets (2 DEL Parents + 3 BLR Adults)", total: 140000, pax: 5, category: "flights", date: "2026-12-03", status: "estimated" },
+            { item: "Domestic Flights (HAN ⇄ DAD)", details: "5 round-trip tickets (VN Airlines / VietJet)", total: 35000, pax: 5, category: "flights", date: "2026-12-06", status: "estimated" },
+            { item: "Vietnam E-Visas", details: "$25/person for 5 pax (Gov Portal)", total: 10500, pax: 5, category: "visas", date: "2026-11-05", status: "estimated" },
+            { item: "Hanoi Hotels (3 Nights Total)", details: "La Siesta Classic (Double + Triple Suites)", total: 33000, pax: 5, category: "stays", date: "2026-12-03", status: "estimated" },
+            { item: "Hoi An Garden Resort (2 Nights)", details: "La Siesta Resort (Double + Grand Suites)", total: 24000, pax: 5, category: "stays", date: "2026-12-06", status: "estimated" },
+            { item: "Da Nang Beachfront Hotel (2 Nights)", details: "TMS Hotel Ocean View (Double + Triple Suites)", total: 22000, pax: 5, category: "stays", date: "2026-12-08", status: "estimated" },
+            { item: "9-Seater Private DCar Limousines", details: "All 9 private transfers (including Ninh Binh Full Day)", total: 38000, pax: 5, category: "transport", date: "2026-12-04", status: "estimated" },
+            { item: "Ninh Binh Day Tour & Boat Tickets", details: "Hoa Lu entry + Tam Coc Sampan rowboat fees for 5 pax", total: 12500, pax: 5, category: "tours", date: "2026-12-05", status: "estimated" },
+            { item: "Ba Na Hills Cable Car & Bridge Tickets", details: "5 Klook cable car + Golden bridge entry passes", total: 18500, pax: 5, category: "tours", date: "2026-12-08", status: "estimated" },
+            { item: "Sightseeing, Puppets & Lantern Boats", details: "Water puppets VIP, Hoi An lantern boat, Marble Mt elevator", total: 9500, pax: 5, category: "tours", date: "2026-12-04", status: "estimated" },
+            { item: "Pure Veg & Indian Dining / Cafes", details: "Sadhu, Dalcheeni, Baba's Kitchen, Ưu Đàm Chay & Egg Coffee", total: 42000, pax: 5, category: "food", date: "2026-12-03", status: "estimated" }
         ];
+
+        function normalizeBudgetItem(b) {
+            if (!b) return null;
+            const total = parseFloat(b.total) || 0;
+            let pax = parseInt(b.pax, 10);
+            if (!pax || isNaN(pax) || pax < 1) {
+                const text = ((b.item || '') + ' ' + (b.details || '')).toLowerCase();
+                if (text.includes('3 pax') || text.includes('3 tickets') || text.includes('3 adult') || text.includes('triple') || text.includes('blr')) {
+                    pax = 3;
+                } else if (text.includes('2 pax') || text.includes('2 tickets') || text.includes('parents') || text.includes('double') || text.includes('del')) {
+                    pax = 2;
+                } else if (text.includes('1 pax') || text.includes('solo') || text.includes('single')) {
+                    pax = 1;
+                } else {
+                    pax = 5;
+                }
+            }
+            const pp = Math.round(total / Math.max(1, pax));
+
+            let category = b.category;
+            if (!category || !BUDGET_CATEGORIES[category]) {
+                const text = ((b.item || '') + ' ' + (b.details || '')).toLowerCase();
+                if (text.includes('flight') || text.includes('air') || text.includes('vietjet')) category = 'flights';
+                else if (text.includes('hotel') || text.includes('resort') || text.includes('suite') || text.includes('night') || text.includes('stay')) category = 'stays';
+                else if (text.includes('limousine') || text.includes('dcar') || text.includes('transfer') || text.includes('cab') || text.includes('grab') || text.includes('car')) category = 'transport';
+                else if (text.includes('tour') || text.includes('ticket') || text.includes('boat') || text.includes('puppet') || text.includes('bridge') || text.includes('entry') || text.includes('cable car') || text.includes('sightseeing')) category = 'tours';
+                else if (text.includes('dining') || text.includes('food') || text.includes('veg') || text.includes('cafe') || text.includes('coffee') || text.includes('sadhu') || text.includes('kitchen') || text.includes('meal')) category = 'food';
+                else if (text.includes('visa') || text.includes('passport')) category = 'visas';
+                else category = 'misc';
+            }
+
+            return {
+                item: b.item || 'Untitled Expense',
+                details: b.details || '',
+                total: total,
+                pax: pax,
+                pp: pp,
+                status: b.status || 'estimated',
+                category: category,
+                date: b.date || ''
+            };
+        }
 
         function getActiveBudgetData() {
             const stored = safeGetStorage('vietnam_budget_items', null);
             if (Array.isArray(stored) && stored.length > 0) {
-                return stored;
+                return stored.map(normalizeBudgetItem).filter(Boolean);
             }
-            return JSON.parse(JSON.stringify(defaultBudgetData));
+            return defaultBudgetData.map(normalizeBudgetItem);
         }
 
         function saveActiveBudgetData(data) {
@@ -2149,7 +2324,9 @@ Please provide your best package quote in VND. Thank you!`;
             });
         }
 
+        let activeBudgetCategory = 'all';
         let currentBudgetStatus = 'booked';
+        let currentBudgetCategory = 'flights';
 
         function selectBudgetStatus(status) {
             currentBudgetStatus = status;
@@ -2164,12 +2341,69 @@ Please provide your best package quote in VND. Thank you!`;
             });
         }
 
+        function selectBudgetCategory(cat) {
+            currentBudgetCategory = cat;
+            const input = document.getElementById('budget-item-category');
+            if (input) input.value = cat;
+            Object.keys(BUDGET_CATEGORIES).forEach(c => {
+                const btn = document.getElementById(`bcat-${c}`);
+                if (!btn) return;
+                if (c === cat) {
+                    btn.className = 'bcat-btn p-1.5 rounded-xl text-center font-bold text-[10px] border border-purple-500 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 shadow-sm';
+                } else {
+                    btn.className = 'bcat-btn p-1.5 rounded-xl text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400';
+                }
+            });
+        }
+
+        function setBudgetItemPax(pax) {
+            document.getElementById('budget-item-pax').value = pax;
+            updateBudgetItemPerPersonPreview();
+        }
+
+        function setBudgetDatePreset(dateStr) {
+            document.getElementById('budget-item-date').value = dateStr;
+        }
+
         function updateBudgetItemPerPersonPreview() {
-            const totalVal = parseFloat(document.getElementById('budget-item-total').value) || 0;
+            const total = parseFloat(document.getElementById('budget-item-total').value) || 0;
+            const paxInput = parseInt(document.getElementById('budget-item-pax').value, 10);
+            const pax = (!paxInput || isNaN(paxInput) || paxInput < 1) ? 1 : paxInput;
+            const pp = Math.round(total / pax);
+
+            // Update pax quick button active styles
+            [5, 3, 2, 1].forEach(p => {
+                const btn = document.getElementById(`bpax-btn-${p}`);
+                if (!btn) return;
+                if (p === pax) {
+                    btn.className = 'bpax-btn py-1 px-1 rounded-lg text-center font-bold text-[10px] border border-purple-500 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300';
+                } else {
+                    btn.className = 'bpax-btn py-1 px-1 rounded-lg text-center font-bold text-[10px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400';
+                }
+            });
+
             const previewEl = document.getElementById('budget-item-pp-preview');
             if (previewEl) {
-                previewEl.textContent = `₹${Math.round(totalVal / 5).toLocaleString('en-IN')}`;
+                if (total === 0) {
+                    previewEl.textContent = `₹0 / person (for ${pax} ${pax === 1 ? 'person' : 'pax'})`;
+                } else if (pax === 1) {
+                    previewEl.textContent = `₹${total.toLocaleString('en-IN')} (Solo / 1 Person)`;
+                } else {
+                    previewEl.textContent = `₹${pp.toLocaleString('en-IN')} / person (split across ${pax} pax)`;
+                }
             }
+        }
+
+        function filterBudgetCategory(cat) {
+            activeBudgetCategory = cat;
+            document.querySelectorAll('.bfilter-btn').forEach(btn => {
+                btn.className = 'bfilter-btn px-2 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap transition-all flex items-center gap-1';
+            });
+            const activeBtn = document.getElementById(`bfilter-${cat}`);
+            if (activeBtn) {
+                activeBtn.className = 'bfilter-btn px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-all bg-purple-600 text-white shadow-sm flex items-center gap-1';
+            }
+            renderBudgetTable();
         }
 
         function openAddBudgetItemModal() {
@@ -2178,8 +2412,11 @@ Please provide your best package quote in VND. Thank you!`;
             document.getElementById('budget-item-title').value = '';
             document.getElementById('budget-item-details').value = '';
             document.getElementById('budget-item-total').value = '';
-            document.getElementById('budget-item-pp-preview').textContent = '₹0';
+            document.getElementById('budget-item-pax').value = '5';
+            document.getElementById('budget-item-date').value = '';
+            selectBudgetCategory('flights');
             selectBudgetStatus('estimated');
+            updateBudgetItemPerPersonPreview();
             document.getElementById('budget-item-modal').classList.remove('hidden');
         }
 
@@ -2192,8 +2429,12 @@ Please provide your best package quote in VND. Thank you!`;
             document.getElementById('budget-item-title').value = item.item || '';
             document.getElementById('budget-item-details').value = item.details || '';
             document.getElementById('budget-item-total').value = item.total || 0;
-            updateBudgetItemPerPersonPreview();
+            document.getElementById('budget-item-pax').value = item.pax || 5;
+            document.getElementById('budget-item-date').value = item.date || '';
+
+            selectBudgetCategory(item.category || 'flights');
             selectBudgetStatus(item.status || 'estimated');
+            updateBudgetItemPerPersonPreview();
             document.getElementById('budget-item-modal').classList.remove('hidden');
         }
 
@@ -2207,7 +2448,11 @@ Please provide your best package quote in VND. Thank you!`;
             const title = document.getElementById('budget-item-title').value.trim();
             const details = document.getElementById('budget-item-details').value.trim();
             const total = parseFloat(document.getElementById('budget-item-total').value) || 0;
-            const pp = Math.round(total / 5);
+            const paxRaw = parseInt(document.getElementById('budget-item-pax').value, 10);
+            const pax = (!paxRaw || isNaN(paxRaw) || paxRaw < 1) ? 5 : paxRaw;
+            const pp = Math.round(total / pax);
+            const date = document.getElementById('budget-item-date').value.trim();
+            const category = currentBudgetCategory || 'misc';
 
             if (!title) {
                 alert('Please enter an item title');
@@ -2219,8 +2464,11 @@ Please provide your best package quote in VND. Thank you!`;
                 item: title,
                 details: details,
                 total: total,
+                pax: pax,
                 pp: pp,
-                status: currentBudgetStatus
+                status: currentBudgetStatus,
+                category: category,
+                date: date
             };
 
             if (idx >= 0 && idx < items.length) {
@@ -2249,6 +2497,22 @@ Please provide your best package quote in VND. Thank you!`;
             }
         }
 
+        function formatBudgetDisplayDate(dateStr) {
+            if (!dateStr) return '';
+            try {
+                const parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    const m = parseInt(parts[1], 10) - 1;
+                    const d = parseInt(parts[2], 10);
+                    if (m >= 0 && m < 12 && !isNaN(d)) {
+                        return `${months[m]} ${d}`;
+                    }
+                }
+            } catch(e) {}
+            return dateStr;
+        }
+
         function renderBudgetTable() {
             const tbody = document.getElementById('budget-items-tbody');
             if (!tbody) return;
@@ -2259,53 +2523,138 @@ Please provide your best package quote in VND. Thank you!`;
             let bookedTotal = 0;
             let estimatedTotal = 0;
 
-            items.forEach((b, idx) => {
-                const total = Number(b.total) || 0;
-                const pp = Number(b.pp) || Math.round(total / 5);
-                const status = b.status || 'estimated';
-                grandTotal += total;
+            let sharedTotal = 0; // 5 pax
+            let blrTotal = 0;    // 3 pax
+            let delTotal = 0;    // 2 pax
+            let soloTotal = 0;   // 1 pax
 
-                if (status === 'booked' || status === 'paid') {
-                    bookedTotal += total;
+            // Category counts
+            const catCounts = { all: items.length, flights: 0, stays: 0, transport: 0, tours: 0, food: 0, visas: 0, misc: 0 };
+
+            items.forEach(b => {
+                const cat = b.category || 'misc';
+                if (catCounts[cat] !== undefined) catCounts[cat]++;
+                const tot = Number(b.total) || 0;
+                grandTotal += tot;
+
+                if (b.status === 'booked' || b.status === 'paid') {
+                    bookedTotal += tot;
                 } else {
-                    estimatedTotal += total;
+                    estimatedTotal += tot;
                 }
 
-                let badgeHtml = '';
-                if (status === 'booked') {
-                    badgeHtml = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300"><i class="fa-solid fa-check mr-0.5"></i> Actual / Booked</span>`;
-                } else if (status === 'paid') {
-                    badgeHtml = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300"><i class="fa-solid fa-receipt mr-0.5"></i> Paid</span>`;
-                } else {
-                    badgeHtml = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300"><i class="fa-regular fa-clock mr-0.5"></i> Estimated</span>`;
-                }
+                if (b.pax === 5) sharedTotal += tot;
+                else if (b.pax === 3) blrTotal += tot;
+                else if (b.pax === 2) delTotal += tot;
+                else soloTotal += tot;
+            });
 
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                        <td class="p-2.5 align-middle">
-                            <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
-                                <strong class="text-slate-900 dark:text-slate-100">${b.item}</strong>
-                                ${badgeHtml}
-                            </div>
-                            <span class="text-slate-500 text-[10px] block">${b.details || 'No notes'}</span>
-                        </td>
-                        <td class="p-2.5 text-right whitespace-nowrap align-middle">
-                            <div class="font-bold text-slate-900 dark:text-slate-100 font-mono">₹${total.toLocaleString('en-IN')}</div>
-                            <div class="text-[10px] text-slate-400">~₹${pp.toLocaleString('en-IN')} / adult</div>
-                        </td>
-                        <td class="p-2.5 text-right whitespace-nowrap align-middle w-16">
-                            <div class="flex items-center justify-end gap-1">
-                                <button onclick="openEditBudgetItemModal(${idx})" class="p-1.5 text-purple-600 hover:bg-purple-100 dark:hover:bg-purple-950 rounded-lg transition-colors" title="Edit Item & Amount">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button onclick="deleteBudgetItem(${idx})" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors" title="Delete Item">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
+            // Update category count badges
+            Object.keys(catCounts).forEach(c => {
+                const countEl = document.getElementById(`bcount-${c}`);
+                if (countEl) countEl.textContent = catCounts[c];
+            });
+
+            // Filter items for display
+            let filteredItems = items.map((item, originalIndex) => ({ item, originalIndex }));
+            if (activeBudgetCategory !== 'all') {
+                filteredItems = filteredItems.filter(entry => entry.item.category === activeBudgetCategory);
+            }
+
+            // Subtotal bar when filtered
+            const subtotalBar = document.getElementById('budget-filter-subtotal-bar');
+            const filterLabel = document.getElementById('budget-filter-label');
+            const filterSubtotal = document.getElementById('budget-filter-subtotal');
+            if (subtotalBar && filterLabel && filterSubtotal) {
+                if (activeBudgetCategory !== 'all') {
+                    const catInfo = BUDGET_CATEGORIES[activeBudgetCategory] || { label: activeBudgetCategory };
+                    const catSubtotal = filteredItems.reduce((sum, e) => sum + (Number(e.item.total) || 0), 0);
+                    filterLabel.innerHTML = `<i class="fa-solid ${catInfo.icon || 'fa-tag'} mr-1"></i> Showing ${catInfo.label} (${filteredItems.length} items)`;
+                    filterSubtotal.textContent = `Subtotal: ₹${catSubtotal.toLocaleString('en-IN')}`;
+                    subtotalBar.classList.remove('hidden');
+                } else {
+                    subtotalBar.classList.add('hidden');
+                }
+            }
+
+            if (filteredItems.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="p-6 text-center text-slate-400 italic">
+                            <i class="fa-solid fa-receipt text-2xl mb-1.5 block text-slate-300 dark:text-slate-600"></i>
+                            No expenses found in this category. Tap <strong>"+ Add Item"</strong> above to create one!
                         </td>
                     </tr>
                 `;
-            });
+            } else {
+                filteredItems.forEach(entry => {
+                    const b = entry.item;
+                    const idx = entry.originalIndex;
+                    const total = Number(b.total) || 0;
+                    const pax = Math.max(1, parseInt(b.pax, 10) || 5);
+                    const pp = Number(b.pp) || Math.round(total / pax);
+                    const status = b.status || 'estimated';
+                    const catKey = b.category || 'misc';
+                    const catInfo = BUDGET_CATEGORIES[catKey] || BUDGET_CATEGORIES.misc;
+                    const dateFormatted = formatBudgetDisplayDate(b.date);
+
+                    let statusBadgeHtml = '';
+                    if (status === 'booked') {
+                        statusBadgeHtml = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40"><i class="fa-solid fa-check mr-0.5"></i> Actual / Booked</span>`;
+                    } else if (status === 'paid') {
+                        statusBadgeHtml = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/40"><i class="fa-solid fa-receipt mr-0.5"></i> Paid</span>`;
+                    } else {
+                        statusBadgeHtml = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40"><i class="fa-regular fa-clock mr-0.5"></i> Estimated</span>`;
+                    }
+
+                    // Split note badge
+                    let splitBadgeHtml = '';
+                    if (pax === 1) {
+                        splitBadgeHtml = `<span class="text-[10px] text-slate-400 font-medium">Solo (1 Person)</span>`;
+                    } else if (pax === 3) {
+                        splitBadgeHtml = `<span class="text-[10px] text-purple-600 dark:text-purple-300 font-bold bg-purple-50 dark:bg-purple-950/80 px-1.5 py-0.5 rounded border border-purple-200/50 dark:border-purple-800/40">~₹${pp.toLocaleString('en-IN')} / person (3 Pax BLR)</span>`;
+                    } else if (pax === 2) {
+                        splitBadgeHtml = `<span class="text-[10px] text-indigo-600 dark:text-indigo-300 font-bold bg-indigo-50 dark:bg-indigo-950/80 px-1.5 py-0.5 rounded border border-indigo-200/50 dark:border-indigo-800/40">~₹${pp.toLocaleString('en-IN')} / person (2 Pax DEL)</span>`;
+                    } else if (pax === 5) {
+                        splitBadgeHtml = `<span class="text-[10px] text-slate-500 dark:text-slate-400">~₹${pp.toLocaleString('en-IN')} / adult (5 Pax All)</span>`;
+                    } else {
+                        splitBadgeHtml = `<span class="text-[10px] text-purple-600 dark:text-purple-400 font-bold">~₹${pp.toLocaleString('en-IN')} / person (${pax} pax)</span>`;
+                    }
+
+                    // Date badge
+                    const dateBadgeHtml = dateFormatted ? `<span class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/70 dark:border-slate-700/60 flex items-center gap-1"><i class="fa-regular fa-calendar text-[9px] text-purple-500"></i> ${dateFormatted}</span>` : '';
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                            <td class="p-2.5 align-middle">
+                                <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+                                    <span class="px-1.5 py-0.2 rounded text-[10px] font-bold uppercase tracking-wider border flex items-center gap-1 ${catInfo.badgeBg}">
+                                        <i class="fa-solid ${catInfo.icon}"></i> ${catInfo.label}
+                                    </span>
+                                    ${dateBadgeHtml}
+                                    ${statusBadgeHtml}
+                                </div>
+                                <div class="font-bold text-slate-900 dark:text-slate-100 text-xs sm:text-sm">${b.item}</div>
+                                <span class="text-slate-500 text-[10px] block mt-0.5">${b.details || 'No notes'}</span>
+                            </td>
+                            <td class="p-2.5 text-right whitespace-nowrap align-middle">
+                                <div class="font-bold text-slate-900 dark:text-slate-100 font-mono text-sm sm:text-base">₹${total.toLocaleString('en-IN')}</div>
+                                <div class="mt-0.5">${splitBadgeHtml}</div>
+                            </td>
+                            <td class="p-2.5 text-right whitespace-nowrap align-middle w-16">
+                                <div class="flex items-center justify-end gap-1">
+                                    <button onclick="openEditBudgetItemModal(${idx})" class="p-1.5 text-purple-600 hover:bg-purple-100 dark:hover:bg-purple-950 rounded-lg transition-colors" title="Edit Item, Split & Amount">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button onclick="deleteBudgetItem(${idx})" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors" title="Delete Item">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
 
             // Update header summary numbers
             const grandTotalEl = document.getElementById('budget-grand-total');
@@ -2315,9 +2664,24 @@ Please provide your best package quote in VND. Thank you!`;
             const loggedTotalEl = document.getElementById('budget-logged-total');
 
             if (grandTotalEl) grandTotalEl.textContent = `₹${grandTotal.toLocaleString('en-IN')}`;
-            if (ppEl) ppEl.textContent = `~₹${Math.round(grandTotal / 5).toLocaleString('en-IN')} / adult`;
+            if (ppEl) ppEl.textContent = `~₹${Math.round(grandTotal / 5).toLocaleString('en-IN')} / adult (5 Pax Total)`;
             if (actualTotalEl) actualTotalEl.textContent = `₹${bookedTotal.toLocaleString('en-IN')}`;
             if (estTotalEl) estTotalEl.textContent = `₹${estimatedTotal.toLocaleString('en-IN')}`;
+
+            // Update Group Split breakdown cards
+            const sharedTotalEl = document.getElementById('split-shared-total');
+            const sharedPpEl = document.getElementById('split-shared-pp');
+            const blrTotalEl = document.getElementById('split-blr-total');
+            const blrPpEl = document.getElementById('split-blr-pp');
+            const delTotalEl = document.getElementById('split-del-total');
+            const delPpEl = document.getElementById('split-del-pp');
+
+            if (sharedTotalEl) sharedTotalEl.textContent = `₹${sharedTotal.toLocaleString('en-IN')}`;
+            if (sharedPpEl) sharedPpEl.textContent = `(₹${Math.round(sharedTotal / 5).toLocaleString('en-IN')}/head)`;
+            if (blrTotalEl) blrTotalEl.textContent = `₹${blrTotal.toLocaleString('en-IN')}`;
+            if (blrPpEl) blrPpEl.textContent = `(₹${Math.round(blrTotal / 3).toLocaleString('en-IN')}/head)`;
+            if (delTotalEl) delTotalEl.textContent = `₹${delTotal.toLocaleString('en-IN')}`;
+            if (delPpEl) delPpEl.textContent = `(₹${Math.round(delTotal / 2).toLocaleString('en-IN')}/head)`;
 
             // Compute logged on-trip spends
             const logs = safeGetStorage('vietnam_expenses', []) || [];

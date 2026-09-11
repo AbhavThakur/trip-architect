@@ -10,7 +10,7 @@ export default function EmergencySosModal({ isOpen, onClose, initialTab = 'india
     <div className="fixed inset-0 z-[99998] bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
       <div className="bg-slate-900 border border-rose-500/40 rounded-3xl w-full max-w-xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto space-y-4 text-xs">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-darkborder pb-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center border border-rose-500/30">
               <AlertCircle className="w-6 h-6" />
@@ -23,7 +23,7 @@ export default function EmergencySosModal({ isOpen, onClose, initialTab = 'india
               <p className="text-[11px] text-slate-400">1-Tap Dialing, Nearest Verified Hospitals & Consular Hotlines</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center">
+          <button onClick={onClose} className="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 hover:text-slate-900 dark:text-white flex items-center justify-center">
             <X className="w-4 h-4" />
           </button>
         </div>

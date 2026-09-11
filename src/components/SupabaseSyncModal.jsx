@@ -86,21 +86,21 @@ create policy "Public trips full access" on trips for all using (true) with chec
 
   return (
     <div className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg p-6 sm:p-7 shadow-2xl space-y-5 text-left relative my-auto">
+      <div className="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder text-slate-900 dark:text-white rounded-3xl w-full max-w-lg p-6 sm:p-7 shadow-2xl space-y-5 text-left relative my-auto">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-darkborder">
           <div className="flex items-center gap-2.5">
             <div className={"w-10 h-10 rounded-2xl flex items-center justify-center " + (enabled ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400")}>
               {enabled ? <Cloud className="w-5 h-5" /> : <CloudOff className="w-5 h-5" />}
             </div>
             <div>
-              <h3 className="text-base font-black text-white font-display">Supabase Cloud Sync</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-base font-black text-slate-900 dark:text-white font-display">Supabase Cloud Sync</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {enabled ? "🟢 Active Cloud Storage & Multi-Device Sync" : "🟡 Local Offline Mode (Device Only)"}
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors">
+          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -108,24 +108,24 @@ create policy "Public trips full access" on trips for all using (true) with chec
         {/* Input Fields */}
         <div className="space-y-3.5 text-xs">
           <div>
-            <label className="block text-slate-300 font-bold mb-1">Supabase Project URL</label>
+            <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Supabase Project URL</label>
             <input
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://xyzproject.supabase.co"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-900 dark:text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs"
             />
           </div>
 
           <div>
-            <label className="block text-slate-300 font-bold mb-1">Supabase Anon Public API Key</label>
+            <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Supabase Anon Public API Key</label>
             <input
               type="password"
               value={key}
               onChange={(e) => setKey(e.target.value)}
               placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-900 dark:text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono text-xs"
             />
           </div>
 

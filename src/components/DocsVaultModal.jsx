@@ -14,8 +14,8 @@ export default function DocsVaultModal({ isOpen, onClose, docs = [] }) {
 
   return (
     <div className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg p-6 space-y-4 shadow-2xl text-left relative my-auto">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+      <div className="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder text-slate-900 dark:text-white rounded-3xl w-full max-w-lg p-6 space-y-4 shadow-2xl text-left relative my-auto">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-darkborder">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
               <Shield className="w-4 h-4" />
@@ -48,7 +48,7 @@ export default function DocsVaultModal({ isOpen, onClose, docs = [] }) {
         {/* Family Member Passports Table */}
         <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
           {docs.map((doc, idx) => (
-            <div key={idx} className="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2 text-xs">
+            <div key={idx} className="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
               <div className="flex items-center justify-between">
                 <strong className="text-white font-bold">{doc.name}</strong>
                 <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">

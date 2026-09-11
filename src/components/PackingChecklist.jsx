@@ -122,7 +122,7 @@ export default function PackingChecklist({ tripId, checklist = [] }) {
   return (
     <div className="space-y-4">
       {/* Header with Progress Bar */}
-      <div className="bg-slate-900/90 p-4 sm:p-5 rounded-3xl border border-slate-800 shadow-xl space-y-3">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white p-4 sm:p-5 rounded-3xl border border-slate-800 shadow-xl space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">

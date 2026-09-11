@@ -197,13 +197,13 @@ export default function TripDetailPage({
       </div>
 
       {/* Desktop Navigation Tabs (All 9 Tabs) */}
-      <div className="hidden lg:flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-800 scrollbar-none">
+      <nav className="hidden lg:flex items-center gap-1.5 overflow-x-auto bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder p-2 rounded-2xl shadow-sm no-scrollbar">
         <button
           onClick={() => setActiveTab("itinerary")}
-          className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+          className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
             activeTab === "itinerary"
-              ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
-              : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+              ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
           )}
         >
           <Calendar className="w-3.5 h-3.5" />
@@ -213,10 +213,10 @@ export default function TripDetailPage({
         {trip.checklist && (
           <button
             onClick={() => setActiveTab("checklist")}
-            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
               activeTab === "checklist"
-                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
             )}
           >
             <ClipboardCheck className="w-3.5 h-3.5" />
@@ -227,10 +227,10 @@ export default function TripDetailPage({
         {(trip.stays || trip.hotels) && (
           <button
             onClick={() => setActiveTab("stays")}
-            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
               activeTab === "stays"
-                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
             )}
           >
             <Building className="w-3.5 h-3.5" />
@@ -241,10 +241,10 @@ export default function TripDetailPage({
         {(hasFlights || hasTransit) && (
           <button
             onClick={() => setActiveTab("mobility")}
-            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
               activeTab === "mobility"
-                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
             )}
           >
             {hasFlights ? <Plane className="w-3.5 h-3.5" /> : <Bus className="w-3.5 h-3.5" />}
@@ -255,10 +255,10 @@ export default function TripDetailPage({
         {hasLimo && (
           <button
             onClick={() => setActiveTab("limo")}
-            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
               activeTab === "limo"
-                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
             )}
           >
             <Bus className="w-3.5 h-3.5 text-emerald-400" />
@@ -269,10 +269,10 @@ export default function TripDetailPage({
         {hasVegDining && (
           <button
             onClick={() => setActiveTab("dining")}
-            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
               activeTab === "dining"
-                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
             )}
           >
             <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
@@ -283,10 +283,10 @@ export default function TripDetailPage({
         {hasShopping && (
           <button
             onClick={() => setActiveTab("shopping")}
-            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
               activeTab === "shopping"
-                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
             )}
           >
             <ShoppingBag className="w-3.5 h-3.5 text-pink-400" />
@@ -297,10 +297,10 @@ export default function TripDetailPage({
         {trip.budget && (
           <button
             onClick={() => setActiveTab("budget")}
-            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
               activeTab === "budget"
-                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
             )}
           >
             <Calculator className="w-3.5 h-3.5 text-purple-400" />
@@ -311,17 +311,17 @@ export default function TripDetailPage({
         {hasCurrency && (
           <button
             onClick={() => setActiveTab("tools")}
-            className={"px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
               activeTab === "tools"
-                ? "bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm"
-                : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
+                ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
             )}
           >
             <Coins className="w-3.5 h-3.5 text-gold-400" />
             <span>Tools & FX</span>
           </button>
         )}
-      </div>
+      </nav>
 
       {/* Tab Content Display */}
       <div className="space-y-6">

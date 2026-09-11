@@ -16,39 +16,39 @@ export default function TransitLogistics({ transit }) {
   const renderLeg = (leg, label, color) => {
     if (!leg) return null;
     return (
-      <div className={`bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 hover:border-${color}-500/40 transition-all`}>
-        <div className="flex items-center justify-between border-b border-slate-850 pb-2">
+      <div className={`bg-white dark:bg-darkcard p-4 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm space-y-3 hover:border-${color}-500/40 transition-all`}>
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
           <div className="flex items-center gap-2">
             <div className={`w-8 h-8 rounded-xl bg-${color}-500/20 text-${color}-400 flex items-center justify-center`}>
               <Bus className="w-4 h-4" />
             </div>
             <div>
               <span className={`text-[10px] font-extrabold uppercase tracking-wider text-${color}-400 block`}>{label}</span>
-              <h5 className="text-xs font-black text-white">{leg.title}</h5>
+              <h5 className="text-xs font-black text-slate-900 dark:text-white">{leg.title}</h5>
             </div>
           </div>
           <span className="text-[10px] font-mono text-slate-400">{leg.date}</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-xs bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+        <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800">
           <div>
             <span className="text-[10px] text-slate-400 block">Boarding</span>
-            <strong className="text-white text-[11px]">{leg.from}</strong>
+            <strong className="text-slate-900 dark:text-white text-[11px]">{leg.from}</strong>
             <span className={`font-mono text-${color}-400 block mt-0.5`}>{leg.deptTime}</span>
           </div>
           <div className="text-right">
             <span className="text-[10px] text-slate-400 block">Arrival</span>
-            <strong className="text-white text-[11px]">{leg.to}</strong>
+            <strong className="text-slate-900 dark:text-white text-[11px]">{leg.to}</strong>
             <span className="font-mono text-amber-400 block mt-0.5">{leg.arrTime}</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="bg-slate-900 p-2 rounded-xl border border-slate-800">
+          <div className="bg-slate-50 dark:bg-slate-900 p-2 rounded-xl border border-slate-200/80 dark:border-slate-800">
             <span className="text-[10px] text-slate-400 block">Service</span>
-            <strong className="text-slate-200 text-[11px] truncate block">{leg.operator}</strong>
+            <strong className="text-slate-800 dark:text-slate-200 text-[11px] truncate block">{leg.operator}</strong>
           </div>
-          <div className="bg-slate-900 p-2 rounded-xl border border-slate-800 flex items-center justify-between">
+          <div className="bg-slate-50 dark:bg-slate-900 p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
             <div>
               <span className="text-[10px] text-slate-400 block">PNR</span>
               <strong className={`text-${color}-400 font-mono text-[11px]`}>{leg.pnr}</strong>
@@ -59,13 +59,13 @@ export default function TransitLogistics({ transit }) {
           </div>
         </div>
 
-        <div className="bg-slate-900 p-2 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
-          <span className="text-slate-300">Berths: <strong className="text-amber-300 font-mono">{leg.seats}</strong></span>
+        <div className="bg-slate-50 dark:bg-slate-900 p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs">
+          <span className="text-slate-700 dark:text-slate-300">Berths: <strong className="text-amber-300 font-mono">{leg.seats}</strong></span>
           <span className="text-[10px] text-slate-400 font-mono">{leg.duration}</span>
         </div>
 
         {leg.notes && (
-          <p className="text-[10px] text-slate-400 bg-slate-900/60 p-2 rounded-lg border border-slate-800 leading-relaxed">
+          <p className="text-[10px] text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/60 p-2 rounded-lg border border-slate-200 dark:border-slate-800 leading-relaxed">
             {leg.notes}
           </p>
         )}
@@ -75,14 +75,14 @@ export default function TransitLogistics({ transit }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-darkborder">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
             <Navigation className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white">First & Last-Mile Transit Matrix</h4>
-            <p className="text-[11px] text-slate-400">Outbound sleeper, return sleeper, and mountain mobility</p>
+            <h4 className="text-sm font-bold text-slate-900 dark:text-white">First & Last-Mile Transit Matrix</h4>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">Outbound sleeper, return sleeper, and mountain mobility</p>
           </div>
         </div>
       </div>

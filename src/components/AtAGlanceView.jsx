@@ -4,12 +4,12 @@ import { Calendar, MapPin, Hotel, Utensils, Compass, CheckCircle2, ChevronRight 
 export default function AtAGlanceView({ days = [], onSelectDay }) {
   return (
     <div className="space-y-4">
-      <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-2 shadow-xl">
-        <h3 className="text-base sm:text-lg font-black text-white font-display flex items-center gap-2">
+      <div className="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl p-5 sm:p-6 space-y-2 shadow-sm">
+        <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white font-display flex items-center gap-2">
           <Compass className="w-5 h-5 text-amber-400" />
           At-A-Glance Master Expedition Matrix (8 Days)
         </h3>
-        <p className="text-xs text-slate-400 leading-relaxed">
+        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
           High-level executive overview of regions, hotel basecamps, core highlights, and designated pure-veg dining.
         </p>
       </div>
@@ -40,12 +40,12 @@ export default function AtAGlanceView({ days = [], onSelectDay }) {
                   )}
                 </div>
 
-                <h4 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-2 leading-snug">
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors line-clamp-2 leading-snug">
                   {day.title}
                 </h4>
 
                 {/* Hotel Basecamp */}
-                <div className="text-[11px] text-indigo-300 flex items-center gap-1.5 bg-indigo-950/30 border border-indigo-500/20 px-2 py-1 rounded-lg">
+                <div className="text-[11px] text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-500/20 px-2 py-1 rounded-lg">
                   <Hotel className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                   <span className="truncate">{hotel}</span>
                 </div>
@@ -55,7 +55,7 @@ export default function AtAGlanceView({ days = [], onSelectDay }) {
                   <span className="text-[10px] uppercase tracking-wider text-slate-400 font-mono font-bold block">
                     Key Highlights:
                   </span>
-                  <ul className="text-[11px] text-slate-300 space-y-0.5 pl-1">
+                  <ul className="text-[11px] text-slate-600 dark:text-slate-300 space-y-0.5 pl-1">
                     {highlights.slice(0, 3).map((h, hIdx) => (
                       <li key={hIdx} className="flex items-start gap-1.5 leading-tight truncate">
                         <span className="text-amber-400 shrink-0">•</span>
@@ -67,7 +67,7 @@ export default function AtAGlanceView({ days = [], onSelectDay }) {
               </div>
 
               {/* Key Veg Meal & Click CTA */}
-              <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+              <div className="pt-2 border-t border-slate-100 dark:border-darkborder flex items-center justify-between text-[11px]">
                 <div className="flex items-center gap-1 text-emerald-400 truncate pr-2">
                   <Utensils className="w-3 h-3 shrink-0" />
                   <span className="truncate">{vegMeal}</span>

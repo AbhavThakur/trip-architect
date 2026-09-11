@@ -35,13 +35,13 @@ export default function VegDiningAudio({ vegDining }) {
     <div className="space-y-5">
       {/* Audio Survival Phrases */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-darkborder">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
               <Volume2 className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-sm font-black text-white">Dietary & Veg Audio Survival Cards</h4>
+              <h4 className="text-sm font-black text-slate-900 dark:text-white">Dietary & Veg Audio Survival Cards</h4>
               <p className="text-[11px] text-slate-400">1-Tap native pronunciation for waiters and street vendors</p>
             </div>
           </div>
@@ -102,26 +102,26 @@ export default function VegDiningAudio({ vegDining }) {
       {/* Verified Restaurants Directory */}
       {restaurants && restaurants.length > 0 && (
         <div className="space-y-3 pt-2">
-          <div className="flex items-center gap-2 pb-2 border-b border-slate-800">
+          <div className="flex items-center gap-2 pb-2 border-b border-slate-200 dark:border-darkborder">
             <div className="w-7 h-7 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
               <Utensils className="w-3.5 h-3.5" />
             </div>
-            <h4 className="text-xs sm:text-sm font-black text-white">Verified Pure Veg & Indian Restaurants</h4>
+            <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white">Verified Pure Veg & Indian Restaurants</h4>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {restaurants.map((r, idx) => (
-              <div key={idx} className="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2">
+              <div key={idx} className="bg-white dark:bg-darkcard p-3.5 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm space-y-2">
                 <div className="flex items-center justify-between">
-                  <strong className="text-xs font-bold text-white">{r.name}</strong>
+                  <strong className="text-xs font-bold text-slate-900 dark:text-white">{r.name}</strong>
                   <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
                     {r.city}
                   </span>
                 </div>
                 <span className="text-[11px] text-emerald-400 font-semibold block">{r.cuisine}</span>
-                <p className="text-[11px] text-slate-400">{r.address}</p>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400">{r.address}</p>
                 {r.note && (
-                  <p className="text-[10px] text-slate-500 italic bg-slate-900 p-1.5 rounded-lg border border-slate-850">
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 italic bg-slate-50 dark:bg-slate-900 p-1.5 rounded-lg border border-slate-200 dark:border-slate-800">
                     {r.note}
                   </p>
                 )}

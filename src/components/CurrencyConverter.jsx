@@ -10,14 +10,14 @@ export default function CurrencyConverter({ currency }) {
   const inrValue = Math.round(foreignAmount * rate);
 
   return (
-    <div className="bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div className="bg-white dark:bg-darkcard p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm space-y-4">
+      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
             <Calculator className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-black text-white">Live FX & Currency Converter</h4>
+            <h4 className="text-sm font-black text-slate-900 dark:text-white">Live FX & Currency Converter</h4>
             <p className="text-[11px] text-slate-400">
               Offline calculator • 100,000 {currency?.code || "VND"} ≈ ₹{Math.round(100000 * rate).toLocaleString()} INR
             </p>
@@ -48,7 +48,7 @@ export default function CurrencyConverter({ currency }) {
       {/* Interactive Input & Output */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
         {/* Foreign Currency Input */}
-        <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+        <div className="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1">
           <label className="text-[10px] uppercase font-bold text-slate-400 block">
             Foreign Amount ({currency?.code || "VND"})
           </label>

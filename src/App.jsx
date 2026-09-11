@@ -28,20 +28,18 @@ export default function App() {
   const [isLostSosModalOpen, setIsLostSosModalOpen] = useState(false);
   const [isCloudSynced, setIsCloudSynced] = useState(false);
   const [seniorMode, setSeniorMode] = useState(false);
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isIos, setIsIos] = useState(false);
 
   // Initialize Theme and Senior Mode
   useEffect(() => {
-    const savedTheme = localStorage.getItem("travel_theme") || "dark";
+    const savedTheme = localStorage.getItem("travel_theme") || "light";
     setTheme(savedTheme);
     if (savedTheme === "light") {
       document.documentElement.classList.remove("dark");
-      document.documentElement.classList.add("light-mode");
     } else {
       document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light-mode");
     }
 
     const savedSenior = localStorage.getItem("travel_senior_mode") === "true";
@@ -54,10 +52,8 @@ export default function App() {
     localStorage.setItem("travel_theme", nextTheme);
     if (nextTheme === "light") {
       document.documentElement.classList.remove("dark");
-      document.documentElement.classList.add("light-mode");
     } else {
       document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light-mode");
     }
   };
 
@@ -142,7 +138,7 @@ export default function App() {
   return (
     <div className={"min-h-screen flex flex-col font-sans antialiased transition-colors " + (
       theme === "light"
-        ? "bg-[#f8fafc] text-slate-800"
+        ? "bg-[#f8fafc] text-slate-900"
         : "bg-[#090d16] text-slate-100 selection:bg-emerald-500 selection:text-white"
     )}>
       {/* Top HUD Header with Full Controls */}

@@ -35,9 +35,9 @@ export default function LostSosModal({ isOpen, onClose }) {
   return (
     <div className="fixed inset-0 bg-rose-950/90 backdrop-blur-md z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-slate-900 border-2 border-rose-600 rounded-t-3xl sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-darkborder pb-3">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-2xl bg-rose-600 text-white flex items-center justify-center animate-pulse">
+            <div className="w-9 h-9 rounded-2xl bg-rose-600 text-slate-900 dark:text-white flex items-center justify-center animate-pulse">
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>

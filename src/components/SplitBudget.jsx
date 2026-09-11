@@ -267,7 +267,7 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
   return (
     <div className="space-y-5">
       {/* 1. Header Summary Cards Grid */}
-      <div className="bg-slate-900/90 p-4 sm:p-5 rounded-3xl border border-slate-800 shadow-xl space-y-4">
+      <div className="bg-gradient-to-r from-purple-950 via-slate-900 to-slate-950 text-white p-4 sm:p-5 rounded-3xl border border-purple-800/70 shadow-xl space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
@@ -375,8 +375,8 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
       </div>
 
       {/* 2. Category Filter Pills & Subtotal Bar */}
-      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-        <div className="p-3 border-b border-slate-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
+      <div className="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden shadow-sm">
+        <div className="p-3 border-b border-slate-100 dark:border-darkborder bg-slate-50/70 dark:bg-darkcard flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pr-1">Filter:</span>
           {Object.entries(BUDGET_CATEGORIES).map(([key, cat]) => {
             const Icon = cat.icon;
@@ -394,7 +394,7 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
               >
                 <Icon className="w-3.5 h-3.5" />
                 <span>{cat.label}</span>
-                <span className={"px-1.5 py-0.2 rounded-full text-[9px] " + (isActive ? "bg-white/20 text-white" : "bg-slate-800 text-slate-300")}>
+                <span className={"px-1.5 py-0.2 rounded-full text-[9px] " + (isActive ? "bg-white/20 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300")}>
                   {count}
                 </span>
               </button>
@@ -403,7 +403,7 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
         </div>
 
         {activeFilter !== "all" && (
-          <div className="px-4 py-2 bg-purple-950/40 border-b border-purple-900/40 text-xs text-purple-300 flex justify-between items-center">
+          <div className="px-4 py-2 bg-purple-50 dark:bg-purple-950/40 border-b border-purple-200 dark:border-purple-900/40 text-xs text-purple-800 dark:text-purple-300 flex justify-between items-center">
             <span className="font-semibold">Showing {BUDGET_CATEGORIES[activeFilter]?.label || activeFilter} ({filteredItems.length} items)</span>
             <span className="font-mono font-bold">Subtotal: ₹{filteredSubtotal.toLocaleString("en-IN")}</span>
           </div>
@@ -412,7 +412,7 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
         {/* Master Budget Items Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
-            <thead className="bg-slate-950 text-[10px] uppercase font-bold text-slate-400 border-b border-slate-800">
+            <thead className="bg-slate-100 text-slate-700 dark:bg-slate-950 dark:text-slate-400 text-[10px] uppercase font-bold border-b border-slate-200 dark:border-darkborder">
               <tr>
                 <th className="p-3">Expense Item & Notes</th>
                 <th className="p-3 text-right">Total Cost</th>
@@ -421,7 +421,7 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
                 <th className="p-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-850">
+            <tbody className="divide-y divide-slate-100 dark:divide-darkborder">
               {filteredItems.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-slate-500 italic">
@@ -436,28 +436,28 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
                   const ppCost = Math.round((Number(item.total) || 0) / Math.max(1, itemPax));
 
                   return (
-                    <tr key={originalIndex} className="hover:bg-slate-850/60 transition-colors">
+                    <tr key={originalIndex} className="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
                       {/* Title & Notes */}
                       <td className="p-3 align-middle max-w-xs sm:max-w-md">
                         <div className="flex items-center gap-1.5 flex-wrap mb-1">
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-purple-300 border border-slate-700 flex items-center gap-1">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-50 dark:bg-slate-800 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-slate-700 flex items-center gap-1">
                             <Icon className="w-2.5 h-2.5" />
                             {cat.label}
                           </span>
                           {item.date && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-950 text-slate-400 border border-slate-800 flex items-center gap-1">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/70 dark:border-slate-700/60 flex items-center gap-1">
                               <Calendar className="w-2.5 h-2.5 text-purple-400" />
                               {item.date}
                             </span>
                           )}
                         </div>
-                        <div className="font-bold text-white text-xs sm:text-sm">{item.item}</div>
-                        {item.details && <p className="text-[11px] text-slate-400 mt-0.5">{item.details}</p>}
+                        <div className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">{item.item}</div>
+                        {item.details && <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{item.details}</p>}
                       </td>
 
                       {/* Total Cost */}
                       <td className="p-3 text-right whitespace-nowrap align-middle">
-                        <div className="font-mono font-black text-white text-sm sm:text-base">
+                        <div className="font-mono font-black text-slate-900 dark:text-white text-sm sm:text-base">
                           ₹{Number(item.total || 0).toLocaleString("en-IN")}
                         </div>
                       </td>
@@ -523,7 +523,7 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
       </div>
 
       {/* 3. Live On-Trip Spends Feed */}
-      <div className="bg-slate-900/90 p-4 sm:p-5 rounded-3xl border border-slate-800 shadow-xl space-y-3">
+      <div className="bg-white dark:bg-darkcard p-4 sm:p-5 rounded-3xl border border-slate-200 dark:border-darkborder shadow-sm space-y-3">
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">

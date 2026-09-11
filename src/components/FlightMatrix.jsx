@@ -226,13 +226,13 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
   return (
     <div className="space-y-4">
       {/* Header Bar with Action */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-darkborder">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
             <Plane className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-sm font-black text-white">Connecting Flight Matrix & PNRs</h4>
+            <h4 className="text-sm font-black text-slate-900 dark:text-white">Connecting Flight Matrix & PNRs</h4>
             <p className="text-[11px] text-slate-400">Multi-origin routing with layover hub protection</p>
           </div>
         </div>
@@ -258,12 +258,12 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
           return (
             <div
               key={key || idx}
-              className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 hover:border-indigo-500/40 transition-all"
+              className="bg-white dark:bg-darkcard p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-darkborder space-y-3 hover:border-indigo-500/40 shadow-sm transition-all"
             >
               {/* Card Header with Sector, Pax, and Edit Button */}
-              <div className="flex items-center justify-between border-b border-slate-850 pb-2.5">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-darkborder pb-2.5">
                 <div>
-                  <span className="font-extrabold text-xs sm:text-sm text-indigo-300 block">{f.sector}</span>
+                  <span className="font-extrabold text-xs sm:text-sm text-indigo-600 dark:text-indigo-300 block font-bold">{f.sector}</span>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold">
                       {f.passengers || f.pax || "Travelers"}
@@ -278,7 +278,7 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
 
                 <button
                   onClick={() => openEditModal(f)}
-                  className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-slate-700/80 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-all"
+                  className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-900 dark:hover:bg-slate-800 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-slate-700/80 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-all"
                 >
                   <PenSquare className="w-3 h-3" />
                   Edit Flight
@@ -290,7 +290,7 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
                 {isConn && leg1 ? (
                   <>
                     {/* Leg 1 */}
-                    <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                    <div className="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
                       <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 mb-1">
                         <span>Leg 1 Departure</span>
                         {typeof leg1 === "object" && leg1.flightNo && (
@@ -298,9 +298,9 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
                         )}
                       </div>
                       {typeof leg1 === "string" ? (
-                        <p className="text-slate-200">{leg1}</p>
+                        <p className="text-slate-800 dark:text-slate-200">{leg1}</p>
                       ) : (
-                        <div className="text-slate-200 leading-snug">
+                        <div className="text-slate-800 dark:text-slate-200 leading-snug">
                           <strong>{leg1.from}</strong> ➔ <strong>{leg1.to}</strong>
                           {(leg1.dept || leg1.arr) && (
                             <div className="text-[11px] font-mono text-slate-400 mt-0.5">
@@ -328,7 +328,7 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
 
                     {/* Leg 2 */}
                     {leg2 && (
-                      <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                      <div className="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
                         <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 mb-1">
                           <span>Leg 2 Final Sector</span>
                           {typeof leg2 === "object" && leg2.flightNo && (
@@ -336,9 +336,9 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
                           )}
                         </div>
                         {typeof leg2 === "string" ? (
-                          <p className="text-slate-200">{leg2}</p>
+                          <p className="text-slate-800 dark:text-slate-200">{leg2}</p>
                         ) : (
-                          <div className="text-slate-200 leading-snug">
+                          <div className="text-slate-800 dark:text-slate-200 leading-snug">
                             <strong>{leg2.from}</strong> ➔ <strong>{leg2.to}</strong>
                             {(leg2.dept || leg2.arr) && (
                               <div className="text-[11px] font-mono text-slate-400 mt-0.5">
@@ -352,12 +352,12 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
                   </>
                 ) : (
                   /* Direct Flight */
-                  <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800 space-y-1.5">
+                  <div className="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1.5">
                     <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400">
                       <span>Direct Non-Stop Flight</span>
                       <span className="font-mono font-bold text-indigo-400">{f.airline} • {f.flightNo}</span>
                     </div>
-                    <div className="text-slate-200 font-bold">
+                    <div className="text-slate-900 dark:text-white font-bold">
                       {f.from || f.route?.split("➔")[0]?.trim()} ➔ {f.to || f.route?.split("➔")[1]?.trim()}
                     </div>
                     {(f.dept || f.arr) && (
@@ -377,7 +377,7 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
               </div>
 
               {/* PNR and Copy */}
-              <div className="flex items-center justify-between pt-1 border-t border-slate-850 text-xs">
+              <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-darkborder text-xs">
                 <div className="flex items-center gap-1.5">
                   <span className="text-slate-400 text-[10px] uppercase font-bold">Booking PNR:</span>
                   <strong className="font-mono text-emerald-400 font-black text-xs sm:text-sm">
@@ -387,7 +387,7 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
                 {f.pnr && (
                   <button
                     onClick={() => copyPnr(f.pnr)}
-                    className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg text-[10px] font-bold border border-slate-800 flex items-center gap-1 transition-all"
+                    className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-800 flex items-center gap-1 transition-all"
                   >
                     {copiedPnr === f.pnr ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                     {copiedPnr === f.pnr ? "Copied!" : "Copy PNR"}
@@ -403,7 +403,7 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
           <div className="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-darkborder pb-3">
               <h3 className="font-bold text-sm text-white flex items-center gap-2">
                 <Plane className="w-4 h-4 text-indigo-400" />
                 Edit Flight Matrix & Schedule

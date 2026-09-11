@@ -71,7 +71,7 @@ export default function HubPage({ trips = [], onSelectTrip, onAddTrip }) {
       </div>
 
       {/* Filter Tabs & Search Bar */}
-      <div className="flex items-center justify-between gap-3 border-b border-slate-800 pb-3 flex-wrap">
+      <div className="flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3 flex-wrap">
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
           <button
             onClick={() => setFilter("all")}
@@ -128,10 +128,10 @@ export default function HubPage({ trips = [], onSelectTrip, onAddTrip }) {
                   🇮🇳
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-black text-white font-display">
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white font-display">
                     Domestic Expeditions
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Western Ghats, hill retreats, bus/train transits, and road trips
                   </p>
                 </div>
@@ -156,10 +156,10 @@ export default function HubPage({ trips = [], onSelectTrip, onAddTrip }) {
                   🌐
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-black text-white font-display">
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white font-display">
                     International Passports
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Global voyages, multi-leg connecting flights & foreign companions
                   </p>
                 </div>

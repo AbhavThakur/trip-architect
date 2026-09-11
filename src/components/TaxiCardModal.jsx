@@ -55,41 +55,41 @@ export default function TaxiCardModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[9999] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl text-left relative my-auto">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+      <div className="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder text-slate-900 dark:text-white rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl text-left relative my-auto">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-darkborder">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
               <Car className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm sm:text-base font-black text-white font-display">
+              <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white font-display">
                 Grab & Taxi Driver Address Card
               </h3>
-              <p className="text-[11px] text-slate-400">Show your phone screen to the driver</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Show your phone screen to the driver</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800">
+          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* City Switcher */}
-        <div className="grid grid-cols-3 gap-1.5 bg-slate-950 p-1 rounded-2xl border border-slate-800 text-xs font-bold">
+        <div className="grid grid-cols-3 gap-1.5 bg-slate-100 dark:bg-slate-950 p-1 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-bold">
           <button
             onClick={() => setSelectedCity("hanoi")}
-            className={"py-1.5 rounded-xl transition-all " + (selectedCity === "hanoi" ? "bg-amber-500 text-slate-950" : "text-slate-400 hover:text-white")}
+            className={"py-1.5 rounded-xl transition-all " + (selectedCity === "hanoi" ? "bg-amber-500 text-slate-950" : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white")}
           >
             Hà Nội
           </button>
           <button
             onClick={() => setSelectedCity("hoian")}
-            className={"py-1.5 rounded-xl transition-all " + (selectedCity === "hoian" ? "bg-amber-500 text-slate-950" : "text-slate-400 hover:text-white")}
+            className={"py-1.5 rounded-xl transition-all " + (selectedCity === "hoian" ? "bg-amber-500 text-slate-950" : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white")}
           >
             Hội An
           </button>
           <button
             onClick={() => setSelectedCity("danang")}
-            className={"py-1.5 rounded-xl transition-all " + (selectedCity === "danang" ? "bg-amber-500 text-slate-950" : "text-slate-400 hover:text-white")}
+            className={"py-1.5 rounded-xl transition-all " + (selectedCity === "danang" ? "bg-amber-500 text-slate-950" : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white")}
           >
             Đà Nẵng
           </button>

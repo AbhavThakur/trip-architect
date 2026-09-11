@@ -138,14 +138,14 @@ export default function ItineraryTimeline({
   return (
     <div className="space-y-4">
       {/* View Toggle Bar (Detailed Timeline vs At-a-Glance) */}
-      <div className="flex items-center justify-between gap-2 bg-slate-900/90 light-mode:bg-white p-2 rounded-2xl border border-slate-800 light-mode:border-slate-200">
+      <div className="flex items-center justify-between gap-2 bg-white dark:bg-darkcard p-2 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm">
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setViewMode("detailed")}
             className={"px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 " + (
               viewMode === "detailed"
                 ? "bg-amber-500 text-slate-950 font-black shadow"
-                : "text-slate-400 hover:text-white light-mode:hover:text-slate-900"
+                : "text-slate-400 hover:text-slate-900 dark:hover:text-white"
             )}
           >
             <List className="w-3.5 h-3.5" />
@@ -156,7 +156,7 @@ export default function ItineraryTimeline({
             className={"px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 " + (
               viewMode === "glance"
                 ? "bg-amber-500 text-slate-950 font-black shadow"
-                : "text-slate-400 hover:text-white light-mode:hover:text-slate-900"
+                : "text-slate-400 hover:text-slate-900 dark:hover:text-white"
             )}
           >
             <Grid className="w-3.5 h-3.5" />
@@ -225,8 +225,8 @@ export default function ItineraryTimeline({
           )}
 
           {/* Day Selector Pill Bar */}
-          <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <div className="flex items-center gap-1.5 overflow-x-auto">
+          <div className="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-2 shadow-sm flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {normalizedDays.map((d, idx) => (
                 <button
                   key={idx}
@@ -234,10 +234,10 @@ export default function ItineraryTimeline({
                     setSelectedDayIdx(idx);
                     setActiveStopId(null);
                   }}
-                  className={"px-3.5 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 " + (
+                  className={"px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 " + (
                     selectedDayIdx === idx
-                      ? "bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20 font-black scale-105"
-                      : "bg-slate-900 light-mode:bg-white hover:bg-slate-800 text-slate-300 light-mode:text-slate-700 border border-slate-800 light-mode:border-slate-200"
+                      ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                      : "bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                   )}
                 >
                   <span>Day {d.dayNum}</span>
@@ -256,7 +256,7 @@ export default function ItineraryTimeline({
                 className={"px-3.5 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all " + (
                   selectedDayIdx === "all"
                     ? "bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20 font-black"
-                    : "bg-slate-900 light-mode:bg-white hover:bg-slate-800 text-slate-400 border border-slate-800 light-mode:border-slate-200"
+                    : "bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800"
                 )}
               >
                 All Route
@@ -280,12 +280,12 @@ export default function ItineraryTimeline({
             {/* Left Column: Day Itinerary Cards (7 Cols on desktop) */}
             <div className={"space-y-4 lg:col-span-7 " + (mobileView === "map" ? "hidden lg:block" : "block")}>
               {activeDay && (
-                <div className="bg-slate-900/90 light-mode:bg-white border border-slate-800 light-mode:border-slate-200 rounded-3xl p-5 sm:p-6 space-y-4 shadow-xl">
+                <div className="bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-3xl p-5 sm:p-6 space-y-4 shadow-sm">
                   {/* Day Header */}
                   <div className="flex items-start justify-between gap-3 flex-wrap">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 font-mono text-[11px] font-black border border-amber-500/30">
+                        <span className="px-3 py-1 rounded-full bg-slate-900 dark:bg-brand-600 text-white font-extrabold text-xs uppercase tracking-wider">
                           DAY {activeDay.dayNum}
                         </span>
                         {activeDay.date && (
@@ -294,7 +294,7 @@ export default function ItineraryTimeline({
                           </span>
                         )}
                       </div>
-                      <h3 className="text-lg sm:text-xl font-black text-white light-mode:text-slate-900 font-display tracking-tight">
+                      <h3 className="text-lg sm:text-xl font-bold font-display text-slate-900 dark:text-white tracking-tight">
                         {activeDay.title}
                       </h3>
                     </div>
@@ -311,7 +311,7 @@ export default function ItineraryTimeline({
 
                   {/* Weather Banner */}
                   {activeDay.weather && (
-                    <div className="flex items-center gap-2 text-xs bg-slate-950/70 light-mode:bg-slate-50 border border-slate-800/80 light-mode:border-slate-200 rounded-2xl px-3.5 py-2.5 text-slate-300 light-mode:text-slate-700 font-mono">
+                    <div className="flex items-center gap-2 text-xs bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl px-3.5 py-2.5 text-slate-700 dark:text-slate-300 font-mono">
                       <CloudSun className="w-4 h-4 text-amber-400 shrink-0" />
                       <span>{activeDay.weather}</span>
                     </div>
@@ -330,15 +330,15 @@ export default function ItineraryTimeline({
                           onClick={() => setActiveStopId(stop.id)}
                           className={"group rounded-2xl border p-4 transition-all cursor-pointer relative " + (
                             isActive
-                              ? "bg-slate-800/90 light-mode:bg-amber-50/70 border-amber-500 shadow-lg shadow-amber-500/10 ring-1 ring-amber-500/40"
-                              : "bg-slate-950/70 light-mode:bg-slate-50 border-slate-800/90 light-mode:border-slate-200 hover:border-slate-700 hover:bg-slate-900/60"
+                              ? "bg-amber-50/70 dark:bg-amber-950/30 border-amber-500 shadow-md ring-1 ring-amber-500/40"
+                              : "bg-white dark:bg-darkcard border-slate-200 dark:border-darkborder hover:border-slate-300 dark:hover:border-slate-700"
                           )}
                         >
                           <div className="flex items-start gap-3.5">
                             <div className={"w-7 h-7 rounded-xl font-mono text-xs font-black flex items-center justify-center shrink-0 border " + (
                               isActive
-                                ? "bg-amber-500 text-slate-950 border-amber-400 shadow"
-                                : "bg-slate-800 light-mode:bg-slate-200 text-slate-300 light-mode:text-slate-800 border-slate-700 light-mode:border-slate-300"
+                                ? "bg-slate-900 text-white dark:bg-brand-600 border-slate-800 dark:border-brand-500 shadow"
+                                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700"
                             )}>
                               {stop.orderNum}
                             </div>
@@ -347,7 +347,7 @@ export default function ItineraryTimeline({
                               <div className="flex items-center justify-between gap-2 flex-wrap">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   {stop.time && (
-                                    <span className="text-[11px] font-mono font-bold text-amber-400 light-mode:text-amber-700 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                                    <span className="text-[11px] font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
                                       {stop.time}
                                     </span>
                                   )}
@@ -356,7 +356,7 @@ export default function ItineraryTimeline({
                                     <span>{catMeta.label}</span>
                                   </span>
                                   {stop.price && (
-                                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-800 light-mode:bg-slate-200 text-emerald-400 light-mode:text-emerald-700 border border-slate-700 light-mode:border-slate-300">
+                                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-800 text-emerald-400 border border-slate-700">
                                       {stop.price}
                                     </span>
                                   )}
@@ -373,7 +373,7 @@ export default function ItineraryTimeline({
                                           stop: { ...stop }
                                         });
                                       }}
-                                      className="p-1.5 text-slate-400 hover:text-white light-mode:hover:text-slate-900 rounded-lg"
+                                      className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg"
                                       title="Edit Stop"
                                     >
                                       <Edit3 className="w-3.5 h-3.5" />
@@ -395,20 +395,20 @@ export default function ItineraryTimeline({
                                 </div>
                               </div>
 
-                              <h4 className="text-sm sm:text-base font-bold text-white light-mode:text-slate-900">
+                              <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
                                 {stop.name}
                               </h4>
 
                               {stop.desc && (
-                                <p className="text-xs text-slate-300 light-mode:text-slate-600 leading-relaxed">
+                                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                                   {stop.desc}
                                 </p>
                               )}
 
                               {/* Travel Tip / Senior Advice */}
                               {stop.tip && (
-                                <div className="mt-2 text-xs bg-amber-950/25 light-mode:bg-amber-50 border border-amber-500/30 rounded-xl p-2.5 text-amber-200/90 light-mode:text-amber-800 flex items-start gap-2 font-sans">
-                                  <Lightbulb className="w-4 h-4 text-amber-400 light-mode:text-amber-600 shrink-0 mt-0.5" />
+                                <div className="mt-2 text-xs bg-amber-50/70 dark:bg-amber-950/25 border border-amber-200 dark:border-amber-500/30 rounded-xl p-2.5 text-amber-900 dark:text-amber-200/90 flex items-start gap-2 font-sans">
+                                  <Lightbulb className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                                   <span className="leading-snug">{stop.tip}</span>
                                 </div>
                               )}

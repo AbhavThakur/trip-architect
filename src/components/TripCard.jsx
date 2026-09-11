@@ -73,15 +73,16 @@ export default function TripCard({ trip, onPreview, onLaunch }) {
               Preview
             </button>
           )}
-          <a
-            href={trip.url || `#`}
+          <button
+            type="button"
+            onClick={() => onPreview ? onPreview(trip) : null}
             className={`flex-1 py-2 px-4 bg-gradient-to-r ${
               isDomestic ? 'from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500' : 'from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500'
             } text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all`}
           >
             <span>Launch Companion</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
-          </a>
+          </button>
         </div>
       </div>
     </div>

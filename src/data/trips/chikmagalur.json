@@ -2,14 +2,14 @@
   "id": "chikmagalur-2026",
   "title": "Chikmagalur Coffee & Cloud Peaks",
   "destination": "Chikmagalur, Karnataka, India",
-  "flag": "\ud83c\uddee\ud83c\uddf3",
+  "flag": "🇮🇳",
   "status": "upcoming",
   "category": "domestic",
-  "dates": "Sep 12 \u2013 14, 2026",
+  "dates": "Sep 12 – 14, 2026",
   "daysCount": 3,
-  "travelers": "2\u20133 Travelers",
+  "travelers": "2–3 Travelers",
   "heroGradient": "from-emerald-950 via-teal-900 to-slate-950",
-  "badge": "Upcoming \u2022 Western Ghats",
+  "badge": "Upcoming • Western Ghats",
   "accentColor": "#10b981",
   "url": "chikmagalur_trip_architect.html",
   "summary": "3-day weekend escape across lush coffee plantations, rugged 4x4 jeep trails to roaring waterfalls, highest peak trekking at Mullayanagiri (1,930m), and scenic ridge cruising on 125cc scooties.",
@@ -23,7 +23,7 @@
   },
   "transit": {
     "outbound": {
-      "title": "Going Journey: Bengaluru \u2794 Chikmagalur",
+      "title": "Going Journey: Bengaluru ➔ Chikmagalur",
       "mode": "bus",
       "modeLabel": "Overnight AC Sleeper Bus",
       "operator": "KSRTC Airavat Club Class Multi-Axle",
@@ -35,11 +35,11 @@
       "deptTime": "11:00 PM (Sep 11)",
       "to": "Chikmagalur (KSRTC Main Stand)",
       "arrTime": "06:30 AM / 09:30 AM (Sep 12)",
-      "duration": "5h 30m \u2013 6h 30m (245 km)",
+      "duration": "5h 30m – 6h 30m (245 km)",
       "notes": "Highway food stop at Paakashala Yediyur on NH 75. 2-min auto from bus stand to Tresca Hotel."
     },
     "returnTrip": {
-      "title": "Return Journey: Chikmagalur \u2794 Bengaluru",
+      "title": "Return Journey: Chikmagalur ➔ Bengaluru",
       "mode": "bus",
       "modeLabel": "Overnight AC Sleeper Bus",
       "operator": "KSRTC Airavat Multi-Axle",
@@ -191,6 +191,133 @@
           "desc": "Board night bus back to Bengaluru (arrives ~05:00 AM Tue)."
         }
       ]
+    }
+  ],
+  "stays": {
+    "tresca": {
+      "name": "Hotel Tresca (Indira Gandhi Road)",
+      "city": "Chikmagalur",
+      "dates": "Sep 12 – 14, 2026 (2 Nights)",
+      "voucher": "TRESCA-BLR-4019",
+      "address": "Indira Gandhi Road, Joytinagar, Chikmagalur, Karnataka 577101",
+      "phone": "+91 8262 235555",
+      "checkIn": "12:00 PM (Early luggage drop at 09:30 AM cloakroom)",
+      "checkOut": "11:00 AM (Sep 14)",
+      "note": "2-minute auto ride from KSRTC Stand. In-house pure vegetarian dining."
+    }
+  },
+  "checklist": [
+    {
+      "phase": "Trekking & Mountain Gear",
+      "items": [
+        {
+          "id": "chk_leech",
+          "text": "Leech socks for Jhari Falls & rainforest trails",
+          "defaultChecked": true
+        },
+        {
+          "id": "chk_shoes",
+          "text": "Grip trekking shoes / trail runners for Mullayanagiri",
+          "defaultChecked": true
+        },
+        {
+          "id": "chk_poncho",
+          "text": "Rain poncho / windbreaker for mountain summits",
+          "defaultChecked": true
+        },
+        {
+          "id": "chk_flask",
+          "text": "Insulated thermos flask for hot ginger tea / water",
+          "defaultChecked": false
+        }
+      ]
+    },
+    {
+      "phase": "Transit & Documents",
+      "items": [
+        {
+          "id": "chk_pnr_out",
+          "text": "KSRTC Outbound PNR (KSRTC-BLR-892) saved offline",
+          "defaultChecked": true
+        },
+        {
+          "id": "chk_pnr_ret",
+          "text": "KSRTC Return PNR (KSRTC-RET-441) saved offline",
+          "defaultChecked": true
+        },
+        {
+          "id": "chk_dl",
+          "text": "Physical Driver's License for 125cc scooty hire",
+          "defaultChecked": true
+        },
+        {
+          "id": "chk_cash",
+          "text": "Cash (₹4,000) for jeep off-roading & entry tickets",
+          "defaultChecked": true
+        }
+      ]
+    },
+    {
+      "phase": "Health & Estate Shopping",
+      "items": [
+        {
+          "id": "chk_meds",
+          "text": "Motion sickness tablets (Avomine) for ghat curves",
+          "defaultChecked": true
+        },
+        {
+          "id": "chk_odomos",
+          "text": "Odomos mosquito repellent cream",
+          "defaultChecked": true
+        },
+        {
+          "id": "chk_coffee",
+          "text": "Purchase fresh Arabica coffee beans & Malnad green cardamom",
+          "defaultChecked": false
+        }
+      ]
+    }
+  ],
+  "emergency": {
+    "police": "112",
+    "ambulance": "108",
+    "touristSupport": "1800 11 1363",
+    "hospitals": [
+      {
+        "name": "Malnad Hospital & Rotary Blood Bank",
+        "address": "MG Road, Chikmagalur",
+        "phone": "+91 8262 235555",
+        "note": "ICU & 24x7 Casualty"
+      },
+      {
+        "name": "District Government Hospital Chikmagalur",
+        "address": "Mallandur Road, Chikmagalur",
+        "phone": "+91 8262 230211",
+        "note": "Trauma Center"
+      },
+      {
+        "name": "24x7 Apollo Pharmacy (Near Tresca)",
+        "address": "RG Road, 250m walking distance from Tresca Hotel",
+        "phone": "+91 8262 239999",
+        "note": "Open 24 hours"
+      }
+    ]
+  },
+  "coffeeShopping": [
+    {
+      "name": "Coffee Roasters Association",
+      "item": "Single Estate Arabica Peaberry",
+      "location": "Market Road"
+    },
+    {
+      "name": "Malnad Spice Emporium",
+      "item": "Coorg Cinnamon & Green Cardamom",
+      "location": "RG Road"
+    },
+    {
+      "name": "Panduranga Coffee 1938",
+      "item": "Grand Aroma Chicory & Pure Roast",
+      "location": "M.G. Road"
     }
   ]
 }

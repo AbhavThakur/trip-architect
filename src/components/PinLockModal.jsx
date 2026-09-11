@@ -23,9 +23,12 @@ export default function PinLockModal({ onUnlock }) {
     }
   }, [onUnlock]);
 
+  const pinRef = React.useRef('');
+
   const handleDigit = async (d) => {
-    if (pin.length < 4) {
-      const nextPin = pin + d;
+    if (pinRef.current.length < 4) {
+      const nextPin = pinRef.current + d;
+      pinRef.current = nextPin;
       setPin(nextPin);
       setError('');
 
@@ -35,23 +38,30 @@ export default function PinLockModal({ onUnlock }) {
         if (hash === storedHash) {
           sessionStorage.setItem('travel_architect_unlocked', 'true');
           setIsLocked(false);
+          pinRef.current = '';
           if (onUnlock) onUnlock();
         } else {
           setError('Incorrect PIN. Please try again.');
-          setTimeout(() => setPin(''), 400);
+          setTimeout(() => {
+            pinRef.current = '';
+            setPin('');
+          }, 400);
         }
       }
     }
   };
 
   const handleBackspace = () => {
-    if (pin.length > 0) {
-      setPin(pin.slice(0, -1));
+    if (pinRef.current.length > 0) {
+      const nextPin = pinRef.current.slice(0, -1);
+      pinRef.current = nextPin;
+      setPin(nextPin);
       setError('');
     }
   };
 
   const handleClear = () => {
+    pinRef.current = '';
     setPin('');
     setError('');
   };

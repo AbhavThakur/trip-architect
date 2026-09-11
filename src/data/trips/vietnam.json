@@ -1,65 +1,122 @@
 {
-  "id": "vietnam-2026",
+  "id": "vietnam-dec-2026",
   "title": "Vietnam Master Expedition",
-  "destination": "Hanoi, Ha Long Bay, Da Nang & Hoi An",
-  "flag": "\ud83c\uddfb\ud83c\uddf3",
-  "status": "past",
+  "destination": "Hanoi, Ninh Binh, Hoi An & Da Nang",
+  "flag": "🇻🇳",
+  "status": "upcoming",
   "category": "international",
-  "dates": "Dec 3 \u2013 10, 2026",
+  "dates": "Dec 3 – 10, 2026",
   "daysCount": 8,
-  "travelers": "5 Adults",
-  "heroGradient": "from-red-950 via-slate-900 to-amber-950",
-  "badge": "Master Companion \u2022 8 Days",
-  "accentColor": "#ef4444",
-  "url": "vietnam_trip_architect_5_0.html",
-  "summary": "Comprehensive multi-city journey featuring Hanoi Old Quarter street egg coffee, emerald waters of Ha Long Bay overnight cruise, Ba Na Hills Golden Bridge, and lantern-lit Hoi An ancient town.",
+  "travelers": "5 Adults (Family + Parents)",
+  "heroGradient": "from-rose-600 to-amber-600",
+  "badge": "Master Companion • 8 Days",
+  "accentColor": "rose",
+  "summary": "Comprehensive multi-city journey featuring Hanoi Old Quarter street egg coffee, emerald waters of Ha Long Bay overnight cruise, Ba Na Hills Golden Bridge, and UNESCO lantern boat ride in Hoi An.",
   "basecamp": {
-    "name": "Luxury City Hotels + 5-Star Ha Long Bay Cruise",
-    "location": "Hanoi Old Quarter & Da Nang Beachfront",
-    "checkIn": "02:00 PM",
-    "checkOut": "12:00 PM",
-    "arrivalStrategy": "Early morning arrival at Noi Bai T2: Private 9-seater limousine transfer to hotel, baggage drop at concierge, and walking exploration around Hoan Kiem Lake."
+    "name": "Peridot Grand Luxury Hotel (Hanoi)",
+    "address": "33 Duong Thanh, Old Quarter, Hanoi, Vietnam",
+    "phone": "+84 24 3828 0099",
+    "checkIn": "14:00 (Dec 4)",
+    "checkOut": "12:00 (Dec 6)",
+    "voucher": "HANOI-PG-992",
+    "cloakroom": "Available 24/7 for luggage drop before cruise"
+  },
+  "currency": {
+    "code": "VND",
+    "symbol": "₫",
+    "targetCode": "INR",
+    "targetSymbol": "₹",
+    "defaultRate": 0.0033,
+    "presets": [
+      10000,
+      50000,
+      100000,
+      250000,
+      500000,
+      1000000
+    ]
+  },
+  "hotels": {
+    "hanoi": {
+      "name": "La Siesta Classic Ma May",
+      "city": "Hanoi Old Quarter",
+      "dates": "Dec 4–6 & Dec 10 (3 Nights)",
+      "room": "1 Deluxe Double + 1 Family/Triple Suite",
+      "addressVi": "94 Mã Mây, Phường Hàng Buồm, Quận Hoàn Kiếm, Hà Nội",
+      "phone": "+84 24 3926 3641",
+      "pnr": "BOOK-HANOI-101",
+      "speakText": "Làm ơn chở tôi về khách sạn La Siesta Classic, số 94 phố Mã Mây, Hoàn Kiếm, Hà Nội"
+    },
+    "hoian": {
+      "name": "La Siesta Hoi An Resort & Spa",
+      "city": "Hoi An Ancient Town",
+      "dates": "Dec 6–8 (2 Nights)",
+      "room": "1 Deluxe Double + 1 Grand Suite",
+      "addressVi": "132 Hùng Vương, Phường Thanh Hà, Hội An",
+      "phone": "+84 235 3915 915",
+      "pnr": "HOIAN-RESO-202",
+      "speakText": "Làm ơn chở tôi về khu nghỉ dưỡng La Siesta Hội An, số 132 đường Hùng Vương, Hội An"
+    },
+    "danang": {
+      "name": "TMS Hotel Da Nang Beach",
+      "city": "Da Nang My Khe Beach",
+      "dates": "Dec 8–10 (2 Nights)",
+      "room": "1 Ocean Double + 1 Ocean Triple Suite",
+      "addressVi": "292 Võ Nguyên Giáp, Phường Mỹ An, Đà Nẵng",
+      "phone": "+84 236 3755 999",
+      "pnr": "TMS-DANANG-303",
+      "speakText": "Làm ơn chở tôi về khách sạn TMS Hotel Đà Nẵng, biển Mỹ Khê"
+    }
   },
   "flights": [
     {
       "sector": "Delhi Parents Inbound",
       "pax": "2 Parents",
       "isConnecting": true,
-      "route": "DEL \u2794 BKK \u2794 HAN",
-      "leg1": "DEL (Delhi T3) \u2794 BKK (Suvarnabhumi) \u2022 IndiGo 6E 1053 \u2022 23:30 (Dec 3) \u2794 05:15 AM (Dec 4)",
-      "layover": "Bangkok (BKK) \u2022 2h 15m (Wheelchair assistance / Int'l transit)",
-      "leg2": "BKK \u2794 HAN (Noi Bai T2) \u2022 Vietnam Airlines VN 610 \u2022 07:30 AM (Dec 4) \u2794 09:25 AM (Dec 4)",
+      "route": "DEL ➔ BKK ➔ HAN",
+      "leg1": "DEL (Delhi T3) ➔ BKK (Suvarnabhumi) • IndiGo 6E 1053 • 23:30 (Dec 3) ➔ 05:15 AM (Dec 4)",
+      "layover": "Bangkok (BKK) • 2h 15m (Wheelchair assistance / Int'l transit)",
+      "leg2": "BKK ➔ HAN (Noi Bai T2) • Vietnam Airlines VN 610 • 07:30 AM (Dec 4) ➔ 09:25 AM (Dec 4)",
       "pnr": "VN-DEL-784"
     },
     {
       "sector": "Bengaluru Adults Inbound",
       "pax": "3 Adults",
       "isConnecting": true,
-      "route": "BLR \u2794 DMK \u2794 HAN",
-      "leg1": "BLR (Bengaluru T2) \u2794 DMK (Don Mueang) \u2022 Thai AirAsia FD 138 \u2022 23:10 (Dec 3) \u2794 04:30 AM (Dec 4)",
-      "layover": "Bangkok (DMK) \u2022 2h 45m (Through-checked baggage to Hanoi T2)",
-      "leg2": "DMK \u2794 HAN (Noi Bai T2) \u2022 Thai AirAsia FD 642 \u2022 07:15 AM (Dec 4) \u2794 08:45 AM (Dec 4)",
+      "route": "BLR ➔ DMK ➔ HAN",
+      "leg1": "BLR (Bengaluru T2) ➔ DMK (Don Mueang) • Thai AirAsia FD 138 • 23:10 (Dec 3) ➔ 04:30 AM (Dec 4)",
+      "layover": "Bangkok (DMK) • 2h 45m (Through-checked baggage to Hanoi T2)",
+      "leg2": "DMK ➔ HAN (Noi Bai T2) • Thai AirAsia FD 642 • 07:15 AM (Dec 4) ➔ 08:45 AM (Dec 4)",
       "pnr": "AA-BLR-921"
+    },
+    {
+      "sector": "Hanoi ➔ Da Nang Domestic Transfer",
+      "pax": "5 Travelers",
+      "isConnecting": false,
+      "route": "HAN ➔ DAD",
+      "leg1": "HAN (Noi Bai T1) ➔ DAD (Da Nang T1) • Vietnam Airlines VN 167 • 12:45 PM (Dec 6) ➔ 14:10 PM",
+      "layover": null,
+      "leg2": null,
+      "pnr": "VN-HAN-552"
+    },
+    {
+      "sector": "Da Nang ➔ Hanoi Return Transfer",
+      "pax": "5 Travelers",
+      "isConnecting": false,
+      "route": "DAD ➔ HAN",
+      "leg1": "DAD (Da Nang T1) ➔ HAN (Noi Bai T1) • Vietnam Airlines VN 172 • 10:15 AM (Dec 10) ➔ 11:40 AM",
+      "layover": null,
+      "leg2": null,
+      "pnr": "VN-DAD-891"
     }
   ],
-  "features": [
-    {
-      "icon": "plane",
-      "label": "DEL/BLR Connecting Flight Matrix"
-    },
-    {
-      "icon": "calculator",
-      "label": "Dynamic Per-Pax Split Budget"
-    },
-    {
-      "icon": "volume-2",
-      "label": "Veg Dining Vietnamese Audio Cards"
-    },
-    {
-      "icon": "shield",
-      "label": "Passport, Visa & Backup Sync"
-    }
-  ],
+  "limousine": {
+    "vehicle": "Ford Transit 9-Seater VIP DCar President",
+    "driverName": "Nguyen Van Minh (Private English-speaking)",
+    "phone": "+84 90 412 8899",
+    "route": "Airport pickups ➔ Ninh Binh day tour ➔ Da Nang intercity transfers",
+    "includes": "High-speed highway tolls, bottled water, USB charging ports in all seats"
+  },
   "budget": {
     "total": 385000,
     "currency": "INR",
@@ -94,32 +151,1440 @@
   },
   "itinerary": [
     {
-      "day": "Day 1 (Dec 4)",
-      "title": "Arrival in Hanoi, Noi Bai VIP Limousine, Old Quarter & Water Puppet Show"
+      "day": 1,
+      "date": "Friday, Dec 4, 2026",
+      "title": "Hanoi Arrival, West Lake, Temple of Literature & Water Puppets",
+      "region": "North Vietnam",
+      "regionCode": "north",
+      "subtitle": "Parents land DEL at 05:30 AM; BLR group lands 08:45 AM. Unified 09:30 AM pickup by private 9-seater DCar limousine.",
+      "hotelName": "La Siesta Classic Ma May",
+      "hotelKey": "hanoi",
+      "weather": "16°C ⛅ Cool breeze • Light jacket",
+      "seniorTip": "Flat walking around lake; VIP Water Puppet theatre is fully indoor seated.",
+      "keyVegMeal": "Sadhu Buddhist Vegetarian Fine Dining (L) & Namaste Hanoi (D)",
+      "limoLeg": "HAN T2 Pickup ➔ Old Quarter (45m)",
+      "atAGlanceHighlights": [
+        "🌅 <strong>Morning:</strong> Unified 09:30 AM Airport Pickup in private 9-seater DCar & Hotel Check-in",
+        "☀️ <strong>Afternoon:</strong> Ho Chi Minh Mausoleum photo stop, One Pillar Pagoda, Tran Quoc Pagoda & Temple of Literature",
+        "🌙 <strong>Evening:</strong> Café Giảng Egg Coffee, VIP Water Puppet Theatre show & Sadhu Gourmet Veg dinner"
+      ],
+      "places": [
+        {
+          "time": "09:30 AM",
+          "name": "Noi Bai Airport (HAN T2 Pickup)",
+          "category": "transit",
+          "flightKey": "del_han",
+          "icon": "fa-plane-arrival",
+          "color": "blue",
+          "desc": "Unified family pickup at Terminal 2 Arrivals Pillar 10. Board dedicated Ford Transit 9-seater VIP Limousine.",
+          "coords": [
+            21.2212,
+            105.8072
+          ],
+          "tags": [
+            "Airport",
+            "Private DCar"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "45 mins",
+            "icon": "fa-car-side",
+            "desc": "Expressway drive into Hanoi Old Quarter",
+            "dist": "28 km"
+          }
+        },
+        {
+          "time": "10:30 AM",
+          "name": "La Siesta Classic Ma May (Check-in)",
+          "category": "hotel",
+          "hotelKey": "hanoi",
+          "icon": "fa-hotel",
+          "color": "blue",
+          "desc": "Welcome herbal drink, luggage drop, freshen up in double + triple suites.",
+          "coords": [
+            21.0345,
+            105.8524
+          ],
+          "tags": [
+            "Hotel",
+            "Old Quarter"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "12 mins",
+            "icon": "fa-car-side",
+            "desc": "Private DCar drive to Ba Dinh district",
+            "dist": "3 km"
+          }
+        },
+        {
+          "time": "12:15 PM",
+          "name": "Ho Chi Minh Mausoleum & One Pillar Pagoda",
+          "category": "attraction",
+          "icon": "fa-landmark",
+          "color": "amber",
+          "desc": "Iconic Ba Dinh Square photo stop and the historic 11th-century One Pillar Pagoda built over a square lotus pond.",
+          "coords": [
+            21.0358,
+            105.8335
+          ],
+          "tags": [
+            "Historic Landmark",
+            "Photo Stop"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "8 mins",
+            "icon": "fa-car-side",
+            "desc": "Drive to fine-dining veg restaurant",
+            "dist": "2 km"
+          }
+        },
+        {
+          "time": "01:15 PM",
+          "name": "Sadhu Vegetarian Restaurant (Fine Dining)",
+          "category": "food",
+          "icon": "fa-utensils",
+          "color": "emerald",
+          "desc": "Gourmet Buddhist plant-based feast. Try tofu in passion fruit sauce, lotus seed fried rice, and pumpkin soup.",
+          "coords": [
+            21.0242,
+            105.8443
+          ],
+          "tags": [
+            "Pure Veg",
+            "Buddhist Chay",
+            "Parent Friendly"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "10 mins",
+            "icon": "fa-car-side",
+            "desc": "Drive along West Lake shoreline",
+            "dist": "3.5 km"
+          }
+        },
+        {
+          "time": "02:45 PM",
+          "name": "Tran Quoc Pagoda (West Lake)",
+          "category": "attraction",
+          "icon": "fa-place-of-worship",
+          "color": "amber",
+          "desc": "Oldest Buddhist temple in Hanoi (6th century) set on a picturesque islet in scenic West Lake.",
+          "coords": [
+            21.0483,
+            105.8364
+          ],
+          "tags": [
+            "Oldest Pagoda",
+            "West Lake"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "10 mins",
+            "icon": "fa-car-side",
+            "desc": "Drive to Temple of Literature",
+            "dist": "3 km"
+          }
+        },
+        {
+          "time": "04:00 PM",
+          "name": "Temple of Literature (Văn Miếu)",
+          "category": "attraction",
+          "icon": "fa-graduation-cap",
+          "color": "amber",
+          "desc": "Vietnam's first university founded in 1070. Peaceful courtyards, ancient turtle stelae, and Confucius shrine.",
+          "coords": [
+            21.0293,
+            105.8358
+          ],
+          "tags": [
+            "Vietnam 1st Univ",
+            "UNESCO Heritage"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "8 mins",
+            "icon": "fa-car-side",
+            "desc": "Drive to Hoan Kiem Lake",
+            "dist": "2 km"
+          }
+        },
+        {
+          "time": "05:15 PM",
+          "name": "Café Giảng (Original Egg Coffee)",
+          "category": "food",
+          "icon": "fa-mug-hot",
+          "color": "amber",
+          "desc": "Birthplace of Vietnamese Egg Coffee (Cà Phê Trứng) since 1946. Whipped egg yolk custard atop robusta coffee.",
+          "coords": [
+            21.034,
+            105.855
+          ],
+          "tags": [
+            "Egg Friendly",
+            "Iconic Cafe"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "5 mins",
+            "icon": "fa-person-walking",
+            "desc": "Walk to theatre entrance",
+            "dist": "350 m"
+          }
+        },
+        {
+          "time": "06:15 PM",
+          "name": "Thang Long Water Puppet Theatre (VIP Show)",
+          "category": "attraction",
+          "ticketLink": "https://www.klook.com",
+          "icon": "fa-masks-theater",
+          "color": "purple",
+          "desc": "VIP front-row seated traditional folklore puppet performance with live folk orchestra.",
+          "coords": [
+            21.0322,
+            105.8538
+          ],
+          "tags": [
+            "VIP Front Row",
+            "Indoor Seating"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "8 mins",
+            "icon": "fa-car-side",
+            "desc": "Short drive to Indian dinner",
+            "dist": "1.2 km"
+          }
+        },
+        {
+          "time": "07:45 PM",
+          "name": "Namaste Hanoi (North Indian Dinner)",
+          "category": "food",
+          "icon": "fa-utensils",
+          "color": "emerald",
+          "desc": "Yellow dal tadka, paneer butter masala, piping hot tandoori rotis and jeera rice.",
+          "coords": [
+            21.027,
+            105.845
+          ],
+          "tags": [
+            "North Indian",
+            "Pure Veg"
+          ],
+          "seniorFriendly": true
+        }
+      ],
+      "shoppingGems": [
+        {
+          "place": "Hàng Dầu Street (Shoe Street)",
+          "items": "First-copy New Balance (550/9060), Nike, Sambas",
+          "price": "400k–650k VND (₹1,300–₹2,100)",
+          "tip": "Bargain start at 50%!"
+        },
+        {
+          "place": "Đinh Liệt Street",
+          "items": "North Face Gore-Tex waterproof windbreakers",
+          "price": "350k–550k VND (₹1,150–₹1,800)",
+          "tip": "Test YKK metal zippers on the spot."
+        },
+        {
+          "place": "Hàng Gai (Silk Street)",
+          "items": "100% Pure Mulberry Silk scarves & ties",
+          "price": "120k–350k VND (₹400–₹1,200)",
+          "tip": "Packs completely flat in hand luggage."
+        }
+      ]
     },
     {
-      "day": "Day 2 (Dec 5)",
-      "title": "Ho Chi Minh Mausoleum, Train Street Egg Coffee & Temple of Literature"
+      "day": 2,
+      "date": "Saturday, Dec 5, 2026",
+      "title": "Ninh Binh Day Tour: Hoa Lu Ancient Capital & Tam Coc Karsts",
+      "region": "North Vietnam",
+      "regionCode": "north",
+      "subtitle": "Private 9-seater DCar expressway drive to Ninh Binh (90 km). Explore Hoa Lu 10th-century royal temples of King Dinh & King Le, followed by a serene Tam Coc sampan boat cruise through 3 karst caves in 'Halong Bay on Land'. Return to Hanoi Old Quarter.",
+      "hotelName": "La Siesta Classic Ma May",
+      "hotelKey": "hanoi",
+      "weather": "19°C 🛶 Serene & scenic • Comfortable footwear",
+      "seniorTip": "Flat wooden boarding docks for sampan boats; shaded canopy covers for sun protection.",
+      "keyVegMeal": "Ninh Binh Chay Feast (L) & Dalcheeni Royal Indian Hanoi (D)",
+      "limoLeg": "Hanoi ⇄ Ninh Binh Full Day (90km each way)",
+      "atAGlanceHighlights": [
+        "🌅 <strong>Morning:</strong> Scenic 9-seater DCar drive to Ninh Binh & explore 10th-century Hoa Lu Ancient Capital temples",
+        "☀️ <strong>Afternoon:</strong> Tam Coc Sampan Riverboat cruise through 3 limestone karst caves ('Halong Bay on Land')",
+        "🌙 <strong>Evening:</strong> Smooth return drive to Hanoi Old Quarter, Silk street walk & Dalcheeni Royal Indian dinner"
+      ],
+      "places": [
+        {
+          "time": "08:00 AM",
+          "name": "Board Private 9-Seater DCar to Ninh Binh",
+          "category": "transit",
+          "icon": "fa-van-shuttle",
+          "color": "blue",
+          "desc": "Direct expressway drive south to Ninh Binh (90 km) with scheduled coffee and restroom break.",
+          "coords": [
+            21.0345,
+            105.8524
+          ],
+          "tags": [
+            "Private DCar",
+            "Expressway"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "1.8 hrs",
+            "icon": "fa-car-side",
+            "desc": "Expressway south through Red River delta",
+            "dist": "92 km"
+          }
+        },
+        {
+          "time": "10:00 AM",
+          "name": "Hoa Lu Ancient Capital (King Dinh & King Le Temples)",
+          "category": "attraction",
+          "icon": "fa-archway",
+          "color": "amber",
+          "desc": "10th-century capital of ancient Vietnam before Hanoi. Shady courtyards and intricate wooden carvings of King Dinh & King Le.",
+          "coords": [
+            20.2833,
+            105.9083
+          ],
+          "tags": [
+            "10th-Century Capital",
+            "Royal Temples"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "15 mins",
+            "icon": "fa-car-side",
+            "desc": "Drive to Tam Coc valley",
+            "dist": "8 km"
+          }
+        },
+        {
+          "time": "12:15 PM",
+          "name": "Gourmet Vegetarian Lunch in Ninh Binh",
+          "category": "food",
+          "icon": "fa-utensils",
+          "color": "emerald",
+          "desc": "Crispy fried tofu in tomato sauce, stir-fried morning glory with garlic, and pumpkin soup.",
+          "coords": [
+            20.252,
+            105.936
+          ],
+          "tags": [
+            "Pure Veg",
+            "Local Ninh Binh"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "5 mins",
+            "icon": "fa-car-side",
+            "desc": "Transfer to Tam Coc pier",
+            "dist": "2 km"
+          }
+        },
+        {
+          "time": "01:30 PM",
+          "name": "Tam Coc Sampan Boat Cruise ('Halong Bay on Land')",
+          "category": "attraction",
+          "ticketLink": "https://www.klook.com",
+          "icon": "fa-water",
+          "color": "cyan",
+          "desc": "Traditional 2-hour hand-rowed sampan cruise along Ngo Dong river, gliding through Hang Ca, Hang Hai, and Hang Ba karst caves.",
+          "coords": [
+            20.218,
+            105.937
+          ],
+          "tags": [
+            "Halong on Land",
+            "3 Karst Caves",
+            "Senior Friendly"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "1.8 hrs",
+            "icon": "fa-car-side",
+            "desc": "Expressway return drive to Hanoi",
+            "dist": "92 km"
+          }
+        },
+        {
+          "time": "04:30 PM",
+          "name": "Return Scenic Drive to Hanoi Old Quarter",
+          "category": "transit",
+          "icon": "fa-van-shuttle",
+          "color": "blue",
+          "desc": "Comfortable air-conditioned limousine ride back to Hanoi hotel.",
+          "coords": [
+            21.0345,
+            105.8524
+          ],
+          "tags": [
+            "Private DCar"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "10 mins",
+            "icon": "fa-person-walking",
+            "desc": "Stroll to silk street",
+            "dist": "500 m"
+          }
+        },
+        {
+          "time": "06:45 PM",
+          "name": "Hàng Gai Silk & Craft Evening Walk",
+          "category": "shop",
+          "icon": "fa-bag-shopping",
+          "color": "pink",
+          "desc": "Gentle stroll through Hanoi's famous silk street. Shop for pure mulberry silk scarves, lacquer boxes, and paintings.",
+          "coords": [
+            21.033,
+            105.85
+          ],
+          "tags": [
+            "Silk Street",
+            "Flat Stroll"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "10 mins",
+            "icon": "fa-car-side",
+            "desc": "Drive to West Lake",
+            "dist": "3 km"
+          }
+        },
+        {
+          "time": "08:00 PM",
+          "name": "Dalcheeni Hanoi (Royal Indian Pure Veg Dinner)",
+          "category": "food",
+          "icon": "fa-utensils",
+          "color": "emerald",
+          "desc": "Royal Awadhi cuisine overlooking West Lake. Dal makhani, paneer lababdar, stuffed kulchas, and saffron kheer.",
+          "coords": [
+            21.06,
+            105.825
+          ],
+          "tags": [
+            "Royal Indian",
+            "Pure Veg"
+          ],
+          "seniorFriendly": true
+        }
+      ],
+      "shoppingGems": [
+        {
+          "place": "Ninh Binh Craft Workshops",
+          "items": "Hand-embroidered silk tablecloths & pillow covers",
+          "price": "150k–400k VND (₹500–₹1,320)",
+          "tip": "Intricate local lotus flower embroidery."
+        },
+        {
+          "place": "Hàng Gai (Silk Street)",
+          "items": "100% Pure Mulberry Silk scarves & ties",
+          "price": "120k–350k VND (₹400–₹1,200)",
+          "tip": "Packs completely flat in hand luggage."
+        }
+      ]
     },
     {
-      "day": "Day 3 (Dec 6)",
-      "title": "Transfer to Ha Long Bay, Embark 5-Star Balcony Cruise, Kayaking in Karsts"
+      "day": 3,
+      "date": "Sunday, Dec 6, 2026",
+      "title": "Museum of Ethnology ➔ Fly to Da Nang ➔ Hoi An Lanterns",
+      "region": "North ➔ Central Vietnam",
+      "regionCode": "transition",
+      "subtitle": "Morning visit to the renowned Museum of Ethnology stilt houses. Private DCar to airport for domestic flight to Da Nang. Transfer to Hoi An garden resort & evening magical lantern boat ride on Hoai River.",
+      "hotelName": "La Siesta Hoi An Resort & Spa",
+      "hotelKey": "hoian",
+      "weather": "24°C ☀️ Warm & pleasant • Breathable cotton",
+      "seniorTip": "Flat cobbled pedestrian-only streets in Hoi An Ancient Town; stable wooden docks for lantern boats.",
+      "keyVegMeal": "Annen Organic Veg (L) & Baba's Kitchen Hoi An (D)",
+      "limoLeg": "Hanoi Hotel ➔ HAN T1 (40m) & DAD Airport ➔ Hoi An (35m)",
+      "atAGlanceHighlights": [
+        "🌅 <strong>Morning:</strong> Museum of Ethnology stilt houses & artifacts, then private DCar to Noi Bai T1",
+        "☀️ <strong>Afternoon:</strong> 1h 20m scenic Domestic Flight to Da Nang (HAN ➔ DAD) & check-in to Hoi An Garden Resort",
+        "🌙 <strong>Evening:</strong> UNESCO Ancient Town walking tour, Hoai River flower candle lantern boat & Baba's Kitchen Indian dinner"
+      ],
+      "places": [
+        {
+          "time": "09:30 AM",
+          "name": "Vietnam Museum of Ethnology",
+          "category": "attraction",
+          "icon": "fa-masks-theater",
+          "color": "purple",
+          "desc": "Astounding collection of 15,000 artifacts across 54 ethnic groups. Outdoor traditional Black Thai and Ede stilt houses.",
+          "coords": [
+            21.0406,
+            105.7986
+          ],
+          "tags": [
+            "Cultural Museum",
+            "Stilt Houses"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "30 mins",
+            "icon": "fa-car-side",
+            "desc": "Private DCar to Noi Bai Airport Domestic T1",
+            "dist": "24 km"
+          }
+        },
+        {
+          "time": "11:30 AM",
+          "name": "HAN Airport Domestic T1 Transfer",
+          "category": "transit",
+          "icon": "fa-van-shuttle",
+          "color": "blue",
+          "desc": "Smooth check-in for domestic flight to Da Nang.",
+          "coords": [
+            21.2212,
+            105.8072
+          ],
+          "tags": [
+            "Private DCar"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "1.3 hrs",
+            "icon": "fa-plane",
+            "desc": "Direct domestic flight HAN ➔ DAD",
+            "dist": "620 km"
+          }
+        },
+        {
+          "time": "02:30 PM",
+          "name": "Domestic Flight HAN ➔ DAD",
+          "category": "transit",
+          "flightKey": "han_dad",
+          "icon": "fa-plane",
+          "color": "blue",
+          "desc": "Direct 1h 20m flight to Da Nang Airport.",
+          "coords": [
+            16.0544,
+            108.2022
+          ],
+          "tags": [
+            "Domestic Flight"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "35 mins",
+            "icon": "fa-car-side",
+            "desc": "Private DCar transfer to Hoi An Resort",
+            "dist": "30 km"
+          }
+        },
+        {
+          "time": "05:00 PM",
+          "name": "Check in: La Siesta Hoi An Resort & Spa",
+          "category": "hotel",
+          "hotelKey": "hoian",
+          "icon": "fa-hotel",
+          "color": "blue",
+          "desc": "Lush tropical garden resort with saltwater swimming pool and tranquil verandas.",
+          "coords": [
+            15.8795,
+            108.3204
+          ],
+          "tags": [
+            "Luxury Resort",
+            "Hoi An"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "10 mins",
+            "icon": "fa-person-walking",
+            "desc": "Resort shuttle or gentle stroll to Ancient Town",
+            "dist": "900 m"
+          }
+        },
+        {
+          "time": "07:00 PM",
+          "name": "Hoi An Ancient Town & Lantern Boat Ride",
+          "category": "attraction",
+          "icon": "fa-lightbulb",
+          "color": "gold",
+          "desc": "Magical silk lanterns illuminating the canals + gentle 20-min wooden boat ride releasing paper flower candles.",
+          "coords": [
+            15.877,
+            108.328
+          ],
+          "tags": [
+            "Lantern Boat",
+            "Senior Friendly"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "5 mins",
+            "icon": "fa-person-walking",
+            "desc": "Walk down Phan Chu Trinh St",
+            "dist": "300 m"
+          }
+        },
+        {
+          "time": "08:30 PM",
+          "name": "Baba’s Kitchen Hoi An (Indian Dinner)",
+          "category": "food",
+          "icon": "fa-utensils",
+          "color": "emerald",
+          "desc": "Dal makhani, paneer tikka, hot garlic naans, and complimentary kheer dessert.",
+          "coords": [
+            15.8778,
+            108.328
+          ],
+          "tags": [
+            "Indian Food",
+            "Pure Veg Options"
+          ],
+          "seniorFriendly": true
+        }
+      ],
+      "shoppingGems": [
+        {
+          "place": "Hoi An Night Market (Nguyễn Hoàng St)",
+          "items": "Foldable silk & bamboo lanterns (buy 4–5 for home decor)",
+          "price": "35k–80k VND (₹115–₹265)",
+          "tip": "They fold completely flat for suitcase packing."
+        },
+        {
+          "place": "An Hoi Bridge Market",
+          "items": "Handmade leather wallets, belts, and vintage journals",
+          "price": "200k–450k VND (₹660–₹1,485)",
+          "tip": "Can be custom monogrammed in 30 mins."
+        }
+      ]
     },
     {
-      "day": "Day 4 (Dec 7)",
-      "title": "Tai Chi at Sunrise, Sung Sot Cave, Flight to Da Nang, Dragon Bridge Show"
+      "day": 4,
+      "date": "Monday, Dec 7, 2026",
+      "title": "Coconut Basket Boats, UNESCO Heritage & 24hr Tailoring",
+      "region": "Central Vietnam",
+      "regionCode": "central",
+      "subtitle": "Morning circular basket boat ride in coconut forest. Afternoon tailoring fitting and UNESCO heritage exploration.",
+      "hotelName": "La Siesta Hoi An Resort & Spa",
+      "hotelKey": "hoian",
+      "weather": "25°C 🌴 Tropical sunny • Breathable linens",
+      "seniorTip": "Basket boat operators help seniors gently board from stable wooden docks.",
+      "keyVegMeal": "Annen Organic Veg (L) & Nourish Eatery (D)",
+      "limoLeg": "Hoi An ⇄ Coconut Forest (15m)",
+      "atAGlanceHighlights": [
+        "🌅 <strong>Morning:</strong> Cam Thanh Coconut Palm forest circular bamboo basket boat ride with folk spinning show",
+        "☀️ <strong>Afternoon:</strong> UNESCO Japanese Covered Bridge, Fukian Assembly Hall & 24-hour custom suit/blazer tailoring",
+        "🌙 <strong>Evening:</strong> An Hoi night market street shopping & relaxing herbal foot massage"
+      ],
+      "places": [
+        {
+          "time": "09:30 AM",
+          "name": "Cam Thanh Coconut Forest Basket Boats",
+          "category": "attraction",
+          "ticketLink": "https://www.klook.com",
+          "icon": "fa-leaf",
+          "color": "emerald",
+          "desc": "Circular bamboo basket boats through peaceful coconut palm canals.",
+          "coords": [
+            15.872,
+            108.368
+          ],
+          "tags": [
+            "Basket Boats",
+            "Gentle"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "15 mins",
+            "icon": "fa-car-side",
+            "desc": "Short drive back to town",
+            "dist": "5 km"
+          }
+        },
+        {
+          "time": "12:30 PM",
+          "name": "Annen Yoga & Vegetarian Restaurant",
+          "category": "food",
+          "icon": "fa-utensils",
+          "color": "emerald",
+          "desc": "Vegetarian Cao Lau, organic mango salads, and fresh rice paper summer rolls.",
+          "coords": [
+            15.882,
+            108.341
+          ],
+          "tags": [
+            "Organic Veg"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "8 mins",
+            "icon": "fa-person-walking",
+            "desc": "Stroll into historic quarter",
+            "dist": "600 m"
+          }
+        },
+        {
+          "time": "02:30 PM",
+          "name": "Hoi An Historical Sights Walk",
+          "category": "attraction",
+          "icon": "fa-landmark",
+          "color": "amber",
+          "desc": "Japanese Covered Bridge, Phuc Kien (Fukian) Assembly Hall, Tan Ky ancient house.",
+          "coords": [
+            15.8771,
+            108.3259
+          ],
+          "tags": [
+            "UNESCO",
+            "Fukian Hall"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "5 mins",
+            "icon": "fa-person-walking",
+            "desc": "Walk to tailoring house",
+            "dist": "400 m"
+          }
+        },
+        {
+          "time": "04:30 PM",
+          "name": "Custom Tailoring: Yaly / Bebe Tailor",
+          "category": "shop",
+          "icon": "fa-scissors",
+          "color": "pink",
+          "desc": "Get measured for bespoke linen suits, blazers, and dresses. Delivered to resort in 24 hours.",
+          "coords": [
+            15.878,
+            108.33
+          ],
+          "tags": [
+            "24hr Tailoring"
+          ],
+          "seniorFriendly": true
+        }
+      ],
+      "shoppingGems": [
+        {
+          "place": "Yaly Couture / Bebe Tailors",
+          "items": "Custom-made Italian wool/linen suits & blazers",
+          "price": "Blazers: ₹2,200; Suits: ₹6,800",
+          "tip": "Fitting scheduled for tomorrow evening at resort."
+        },
+        {
+          "place": "Cam Thanh Village",
+          "items": "Carved coconut wood chopstick sets & tea boxes",
+          "price": "40k–90k VND (₹130–₹300)",
+          "tip": "Pure natural craft."
+        }
+      ]
     },
     {
-      "day": "Day 5 (Dec 8)",
-      "title": "Ba Na Hills Cable Car, Giant Golden Hands Bridge, French Village"
+      "day": 5,
+      "date": "Tuesday, Dec 8, 2026",
+      "title": "Ba Na Hills (Golden Bridge in Clouds) ➔ Da Nang Beachfront",
+      "region": "Central Vietnam",
+      "regionCode": "central",
+      "subtitle": "Direct cable car ascent to Golden Bridge held by giant stone hands. Afternoon transfer to beachfront hotel in Da Nang.",
+      "hotelName": "TMS Hotel Da Nang Beach",
+      "hotelKey": "danang",
+      "weather": "16°C ⛰️ Mountain mist at summit • Bring hoodie",
+      "seniorTip": "Direct cable car takes seniors directly to Golden Bridge level without steps.",
+      "keyVegMeal": "Ba Na Buffet (L) & Mumtaz Indian Restaurant Da Nang (D)",
+      "limoLeg": "Hoi An ➔ Ba Na Hills ➔ Da Nang Beach (Full Day)",
+      "atAGlanceHighlights": [
+        "🌅 <strong>Morning:</strong> World-record cable car ascent to 1,487m and walk on iconic Golden Bridge in giant stone hands",
+        "☀️ <strong>Afternoon:</strong> Le Jardin D'Amour flower garden, French Village & Fantasy Amusement Park",
+        "🌙 <strong>Evening:</strong> Check-in to TMS Hotel Da Nang Beach (Oceanfront infinity pool) & Mumtaz Indian dinner"
+      ],
+      "places": [
+        {
+          "time": "08:30 AM",
+          "name": "Hoi An ➔ Ba Na Hills Drive",
+          "category": "transit",
+          "icon": "fa-van-shuttle",
+          "color": "blue",
+          "desc": "Private DCar transfer to Ba Na Hills cable car base station.",
+          "coords": [
+            15.8795,
+            108.3204
+          ],
+          "tags": [
+            "Private DCar"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "50 mins",
+            "icon": "fa-car-side",
+            "desc": "Express highway to Ba Na foothills",
+            "dist": "45 km"
+          }
+        },
+        {
+          "time": "09:30 AM",
+          "name": "Cable Car Ascent & Golden Bridge",
+          "category": "attraction",
+          "ticketLink": "https://www.klook.com",
+          "icon": "fa-mountain",
+          "color": "gold",
+          "desc": "World-record cable car to iconic Golden Bridge held by colossal stone hands in mist.",
+          "coords": [
+            15.995,
+            107.986
+          ],
+          "tags": [
+            "Golden Bridge",
+            "Step-free Cable Car"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "45 mins",
+            "icon": "fa-car-side",
+            "desc": "Drive to Da Nang coastal strip",
+            "dist": "32 km"
+          }
+        },
+        {
+          "time": "03:30 PM",
+          "name": "Transfer to TMS Hotel Da Nang Beach",
+          "category": "hotel",
+          "hotelKey": "danang",
+          "icon": "fa-van-shuttle",
+          "color": "blue",
+          "desc": "Check in to beachfront hotel with rooftop infinity pool and ocean panoramas.",
+          "coords": [
+            16.0583,
+            108.2464
+          ],
+          "tags": [
+            "Beachfront"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "10 mins",
+            "icon": "fa-car-side",
+            "desc": "Short drive to Indian restaurant",
+            "dist": "3 km"
+          }
+        },
+        {
+          "time": "07:30 PM",
+          "name": "Dinner at Mumtaz Indian Restaurant",
+          "category": "food",
+          "icon": "fa-utensils",
+          "color": "emerald",
+          "desc": "Pure veg tandoori & curries. Enjoy view of Dragon Bridge on return drive.",
+          "coords": [
+            16.065,
+            108.223
+          ],
+          "tags": [
+            "Indian Food"
+          ],
+          "seniorFriendly": true
+        }
+      ],
+      "shoppingGems": [
+        {
+          "place": "Da Nang Chợ Hàn (Han Market)",
+          "items": "Tropical Hawaiian shirts, woven straw beach bags",
+          "price": "80k–180k VND (₹260–₹600)",
+          "tip": "Great for beachwear and light gifts."
+        },
+        {
+          "place": "Ba Na French Village Boutique",
+          "items": "French roasted dry fruit canisters & miniature bridge models",
+          "price": "120k–300k VND (₹400–₹1,000)",
+          "tip": "Fixed boutique prices."
+        }
+      ]
     },
     {
-      "day": "Day 6 (Dec 9)",
-      "title": "Marble Mountains, UNESCO Lantern Town of Hoi An, Thu Bon River Boats"
+      "day": 6,
+      "date": "Wednesday, Dec 9, 2026",
+      "title": "Marble Mountains (Glass Elevator), Non Nuoc & My Khe Beach",
+      "region": "Central Vietnam",
+      "regionCode": "central",
+      "subtitle": "Morning visit to Marble Mountains via glass elevator (step-free for senior parents). Non Nuoc stone carving village, My Khe white sand beach & Dragon Bridge night fire show.",
+      "hotelName": "TMS Hotel Da Nang Beach",
+      "hotelKey": "danang",
+      "weather": "22°C 🌊 Sunny beach breeze • Sunglasses",
+      "seniorTip": "Take the glass elevator at Marble Mountains to bypass all 156 stairs.",
+      "keyVegMeal": "Vedaana Indian/Veg (L) & Family Beach Dinner (D)",
+      "limoLeg": "Da Nang Hotel ➔ Marble Mt ➔ Non Nuoc ➔ Hotel (25m)",
+      "atAGlanceHighlights": [
+        "🌅 <strong>Morning:</strong> Glass elevator ascent up Marble Mountains to Huyen Khong Cave & Tam Thai Pagoda",
+        "☀️ <strong>Afternoon:</strong> Non Nuoc Stone Carving Village (jade bracelets & figurines) & My Khe beach relaxation",
+        "🌙 <strong>Evening:</strong> Dragon Bridge weekend fire-and-water show & riverfront promenade walk"
+      ],
+      "places": [
+        {
+          "time": "09:00 AM",
+          "name": "Marble Mountains (Glass Elevator Ascent)",
+          "category": "attraction",
+          "icon": "fa-mountain",
+          "color": "gold",
+          "desc": "Glass elevator directly up to Huyen Khong cave, pagodas, and scenic viewpoint.",
+          "coords": [
+            16.004,
+            108.263
+          ],
+          "tags": [
+            "Glass Elevator",
+            "Senior Friendly"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "10 mins",
+            "icon": "fa-car-side",
+            "desc": "Short drive to stone village",
+            "dist": "1.5 km"
+          }
+        },
+        {
+          "time": "11:00 AM",
+          "name": "Non Nuoc Stone Carving Village",
+          "category": "shop",
+          "icon": "fa-gem",
+          "color": "pink",
+          "desc": "Admire centuries-old stone craftsmanship. Shop for carved jade bangles, marble pagoda statues, and talismans.",
+          "coords": [
+            16.001,
+            108.265
+          ],
+          "tags": [
+            "Jade & Stone Art",
+            "Souvenirs"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "15 mins",
+            "icon": "fa-car-side",
+            "desc": "Drive along coastal highway",
+            "dist": "7 km"
+          }
+        },
+        {
+          "time": "01:00 PM",
+          "name": "Vedaana Indian / Veg Restaurant",
+          "category": "food",
+          "icon": "fa-utensils",
+          "color": "emerald",
+          "desc": "Fresh dosas, paneer curries, and refreshing fresh coconut water.",
+          "coords": [
+            16.062,
+            108.24
+          ],
+          "tags": [
+            "Pure Veg Options",
+            "Indian Food"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "5 mins",
+            "icon": "fa-person-walking",
+            "desc": "Walk to beach promenade",
+            "dist": "300 m"
+          }
+        },
+        {
+          "time": "03:30 PM",
+          "name": "My Khe Beach Relaxation & Sea Breeze",
+          "category": "attraction",
+          "icon": "fa-umbrella-beach",
+          "color": "cyan",
+          "desc": "Relax on sun loungers along one of Asia's most beautiful white-sand coastlines.",
+          "coords": [
+            16.0583,
+            108.2464
+          ],
+          "tags": [
+            "White Sand Beach",
+            "Relaxed"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "10 mins",
+            "icon": "fa-car-side",
+            "desc": "Drive to Dragon Bridge",
+            "dist": "3 km"
+          }
+        },
+        {
+          "time": "07:30 PM",
+          "name": "Dragon Bridge Weekend Fire Show",
+          "category": "attraction",
+          "icon": "fa-fire",
+          "color": "amber",
+          "desc": "Witness the colossal golden dragon bridge breathe fire and spray water over Han River.",
+          "coords": [
+            16.061,
+            108.227
+          ],
+          "tags": [
+            "Dragon Bridge",
+            "Night Spectacular"
+          ],
+          "seniorFriendly": true
+        }
+      ],
+      "shoppingGems": [
+        {
+          "place": "Non Nuoc Stone Carving Village",
+          "items": "Carved jade bracelets & marble pagoda figurines",
+          "price": "150k–500k VND (₹500–₹1,650)",
+          "tip": "Pick lightweight jade bangles or talismans."
+        },
+        {
+          "place": "Han River Waterfront Stalls",
+          "items": "Da Nang handcrafted souvenirs & seashell crafts",
+          "price": "40k–120k VND (₹130–₹400)",
+          "tip": "Great small keepsakes."
+        }
+      ]
     },
     {
-      "day": "Day 7 (Dec 10)",
-      "title": "Souvenir & Silk Tailoring Shopping, Flight to Hanoi & Homebound Journey"
+      "day": 7,
+      "date": "Thursday, Dec 10, 2026",
+      "title": "Han Market Cashew Haul ➔ Fly to Hanoi ➔ Farewell Feast",
+      "region": "Central ➔ North Vietnam",
+      "regionCode": "transition",
+      "subtitle": "Morning shopping at Han Market for Grade 1 cashews and coffee. Afternoon domestic flight back to Hanoi. Check in to Old Quarter hotel for grand evening shoe shopping and 5-star celebratory hotpot dinner.",
+      "hotelName": "La Siesta Classic Ma May",
+      "hotelKey": "hanoi",
+      "weather": "17°C 🛍️ Mild Hanoi evening • Light jacket",
+      "seniorTip": "Electric buggy transfer available across Hanoi Old Quarter pedestrian zone.",
+      "keyVegMeal": "Ưu Đàm Chay Celebratory 5-Star Veg Hotpot (D)",
+      "limoLeg": "Da Nang Hotel ➔ DAD Airport (20m) & HAN T1 ➔ Old Quarter (45m)",
+      "atAGlanceHighlights": [
+        "🌅 <strong>Morning:</strong> Da Nang Han Market grand haul: vacuum-packed Grade 1 cashews ('Loại 1') & Trung Nguyên coffee",
+        "☀️ <strong>Afternoon:</strong> 1:30 PM Domestic Flight back to Hanoi (DAD ➔ HAN) & check into Old Quarter hotel",
+        "🌙 <strong>Evening:</strong> Grand shoe shopping spree on Hàng Dầu & Celebratory 5-Star Farewell Dinner at Ưu Đàm Chay"
+      ],
+      "places": [
+        {
+          "time": "09:30 AM",
+          "name": "Da Nang Han Market (Chợ Hàn)",
+          "category": "shop",
+          "icon": "fa-cart-shopping",
+          "color": "amber",
+          "desc": "Grade 1 vacuum cashews ('Loại 1'), dried mangoes, Trung Nguyên coffee, and woven straw bags.",
+          "coords": [
+            16.068,
+            108.224
+          ],
+          "tags": [
+            "Cashews 'Loại 1'",
+            "Fixed Prices"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "20 mins",
+            "icon": "fa-car-side",
+            "desc": "Transfer to Da Nang Airport DAD",
+            "dist": "5 km"
+          }
+        },
+        {
+          "time": "01:30 PM",
+          "name": "Domestic Flight to Hanoi (DAD ➔ HAN)",
+          "category": "transit",
+          "flightKey": "dad_han",
+          "icon": "fa-plane",
+          "color": "blue",
+          "desc": "Direct 1h 20m flight back to Hanoi for grand shopping evening.",
+          "coords": [
+            16.0544,
+            108.2022
+          ],
+          "tags": [
+            "Domestic Flight"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "45 mins",
+            "icon": "fa-car-side",
+            "desc": "Private DCar to Hanoi Old Quarter Hotel",
+            "dist": "28 km"
+          }
+        },
+        {
+          "time": "05:30 PM",
+          "name": "Hanoi Old Quarter Shoe & Silk Shopping",
+          "category": "shop",
+          "icon": "fa-bag-shopping",
+          "color": "pink",
+          "desc": "Hàng Dầu shoes (New Balance/Sambas), Đinh Liệt Gore-Tex jackets, and Hàng Gai pure silk fabrics.",
+          "coords": [
+            21.0328,
+            105.854
+          ],
+          "tags": [
+            "Shoe Street",
+            "50% Bargaining"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "10 mins",
+            "icon": "fa-car-side",
+            "desc": "Short Grab to celebratory restaurant",
+            "dist": "1.5 km"
+          }
+        },
+        {
+          "time": "08:00 PM",
+          "name": "Celebratory Farewell Dinner at Ưu Đàm Chay",
+          "category": "food",
+          "icon": "fa-utensils",
+          "color": "emerald",
+          "desc": "Fine-dining plant-based mushroom hotpots, lemongrass tofu, and herbal desserts in tranquil Buddhist sanctuary.",
+          "coords": [
+            21.0205,
+            105.8526
+          ],
+          "tags": [
+            "Fine Dining Veg",
+            "Sanctuary"
+          ],
+          "seniorFriendly": true
+        }
+      ],
+      "shoppingGems": [
+        {
+          "place": "Da Nang Chợ Hàn (Han Market)",
+          "items": "Grade 1 Salted Cashews ('Loại 1', 500g tin)",
+          "price": "160k–220k VND (₹530–₹725) / tin",
+          "tip": "Buy 6–8 tins (fits in 25kg luggage allowance)."
+        },
+        {
+          "place": "Hanoi Grand Evening Shoe Haul",
+          "items": "Final pairs of sneakers & winter track pants",
+          "price": "350k–600k VND (₹1,150–₹2,000)",
+          "tip": "Bundle 2–3 pairs for extra 10% discount."
+        }
+      ]
+    },
+    {
+      "day": 8,
+      "date": "Friday, Dec 11, 2026",
+      "title": "Dong Xuan Market, Airport VAT Cash Refund & Flights Home",
+      "region": "North Vietnam",
+      "regionCode": "north",
+      "subtitle": "Morning souvenir shopping at Dong Xuan Market. Afternoon transfer to Noi Bai T2 for 8.5% VAT cash refund and return flights.",
+      "hotelName": null,
+      "hotelKey": null,
+      "weather": "17°C ✈️ Mild Hanoi day • Airport layers",
+      "seniorTip": "Airport wheelchair & buggy available upon request at HAN T2 for senior parents.",
+      "keyVegMeal": "Airport Lounge & In-Flight Meals",
+      "limoLeg": "Hanoi Old Quarter ➔ Noi Bai Airport T2 (40m)",
+      "atAGlanceHighlights": [
+        "🌅 <strong>Morning:</strong> Dong Xuan Market morning walk & last-minute Vietnamese specialty shopping",
+        "☀️ <strong>Afternoon:</strong> Private 9-seater DCar transfer to Noi Bai Airport International Terminal 2",
+        "🌙 <strong>Evening:</strong> Claim 8.5% VAT Cash Refund at Customs desk (T2 3rd Fl) & board flights home to DEL and BLR"
+      ],
+      "places": [
+        {
+          "time": "10:30 AM",
+          "name": "Dong Xuan Market & Old Quarter Souvenirs",
+          "category": "shop",
+          "icon": "fa-cart-shopping",
+          "color": "amber",
+          "desc": "Final shopping for tea, wooden crafts, and woven baskets.",
+          "coords": [
+            21.038,
+            105.849
+          ],
+          "tags": [
+            "Historic Market"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "40 mins",
+            "icon": "fa-car-side",
+            "desc": "Private DCar to Noi Bai Airport T2",
+            "dist": "30 km"
+          }
+        },
+        {
+          "time": "03:30 PM",
+          "name": "Transfer to Noi Bai Airport T2",
+          "category": "transit",
+          "icon": "fa-van-shuttle",
+          "color": "blue",
+          "desc": "Board private 9-seater limousine to International Terminal 2.",
+          "coords": [
+            21.2212,
+            105.8072
+          ],
+          "tags": [
+            "Private DCar"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "15 mins",
+            "icon": "fa-person-walking",
+            "desc": "Walk to customs refund desk",
+            "dist": "200 m"
+          }
+        },
+        {
+          "time": "04:30 PM",
+          "name": "Airport VAT 8.5% Cash Refund (HAN T2 3rd Fl)",
+          "category": "shop",
+          "icon": "fa-receipt",
+          "color": "gold",
+          "desc": "Get customs stamp on 3rd floor before security; collect cash inside lounge.",
+          "coords": [
+            21.2212,
+            105.8072
+          ],
+          "tags": [
+            "VAT Cash Refund"
+          ],
+          "seniorFriendly": true,
+          "transitToNext": {
+            "time": "15 mins",
+            "icon": "fa-person-walking",
+            "desc": "Walk to international departure gates",
+            "dist": "300 m"
+          }
+        },
+        {
+          "time": "06:30 PM",
+          "name": "Board Flights Home (Delhi & Bengaluru)",
+          "category": "transit",
+          "flightKey": "han_del",
+          "icon": "fa-plane-departure",
+          "color": "purple",
+          "desc": "DEL flight departs ~19:00 (VN971); BLR departs ~17:30–19:00 (FD643).",
+          "coords": [
+            21.2212,
+            105.8072
+          ],
+          "tags": [
+            "Return Flights"
+          ],
+          "seniorFriendly": true
+        }
+      ],
+      "shoppingGems": [
+        {
+          "place": "Dong Xuan Wholesale Market",
+          "items": "Lotus seed tea, ceramic tea sets, and bamboo trays",
+          "price": "80k–250k VND (₹265–₹825)",
+          "tip": "Great authentic Vietnamese tea."
+        },
+        {
+          "place": "Noi Bai Airport T2 (VAT Refund)",
+          "items": "8.5% Cash refund on gadgets/silk purchases > 2M VND",
+          "price": "Cash in USD / VND",
+          "tip": "Present VAT tax invoice before immigration."
+        }
+      ]
     }
-  ]
+  ],
+  "checklist": [
+    {
+      "phase": 1,
+      "title": "Phase 1: Immediate Action (Flights & Stays)",
+      "badge": "Immediate",
+      "tasks": [
+        {
+          "id": "c1_1",
+          "text": "Book Flights (DEL & BLR ➔ HAN)",
+          "desc": "VN970 & FD642."
+        },
+        {
+          "id": "c1_2",
+          "text": "Book Domestic Flights (HAN ⇄ DAD)",
+          "desc": "Dec 6 & Dec 10."
+        },
+        {
+          "id": "c1_3",
+          "text": "Pre-purchase 20-25kg Checked Bag",
+          "desc": "For cashews & shoes."
+        },
+        {
+          "id": "c1_4",
+          "text": "Reserve Hotels in Hanoi, Hoi An & Da Nang",
+          "desc": "With 'Pure Veg for 5' note."
+        }
+      ]
+    },
+    {
+      "phase": 2,
+      "title": "Phase 2: 30 Days Prior (E-Visas)",
+      "badge": "30 Days Out",
+      "tasks": [
+        {
+          "id": "c2_1",
+          "text": "Apply on Official Gov Portal (evisa.gov.vn)",
+          "desc": "$25 fee. Entry: Noi Bai."
+        },
+        {
+          "id": "c2_2",
+          "text": "Verify Passport MRZ Match",
+          "desc": "Check bottom 2 lines of passport."
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "title": "Phase 3: 15 Days Prior (DCar & Tickets)",
+      "badge": "15 Days Out",
+      "tasks": [
+        {
+          "id": "c3_1",
+          "text": "Reserve Private 9-Seater DCar Limousine",
+          "desc": "For North & Central legs."
+        },
+        {
+          "id": "c3_2",
+          "text": "Book Water Puppet VIP Tickets",
+          "desc": "Dec 4 06:15 PM show."
+        },
+        {
+          "id": "c3_3",
+          "text": "Book Ba Na Hills Cable Car Tickets",
+          "desc": "Dec 8 Golden Bridge."
+        }
+      ]
+    },
+    {
+      "phase": 4,
+      "title": "Phase 4: 7 Days Prior (Apps & Forex)",
+      "badge": "7 Days Out",
+      "tasks": [
+        {
+          "id": "c4_1",
+          "text": "Setup Grab App & Link Zero-Forex Card",
+          "desc": "Card verified."
+        },
+        {
+          "id": "c4_2",
+          "text": "Buy Airalo / Klook eSIMs",
+          "desc": "Activate for 5 phones."
+        },
+        {
+          "id": "c4_3",
+          "text": "Withdraw $400-$500 Crisp $100 USD Bills",
+          "desc": "For gold shop exchange."
+        }
+      ]
+    },
+    {
+      "phase": 5,
+      "title": "Phase 5: On Ground (VAT Refund)",
+      "badge": "On Ground",
+      "tasks": [
+        {
+          "id": "c5_1",
+          "text": "Collect VAT Forms (Hóa Đơn GTGT)",
+          "desc": "Purchases > 2M VND."
+        },
+        {
+          "id": "c5_2",
+          "text": "Claim 8.5% Cash Refund at HAN T2",
+          "desc": "3rd Floor Customs before security."
+        }
+      ]
+    }
+  ],
+  "vegDining": {
+    "phrases": [
+      {
+        "badge": "Strict Pure Veg",
+        "vietnamese": "Tôi ăn chay. Tôi không ăn thịt, cá, hải sản, và nước mắm.",
+        "phonetic": "Toy an chai. Toy khong an thit, ca, hai san, va nuoc mam.",
+        "english": "I am vegetarian. I do not eat meat, fish, seafood, or fish sauce.",
+        "color": "emerald"
+      },
+      {
+        "badge": "Egg Friendly",
+        "vietnamese": "Tôi ăn được trứng gà.",
+        "phonetic": "Toy an duoc trung ga.",
+        "english": "I can eat chicken eggs.",
+        "color": "amber"
+      },
+      {
+        "badge": "No MSG (Health)",
+        "vietnamese": "Làm ơn không cho bột ngọt hoặc mì chính.",
+        "phonetic": "Lam on khong cho bot ngot hoac mi chinh.",
+        "english": "Please do not add MSG or seasoning powder.",
+        "color": "rose"
+      },
+      {
+        "badge": "No Fish Sauce",
+        "vietnamese": "Không dùng nước mắm, chỉ dùng nước tương hoặc muối.",
+        "phonetic": "Khong dung nuoc mam, chi dung nuoc tuong hoac muoi.",
+        "english": "No fish sauce, please use soy sauce or salt only.",
+        "color": "cyan"
+      },
+      {
+        "badge": "Airport VAT Refund",
+        "vietnamese": "Làm ơn xuất hóa đơn VAT hoàn thuế cho tôi.",
+        "phonetic": "Lam on xuat hoa don VAT hoan thue cho toi.",
+        "english": "Please issue a VAT invoice for airport tax refund.",
+        "color": "indigo"
+      },
+      {
+        "badge": "Market Bargain",
+        "vietnamese": "Bớt giá cho tôi một chút được không?",
+        "phonetic": "Bot gia cho toi mot chut duoc khong?",
+        "english": "Can you give me a small discount?",
+        "color": "pink"
+      }
+    ],
+    "restaurants": [
+      {
+        "name": "Sadhu Vegetarian",
+        "cuisine": "Gourmet Buddhist Chay",
+        "city": "Hanoi",
+        "address": "87 Ly Thuong Kiet • 0.8 km from Old Quarter",
+        "note": "Top recommendation for North Vietnam fine dining"
+      },
+      {
+        "name": "Baba's Kitchen",
+        "cuisine": "North & South Indian",
+        "city": "Hoi An",
+        "address": "115 Phan Chu Trinh • Old Town",
+        "note": "Pure veg curries, naan, dal tadka & masala chai"
+      },
+      {
+        "name": "Mumtaz Indian",
+        "cuisine": "City Center Indian",
+        "city": "Da Nang",
+        "address": "231 Tran Phu • Near Dragon Bridge",
+        "note": "Dragon bridge view with authentic vegetarian options"
+      }
+    ]
+  },
+  "shopping": null,
+  "emergency": {
+    "police": "113",
+    "ambulance": "115",
+    "touristSupport": "+84 24 3825 5588",
+    "embassy": {
+      "name": "Embassy of India, Hanoi",
+      "address": "58-60 Tran Hung Dao, Hoan Kiem, Hanoi",
+      "phone": "+84 24 3824 4990",
+      "emergencyPhone": "+84 90 321 0270"
+    },
+    "hospitals": [
+      {
+        "name": "Hanoi French Hospital (L'Hôpital Français)",
+        "address": "No 1 Phuong Mai, Dong Da, Hanoi",
+        "phone": "+84 24 3577 1100",
+        "note": "24/7 International Emergency Room, English & French speaking doctors"
+      },
+      {
+        "name": "Vinmec International Hospital Da Nang",
+        "address": "Corner 30/4 & Nguyen Tri Phuong, Da Nang",
+        "phone": "+84 236 371 1111",
+        "note": "JCI Accredited, Direct billing with Bajaj Allianz"
+      }
+    ],
+    "insurance": {
+      "policyNo": "BAGIC-TRV-89402174",
+      "provider": "Bajaj Allianz Global Travel Care",
+      "tpaHelpline": "+91 124 617 4700",
+      "tollFreeIndia": "1800 209 5858",
+      "claimsEmail": "travelclaims@bajajallianz.co.in"
+    }
+  }
 }

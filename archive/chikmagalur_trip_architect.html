@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#090d16">
+    <meta name="description" content="Chikmagalur Master Travel Architect & Mobile Companion (Sep 12–14, 2026)">
+    <link rel="manifest" href="manifest.json">
+    
+    <title>Chikmagalur Master Travel Architect | Mobile App</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 Pro CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Security Vault & Emergency SOS Modules -->
+    <script src="pin_security.js"></script>
+    <script src="emergency_sos.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: { 500: '#10b981', 600: '#059669', 700: '#047857' },
+                        gold: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' },
+                        darkbg: '#090d16',
+                        darkcard: '#111827',
+                        darkborder: '#1f2937'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root {
+            --sat: env(safe-area-inset-top, 0px);
+            --sab: env(safe-area-inset-bottom, 0px);
+        }
+        body { 
+            background-color: #090d16; 
+            color: #f1f5f9;
+            font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+        .light-mode body { background-color: #f8fafc; color: #0f172a; }
+        .light-mode .bg-slate-900 { background-color: #ffffff !important; border-color: #e2e8f0 !important; }
+        .light-mode .bg-slate-950 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+        .light-mode .text-white { color: #0f172a !important; }
+        .light-mode .text-slate-300 { color: #475569 !important; }
+        .light-mode .border-slate-800 { border-color: #e2e8f0 !important; }
+
+        .pb-safe { padding-bottom: calc(4.75rem + var(--sab, 0px)); }
+        
+        #map-container {
+            height: calc(100vh - 140px);
+            position: sticky;
+            top: 110px;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            border: 1px solid #1f2937;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        #map { width: 100%; height: 100%; z-index: 10; background: #090d16; }
+        .dark-map .leaflet-tile-pane {
+            filter: invert(100%) hue-rotate(180deg) brightness(88%) contrast(90%);
+        }
+
+        @media (max-width: 1024px) {
+            #map-container { height: 380px; position: relative; top: 0; margin-bottom: 1.5rem; }
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* WANDERLOG / AIRBNB CUSTOM MAP PIN STYLES */
+        .custom-map-pin {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6), 0 0 0 2.5px #111827;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            cursor: pointer;
+        }
+        .custom-map-pin:hover, .custom-map-pin.active-pin {
+            transform: scale(1.22) translateY(-4px);
+            z-index: 1000 !important;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.8), 0 0 0 3px #fbbf24;
+        }
+        .pin-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #000000;
+            color: #fbbf24;
+            font-size: 10px;
+            font-weight: 800;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid #111827;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+            font-family: monospace;
+        }
+        
+        .pin-rose { background: linear-gradient(135deg, #f43f5e, #be123c); }
+        .pin-emerald { background: linear-gradient(135deg, #10b981, #047857); }
+        .pin-cyan { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+        .pin-amber { background: linear-gradient(135deg, #f59e0b, #b45309); }
+        .pin-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .pin-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+
+        /* LEAFLET POPUP CUSTOMIZATION */
+        .leaflet-popup-content-wrapper {
+            padding: 0;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: #111827;
+        }
+        .leaflet-popup-content { margin: 0 !important; line-height: 1.4; width: 280px !important; }
+        .leaflet-container a.leaflet-popup-close-button {
+            top: 8px; right: 8px; color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+            font-size: 16px; width: 24px; height: 24px; border-radius: 50%;
+            background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
+        }
+
+        .timeline-card {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            border-left: 3px solid transparent;
+        }
+        .timeline-card:hover {
+            transform: translateX(4px);
+            border-left-color: #10b981;
+        }
+        .timeline-card.active-card {
+            border-left-color: #fbbf24;
+            background: rgba(16, 185, 129, 0.08);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col pb-safe">
+
+    <!-- 1. TOP COMMAND BAR & LIVE HUD -->
+    <header class="bg-slate-950 text-white sticky top-0 z-40 shadow-md border-b border-slate-800 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-3 py-2 flex items-center justify-between gap-1.5 text-xs">
+            
+            <!-- Left: Back to Hub + Dual Live Clocks -->
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="index.html" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 rounded-lg flex items-center gap-1.5 text-[11px] font-bold active:scale-95 transition-all shadow-sm" title="Back to All Trips Hub">
+                    <i class="fa-solid fa-arrow-left text-emerald-400"></i>
+                    <span>Trip Hub</span>
+                </a>
+
+                <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 text-[11px] font-mono">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-slate-400">⛰️ Chikmagalur</span>
+                    <span id="live-time-cmg" class="font-extrabold text-gold-400">--:--</span>
+                </div>
+            </div>
+
+            <!-- Right: Instant Action Pills -->
+            <div class="flex items-center gap-1">
+                <!-- Taxi Card (Kannada Address) -->
+                <button onclick="openTaxiModal()" class="px-2 py-1 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow" title="Show Hotel Address in Kannada">
+                    <i class="fa-solid fa-taxi text-gold-300"></i> Auto Card
+                </button>
+                <!-- Scooty Rental Rules -->
+                <button onclick="openScootyModal()" class="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow" title="125cc Scooty Rules & Pickups">
+                    <i class="fa-solid fa-motorcycle text-blue-200"></i> Scooty
+                </button>
+                <!-- Emergency Contacts -->
+                <button onclick="window.openEmergencySosModal('india')" class="px-2 py-1 bg-rose-700/80 hover:bg-rose-600 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow" title="Emergency SOS & Hospitals">
+                    <i class="fa-solid fa-truck-medical text-rose-300"></i> SOS
+                </button>
+                <!-- 🔒 Lock Vault Button -->
+                <button onclick="window.vaultSecurity.lock()" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow" title="Lock Travel Vault">
+                    <i class="fa-solid fa-lock text-emerald-400"></i> Lock
+                </button>
+                <!-- Senior Comfort Mode -->
+                <button onclick="toggleSeniorPacing()" id="senior-pace-btn" class="px-2 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg flex items-center gap-1 text-[11px]" title="Senior Comfort Pacing">
+                    <i class="fa-solid fa-person-walking-with-cane"></i>
+                </button>
+                <!-- Dark / Light Mode -->
+                <button onclick="toggleLightMode()" id="theme-toggle-btn" class="w-7 h-7 rounded-lg bg-slate-900 text-slate-300 flex items-center justify-center border border-slate-800 text-xs">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hero Sub-Bar -->
+        <div class="bg-slate-900/90 px-3 py-1.5 border-t border-slate-800 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-600 to-teal-800 text-white flex items-center justify-center font-bold text-xs shadow">
+                    <i class="fa-solid fa-mountain"></i>
+                </div>
+                <div>
+                    <h1 class="text-xs font-bold text-white leading-none">Chikmagalur Coffee & Cloud Peaks</h1>
+                    <div id="trip-countdown-banner" class="text-[10px] text-gold-400 font-mono mt-0.5 font-semibold">
+                        ⏳ Sep 12–14, 2026 • 2–3 Travelers • Tresca Basecamp
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="openHotelStrategyModal()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-300 font-bold rounded-xl flex items-center gap-1 text-[11px] active:scale-95">
+                <i class="fa-solid fa-hotel text-amber-400"></i> Tresca Bag Drop
+            </button>
+        </div>
+    </header>
+
+    <!-- 2. DESKTOP & MOBILE NAVIGATION TABS -->
+    <nav class="bg-slate-900 border-b border-slate-800 px-4 sticky top-[73px] z-30 shadow-sm backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex gap-1 overflow-x-auto no-scrollbar py-2" id="nav-tabs">
+            <button onclick="switchTab('itinerary')" id="tab-btn-itinerary" class="tab-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white flex items-center gap-1.5">
+                <i class="fa-solid fa-route"></i> Itinerary & Map
+            </button>
+            <button onclick="switchTab('logistics')" id="tab-btn-logistics" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-hotel text-amber-400"></i> Tresca & Hybrid Transport
+            </button>
+            <button onclick="switchTab('checklist')" id="tab-btn-checklist" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-list-check text-emerald-400"></i> Checklist & Gear
+            </button>
+            <button onclick="switchTab('shopping')" id="tab-btn-shopping" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-mug-hot text-amber-400"></i> Coffee & Malnad Spices
+            </button>
+        </div>
+    </nav>
+
+    <!-- 3. MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto w-full px-3 sm:px-4 py-4 flex-1">
+
+        <!-- =============================================================
+             TAB 1: ITINERARY & SYNCHRONIZED MAP
+             ============================================================= -->
+        <div id="tab-content-itinerary" class="tab-content active">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Left Column: Day Filters + Timeline Cards (7 cols) -->
+                <div class="lg:col-span-7 space-y-4">
+                    
+                    <!-- Day Switcher Pills -->
+                    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                        <button onclick="filterDay('all')" id="day-btn-all" class="day-filter-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-amber-400 border border-amber-500/40">
+                            All 3 Days
+                        </button>
+                        <button onclick="filterDay(1)" id="day-btn-1" class="day-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">
+                            Day 1 (Cab + Jeep)
+                        </button>
+                        <button onclick="filterDay(2)" id="day-btn-2" class="day-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">
+                            Day 2 (125cc Scooty)
+                        </button>
+                        <button onclick="filterDay(3)" id="day-btn-3" class="day-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">
+                            Day 3 (Belur & Bus)
+                        </button>
+                    </div>
+
+                    <!-- Timeline Events List -->
+                    <div id="timeline-list" class="space-y-6">
+                        
+                        <!-- DAY 1 -->
+                        <div class="day-section" data-day="1">
+                            <div class="sticky top-[125px] z-20 bg-slate-950/90 backdrop-blur-md py-2 border-b border-slate-800 flex items-center justify-between mb-3">
+                                <div>
+                                    <span class="text-[10px] font-mono font-extrabold text-emerald-400 uppercase">Day 1 • Saturday, Sep 12</span>
+                                    <h3 class="text-sm font-black text-white">Waterfalls, Cloud Walks & Sunset</h3>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-600/20 text-brand-400 border border-brand-500/30">
+                                    🚖 Private Cab + 4x4 Jeep
+                                </span>
+                            </div>
+
+                            <div class="space-y-3.5 pl-3 border-l-2 border-slate-800 ml-2">
+                                
+                                <!-- Event 1 -->
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">09:30 AM – 10:15 AM</span>
+                                        <button onclick="focusMarker('tresca')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Arrival & Strategic Bag Drop at Tresca Hotel</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Arrive at KSRTC Stand. Take a 2-min auto (850m) to Tresca A Luxury Hotel. Drop bags at 24-hr reception cloakroom, freshen up in lobby washroom, and change into comfortable hill clothes.
+                                    </p>
+                                    <div id="day1-transit-banner"></div>
+                                    <div class="mt-2 text-[11px] text-amber-300 bg-amber-950/30 p-2 rounded-lg border border-amber-500/20">
+                                        💡 <strong>Strategy:</strong> Standard check-in is 12 PM. Head straight out without carrying bags!
+                                    </div>
+                                </div>
+
+                                <!-- Event 2 -->
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">10:15 AM – 10:45 AM</span>
+                                        <button onclick="focusMarker('vishnu')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">South Indian Breakfast & Filter Coffee</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Quick crispy dosas and piping hot Malnad filter coffee at Vishnu Delicacy or Town Caffee (right along RG Road, 2 min walk).
+                                    </p>
+                                </div>
+
+                                <!-- Event 3 -->
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">11:00 AM Pickup</span>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300">Cab Pickup</span>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Private Sightseeing Cab Pickup</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Your pre-arranged private cab picks you up directly at Tresca to comfortably tackle the mountain hairpin curves.
+                                    </p>
+                                </div>
+
+                                <!-- Event 4 -->
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">11:45 AM – 01:45 PM</span>
+                                        <button onclick="focusMarker('jhari')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Jhari (Buttermilk) Falls Off-Road 4x4 Jeep</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Cab drops you at the coffee estate checkpost. Switch to local 4x4 open jeep (~₹800 per jeep) for a thrilling, muddy off-road ride down into private coffee plantations to the roaring falls.
+                                    </p>
+                                    <div class="mt-2 text-[11px] text-cyan-300 bg-cyan-950/30 p-2 rounded-lg border border-cyan-500/20">
+                                        🌊 <strong>Gear:</strong> Wear grippy footwear. Rocks near the spray can be slippery.
+                                    </div>
+                                </div>
+
+                                <!-- Event 5 -->
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">02:00 PM – 03:00 PM</span>
+                                        <button onclick="focusMarker('siri-lunch')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Countryside Malnad Lunch</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Stop at Siri Cafe or a traditional Malnad outlet along the route for hearty local lunch before the peak climb.
+                                    </p>
+                                </div>
+
+                                <!-- Event 6 -->
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">03:30 PM – 05:30 PM</span>
+                                        <button onclick="focusMarker('mullayanagiri')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Mullayanagiri Peak (Highest in Karnataka, 1,930m)</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Late afternoon timing is prime: morning tourist congestion has cleared. Climb the stone steps along the windy ridge to the highest point in Karnataka for panoramic views through drifting mist.
+                                    </p>
+                                    <div class="mt-2 text-[11px] text-emerald-300 bg-emerald-950/30 p-2 rounded-lg border border-emerald-500/20">
+                                        ⛰️ <strong>Weather:</strong> High winds and sudden chills. Keep light windcheaters zipped.
+                                    </div>
+                                </div>
+
+                                <!-- Event 7 -->
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">05:45 PM – 06:45 PM</span>
+                                        <button onclick="focusMarker('hirekolale')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Hirekolale Lake Sunset</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Stop by on the way down from the hills. Sit on the stone embankment watching the tranquil sunset reflecting across the mountain waters.
+                                    </p>
+                                </div>
+
+                                <!-- Event 8 -->
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">07:15 PM onwards</span>
+                                        <button onclick="focusMarker('tresca')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Formal Room Check-in & RG Road Dinner</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Cab drops back at Tresca. Complete formal room check-in, unpack, hot shower, followed by dinner at The Estate Cafe or along RG Road (Kailash Parbat / Hotel Matsya).
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DAY 2 -->
+                        <div class="day-section" data-day="2">
+                            <div class="sticky top-[125px] z-20 bg-slate-950/90 backdrop-blur-md py-2 border-b border-slate-800 flex items-center justify-between mb-3">
+                                <div>
+                                    <span class="text-[10px] font-mono font-extrabold text-blue-400 uppercase">Day 2 • Sunday, Sep 13</span>
+                                    <h3 class="text-sm font-black text-white">Ridge Views & Plantation Cruising</h3>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-600/20 text-blue-400 border border-blue-500/30">
+                                    🛵 125cc Scooty Freedom Day
+                                </span>
+                            </div>
+
+                            <div class="space-y-3.5 pl-3 border-l-2 border-slate-800 ml-2">
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">09:30 AM</span>
+                                        <button onclick="focusMarker('scooty')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Collect 125cc Scooty near KSRTC Bus Stand</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Walk 500m to rental hub (Happy Go Rentals / Royal Brothers). Collect 125cc scooter.
+                                    </p>
+                                    <div class="mt-2 text-[11px] text-blue-300 bg-blue-950/30 p-2 rounded-lg border border-blue-500/20">
+                                        🛵 <strong>Crucial Rule:</strong> If 2 travelers: rent 1 scooty (125cc). If 3 travelers: rent 2 scooties to ensure mountain uphill power and avoid heavy traffic police fines on ghat turns.
+                                    </div>
+                                </div>
+
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">10:00 AM – 01:30 PM</span>
+                                        <button onclick="focusMarker('bababudangiri')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Baba Budangiri & Z-Point Ridge Trail</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Ride up scenic ghat roads through thick coffee estates towards Baba Budangiri. Take the trail towards Z-Point (Kemmanagundi)—a thrilling narrow ridge walk with lush green valley drops on either side.
+                                    </p>
+                                </div>
+
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">03:30 PM – 05:30 PM</span>
+                                        <button onclick="focusMarker('museum')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Coffee Board Museum & Cafe Pour-Overs</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Ride back along KM Road to visit Coffee Museum (Coffee Board of India) to learn coffee harvesting, roasting, and bean classification. Stop by Cafe Agape or World of Coffee for artisanal pour-overs.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DAY 3 -->
+                        <div class="day-section" data-day="3">
+                            <div class="sticky top-[125px] z-20 bg-slate-950/90 backdrop-blur-md py-2 border-b border-slate-800 flex items-center justify-between mb-3">
+                                <div>
+                                    <span class="text-[10px] font-mono font-extrabold text-amber-400 uppercase">Day 3 • Monday, Sep 14</span>
+                                    <h3 class="text-sm font-black text-white">Heritage, Coffee Shopping & Departure</h3>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-600/20 text-amber-400 border border-amber-500/30">
+                                    🏛️ Belur Temple + Sleeper Bus
+                                </span>
+                            </div>
+
+                            <div class="space-y-3.5 pl-3 border-l-2 border-slate-800 ml-2">
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">11:00 AM</span>
+                                        <button onclick="focusMarker('tresca')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Check-out & Luggage Cloakroom Hold</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Check out of Tresca. Hand backpacks to reception to safely hold in cloakroom for the entire day.
+                                    </p>
+                                </div>
+
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">11:30 AM – 03:00 PM</span>
+                                        <button onclick="focusMarker('belur')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Belur Chennakeshava Temple (Option A) or Aldur Canopy (Option B)</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        • Option A: 25 km highway scooty ride to Belur to explore the 12th-century Chennakeshava Temple (intricate Hoysala soapstone carvings).<br>
+                                        • Option B: Scenic cruise on Aldur/Mudigere road under canopy trees with a stop at Siri Coffee sculpture gardens.
+                                    </p>
+                                </div>
+
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">05:00 PM – 07:30 PM</span>
+                                        <button onclick="focusMarker('shopping')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Coffee & Spice Shopping on MG Road</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        • Fresh Ground Coffee: Freshly roasted Arabica/Robusta blends at Panduranga Coffee or Classic Coffee.<br>
+                                        • Malnad Spices: Whole green cardamom, black pepper, and cinnamon bark.<br>
+                                        • Local Snacks: Hot banana and jackfruit chips.
+                                    </p>
+                                </div>
+
+                                <div class="timeline-card bg-slate-900 p-4 rounded-xl border border-slate-800 relative -ml-[19px]">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-xs font-mono font-bold text-amber-400">10:15 PM – 11:30 PM</span>
+                                        <button onclick="focusMarker('ksrtc')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700">
+                                            <i class="fa-solid fa-map-pin"></i> Map
+                                        </button>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mb-1">Board Overnight AC Sleeper Bus to BLR</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">
+                                        Walk/auto to KSRTC Stand. Board 10:30 PM AC Sleeper bus back to Bengaluru. Arrives Tuesday ~05:00 AM.
+                                    </p>
+                                    <div id="day3-transit-banner"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right Column: Leaflet Interactive Map (5 cols) -->
+                <div class="lg:col-span-5">
+                    <div id="map-container" class="dark-map">
+                        <div id="map"></div>
+                    </div>
+                    <div class="mt-2 text-center text-[11px] text-slate-400">
+                        <i class="fa-solid fa-circle-info text-emerald-400 mr-1"></i>
+                        <span>Click any marker or "Map" button on timeline to inspect and navigate.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================================
+             TAB 2: BASECAMP & HYBRID TRANSPORT LOGISTICS
+             ============================================================= -->
+        <div id="tab-content-logistics" class="tab-content space-y-6">
+            
+            <!-- Logistics Command Bar -->
+            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Transit & Logistics Vault
+                    </span>
+                    <h2 class="text-xl font-black text-white font-display mt-1">Going, Return & Mountain Mobility Hub</h2>
+                    <p class="text-xs text-slate-300 mt-0.5">Outbound journey from BLR, return sleeper bus, and local 4x4 Jeep + 125cc Scooty rentals</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openEditTransitModal('outbound')" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow-lg flex items-center gap-1.5 active:scale-95 transition-all">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Going Leg
+                    </button>
+                    <button onclick="openEditTransitModal('returnTrip')" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow-lg flex items-center gap-1.5 active:scale-95 transition-all">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Return
+                    </button>
+                </div>
+            </div>
+
+            <!-- Outbound & Return Transit Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="transit-cards-grid">
+                <!-- Dynamically populated via renderTransitCards() -->
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Tresca Hotel Breakdown -->
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
+                                <i class="fa-solid fa-hotel"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-extrabold text-white">Tresca A Luxury Hotel</h3>
+                                <p class="text-xs text-slate-400">RG Road, Vijayapura (Opp. Renukacharya Kalyana Mantapa)</p>
+                            </div>
+                        </div>
+                        <button onclick="openTaxiModal()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold rounded-lg text-xs border border-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-language"></i> Kannada Card
+                        </button>
+                    </div>
+
+                    <div class="space-y-3.5 text-xs">
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-emerald-400 font-bold block mb-1">
+                                <i class="fa-solid fa-bullseye mr-1"></i> 9:30 AM Arrival Strategy
+                            </span>
+                            <p class="text-slate-300 leading-relaxed">
+                                Because you arrive only 2.5 hours before formal check-in (12:00 PM), head straight to Tresca. Request early check-in if rooms are ready. If still occupied, drop bags at the 24-hr cloakroom, freshen up in the lobby washroom, and head out immediately for breakfast and sightseeing without carrying any luggage!
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-amber-400 font-bold block mb-1">
+                                <i class="fa-solid fa-utensils mr-1"></i> Dining & Kitchen Note
+                            </span>
+                            <p class="text-slate-300 leading-relaxed">
+                                Tresca features clean, modern rooms but does not have a full in-house restaurant kitchen. Because it is located right on RG Road, top-tier dining options (Vishnu Delicacy, Kailash Parbat, Town Caffee, Hotel Matsya) are within a 2- to 5-minute easy walk.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-blue-400 font-bold block mb-1">
+                                <i class="fa-solid fa-route mr-1"></i> Bus Stand Proximity
+                            </span>
+                            <p class="text-slate-300 leading-relaxed">
+                                Just 850 meters (~2 minutes by auto / 8 minutes walk) from the KSRTC Main Bus Stand.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hybrid In-Trip Transport Matrix -->
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/30">
+                                <i class="fa-solid fa-van-shuttle"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-extrabold text-white">Local Mountain Mobility</h3>
+                                <p class="text-xs text-slate-400">Engineered for mountain hairpins & freedom</p>
+                            </div>
+                        </div>
+                        <button onclick="openScootyModal()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-blue-400 font-bold rounded-lg text-xs border border-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-motorcycle"></i> Scooty Rules
+                        </button>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-white">Saturday (Day 1)</span>
+                                <span class="text-[11px] text-amber-400 font-mono">10:30 AM – 07:00 PM</span>
+                            </div>
+                            <span class="text-emerald-400 font-semibold block">🚖 Private Sightseeing Cab + 4x4 Jeep</span>
+                            <p class="text-slate-300 mt-1 leading-relaxed">
+                                Handles hotel pickup at Tresca, steep hairpins, Jhari Falls jeep point (~₹800), Mullayanagiri climb (1,930m), and Hirekolale sunset.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-white">Sunday (Day 2)</span>
+                                <span class="text-[11px] text-amber-400 font-mono">Pickup 09:00 AM</span>
+                            </div>
+                            <span class="text-blue-400 font-semibold block">🛵 125cc Scooty Rental</span>
+                            <p class="text-slate-300 mt-1 leading-relaxed">
+                                Cruise scenic plantation loops, winding roads to Baba Budangiri, Z-Point ridge trek, and plantation cafe hopping.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-white">Monday (Day 3)</span>
+                                <span class="text-[11px] text-amber-400 font-mono">Return 08:30 PM • Bus 10:30 PM</span>
+                            </div>
+                            <span class="text-purple-400 font-semibold block">🛵 Scooty + 🚌 Overnight AC Sleeper Bus</span>
+                            <p class="text-slate-300 mt-1 leading-relaxed">
+                                Belur Hoysala temple or Aldur green corridor + town coffee shopping. Settle scooty deposit and board night AC sleeper back to Bengaluru.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =============================================================
+             TAB 3: PRE-DEPARTURE CHECKLIST & PROGRESS BAR
+             ============================================================= -->
+        <div id="tab-content-checklist" class="tab-content">
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 max-w-2xl mx-auto shadow-xl space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <div>
+                        <h3 class="text-base font-extrabold text-white">Pre-Departure & Gear Checklist</h3>
+                        <p class="text-xs text-slate-400">Real-time packing tracker with offline memory</p>
+                    </div>
+                    <button onclick="resetChecklist()" class="text-xs text-slate-400 hover:text-amber-400 px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 transition-colors">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset
+                    </button>
+                </div>
+
+                <!-- Packing Progress Bar -->
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                    <div class="flex justify-between items-center text-xs mb-1.5">
+                        <span class="font-bold text-slate-300">Packing Readiness</span>
+                        <span id="pack-percent" class="font-mono font-extrabold text-emerald-400">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                        <div id="pack-progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div id="checklist-items" class="space-y-3">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================================
+             TAB 4: COFFEE & SPICES GUIDE
+             ============================================================= -->
+        <div id="tab-content-shopping" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                    <div class="flex items-center gap-3 pb-3 border-b border-slate-800">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
+                            <i class="fa-solid fa-mug-hot"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-extrabold text-white">Chikmagalur Coffee Roasters</h3>
+                            <p class="text-xs text-slate-400">Where to buy fresh authentic blends</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <h4 class="font-bold text-amber-300 text-sm mb-1">Panduranga Coffee (MG Road)</h4>
+                            <p class="text-slate-300 leading-relaxed">
+                                Operating since 1938. The gold standard for Chikmagalur coffee. Get whole roasted beans or have them grind custom blends (80:20 Arabica:Chicory or 100% Pure Malnad Peaberry) right in front of you for your specific brewing method.
+                            </p>
+                        </div>
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <h4 class="font-bold text-amber-300 text-sm mb-1">Classic Coffee & Coffee Board</h4>
+                            <p class="text-slate-300 leading-relaxed">
+                                Single-estate premium Arabicas with distinctive chocolate and fruit tasting notes. Visit the Coffee Museum on KM Road to understand the wet pulping process.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                    <div class="flex items-center gap-3 pb-3 border-b border-slate-800">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/30">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-extrabold text-white">Malnad Spices & Snacks</h3>
+                            <p class="text-xs text-slate-400">Fresh plantation harvest checklist</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                            <h4 class="font-bold text-emerald-300 text-sm mb-1">Estate Spices Checklist</h4>
+                            <ul class="list-disc list-inside text-slate-300 space-y-1.5 mt-1">
+                                <li><strong>Green Cardamom:</strong> Look for whole, vibrant green 8mm pods with dense aroma.</li>
+                                <li><strong>Black Pepper:</strong> Authentic Malnad sun-dried Tellicherry grade peppercorns.</li>
+                                <li><strong>Cinnamon:</strong> True Ceylon / Malnad rolled bark.</li>
+                                <li><strong>Hot Chips:</strong> Pick up freshly fried salted banana and jackfruit chips on Market Road.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- =============================================================
+         MODALS
+         ============================================================= -->
+
+    <!-- Taxi Driver Card Modal (Kannada + English) -->
+    <div id="taxi-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeTaxiModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-4">
+                <span class="w-12 h-12 rounded-2xl bg-brand-600/20 text-brand-400 flex items-center justify-center text-xl mx-auto mb-2 border border-brand-500/30">
+                    <i class="fa-solid fa-taxi"></i>
+                </span>
+                <h3 class="text-base font-extrabold text-white">Auto / Cab Driver Card</h3>
+                <p class="text-xs text-slate-400">Show this screen to any local driver</p>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 mb-4">
+                <span class="text-[10px] text-slate-400 uppercase font-mono font-bold block mb-1">Kannada Translation</span>
+                <div class="text-base font-bold text-emerald-300 leading-relaxed mb-3">
+                    ಟ್ರೆಸ್ಕಾ ಎ ಲಕ್ಸುರಿ ಹೋಟೆಲ್, ಆರ್.ಜಿ. ರಸ್ತೆ, ವಿಜಯಪುರ, ರೇಣುಕಾಚಾರ್ಯ ಕಲ್ಯಾಣ ಮಂಟಪದ ಎದುರು, ಚಿಕ್ಕಮಗಳೂರು
+                </div>
+                <span class="text-[10px] text-slate-400 uppercase font-mono font-bold block mb-1">English Landmark</span>
+                <div class="text-xs font-semibold text-slate-200">
+                    Tresca A Luxury Hotel, RG Road, Vijayapura (Opp. Renukacharya Kalyana Mantapa) — 850m from KSRTC Stand.
+                </div>
+            </div>
+            <a href="https://maps.google.com/?q=Tresca+A+Luxury+Hotel+Chikmagalur" target="_blank" 
+               class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg">
+                <i class="fa-solid fa-diamond-turn-right"></i> Open Navigation in Google Maps
+            </a>
+        </div>
+    </div>
+
+    <!-- Scooty Rules Modal -->
+    <div id="scooty-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeScootyModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-base font-extrabold text-white mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-motorcycle text-blue-400"></i> Scooty Rental Guidelines
+            </h3>
+            <div class="space-y-3 text-xs text-slate-300">
+                <p>• <strong>Pickup Point:</strong> Walk 500m to KSRTC Stand / Barlane Road (Happy Go Rentals or Royal Brothers).</p>
+                <p>• <strong>Engine Power:</strong> Insist on 125cc (Activa 125 / Jupiter 125) for climbing steep hill ghats.</p>
+                <p>• <strong>Group Size Rule:</strong> If 2 travelers = 1 scooty. If 3 travelers = rent 2 scooties to avoid triple-riding fines (~₹1,500) and dangerous mountain stalling.</p>
+                <p>• <strong>Return Time:</strong> Monday by 08:30 PM to settle deposit before boarding night sleeper bus.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contacts Modal -->
+    <div id="emergency-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeEmergencyModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-base border border-rose-500/30">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-white">Chikmagalur SOS Directory</h3>
+                    <p class="text-xs text-slate-400">Offline emergency contacts & authorities</p>
+                </div>
+            </div>
+            <div class="space-y-2.5 text-xs">
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <div>
+                        <span class="font-bold text-white block">KSRTC Stand Inquiry</span>
+                        <span class="text-[10px] text-slate-400">Bus Stand Road</span>
+                    </div>
+                    <a href="tel:08262230303" class="px-2.5 py-1 bg-emerald-600 text-white font-mono font-bold rounded-lg flex items-center gap-1">
+                        <i class="fa-solid fa-phone text-[10px]"></i> 08262-230303
+                    </a>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <div>
+                        <span class="font-bold text-white block">Forest Checkpost (Mullayanagiri)</span>
+                        <span class="text-[10px] text-slate-400">Ghat Checkpost Office</span>
+                    </div>
+                    <a href="tel:08262230005" class="px-2.5 py-1 bg-emerald-600 text-white font-mono font-bold rounded-lg flex items-center gap-1">
+                        <i class="fa-solid fa-phone text-[10px]"></i> 08262-230005
+                    </a>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <div>
+                        <span class="font-bold text-white block">District Hospital Chikmagalur</span>
+                        <span class="text-[10px] text-slate-400">24x7 Emergency Casualty</span>
+                    </div>
+                    <a href="tel:08262230444" class="px-2.5 py-1 bg-rose-600 text-white font-mono font-bold rounded-lg flex items-center gap-1">
+                        <i class="fa-solid fa-phone text-[10px]"></i> 08262-230444
+                    </a>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <div>
+                        <span class="font-bold text-white block">Police Helpline</span>
+                        <span class="text-[10px] text-slate-400">National Emergency</span>
+                    </div>
+                    <a href="tel:112" class="px-2.5 py-1 bg-blue-600 text-white font-mono font-bold rounded-lg flex items-center gap-1">
+                        <i class="fa-solid fa-phone text-[10px]"></i> 112
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Transit Modal -->
+    <div id="edit-transit-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeEditTransitModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base border border-emerald-500/30">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-white">Edit Journey & Transit Logistics</h3>
+                    <p class="text-xs text-slate-400">Bus, Train, Self-Drive or Cab timings & PNRs</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <!-- Journey Direction Selector -->
+                <div>
+                    <label class="font-bold block mb-1 text-slate-300">Select Journey Leg:</label>
+                    <select id="edit-transit-leg" onchange="loadTransitEditForm()" class="w-full bg-slate-950 p-2.5 rounded-xl font-bold border border-slate-700 text-white">
+                        <option value="outbound">Going Leg: Bengaluru ➔ Chikmagalur (Sep 11–12)</option>
+                        <option value="returnTrip">Return Leg: Chikmagalur ➔ Bengaluru (Sep 14–15)</option>
+                    </select>
+                </div>
+
+                <!-- Mode Selector Pills -->
+                <div>
+                    <label class="font-bold block mb-1 text-slate-300">Transport Mode:</label>
+                    <div class="grid grid-cols-4 gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800 text-center font-bold text-[11px]">
+                        <button type="button" id="cmg-mode-bus" onclick="setTransitMode('bus')" class="py-1.5 rounded-lg bg-emerald-600 text-white transition-colors">🚌 Bus</button>
+                        <button type="button" id="cmg-mode-train" onclick="setTransitMode('train')" class="py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors">🚆 Train</button>
+                        <button type="button" id="cmg-mode-selfdrive" onclick="setTransitMode('selfdrive')" class="py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors">🚗 Car</button>
+                        <button type="button" id="cmg-mode-cab" onclick="setTransitMode('cab')" class="py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors">🚖 Cab</button>
+                    </div>
+                    <input type="hidden" id="edit-transit-mode" value="bus">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Operator / Service / Train:</span>
+                        <input type="text" id="edit-transit-operator" placeholder="e.g. KSRTC Airavat Club Class" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-white">
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Vehicle / Train / Bus No:</span>
+                        <input type="text" id="edit-transit-vehicleno" placeholder="e.g. KA-01-F-9920 / 12079" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 font-mono text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Boarding Point / Station:</span>
+                        <input type="text" id="edit-transit-from" placeholder="e.g. Bengaluru Majestic / Silk Board" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-white font-semibold">
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Drop Point / Station:</span>
+                        <input type="text" id="edit-transit-to" placeholder="e.g. Chikmagalur KSRTC Stand" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-white font-semibold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Departure Date & Time:</span>
+                        <input type="text" id="edit-transit-dept" placeholder="e.g. 11:00 PM (Sep 11)" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-white font-mono">
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Arrival Time:</span>
+                        <input type="text" id="edit-transit-arr" placeholder="e.g. 06:30 AM (Sep 12)" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-white font-mono">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">PNR / Booking Ref:</span>
+                        <input type="text" id="edit-transit-pnr" placeholder="e.g. KSRTC-BLR-892" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 font-mono font-bold text-emerald-400">
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 block mb-0.5">Seat / Berth Numbers:</span>
+                        <input type="text" id="edit-transit-seats" placeholder="e.g. Lower Berths 12 & 13" class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 font-mono text-amber-300">
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-[10px] text-slate-400 block mb-0.5">Travel Notes / Instructions:</span>
+                    <input type="text" id="edit-transit-notes" placeholder="e.g. Highway Paakashala dinner stop. 2-min auto to Tresca Hotel." class="w-full bg-slate-950 p-2 rounded-xl border border-slate-700 text-slate-300">
+                </div>
+
+                <div class="pt-2 flex items-center justify-between">
+                    <button type="button" onclick="resetChikmagalurTransitLeg()" class="text-rose-400 text-xs font-bold hover:underline">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset Leg
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="closeEditTransitModal()" class="px-3.5 py-1.5 bg-slate-800 text-slate-300 rounded-xl font-bold">Cancel</button>
+                        <button type="button" onclick="saveEditedTransit()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-lg">Save Journey</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hotel Strategy Modal -->
+    <div id="hotel-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeHotelModal()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-base font-extrabold text-white mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-suitcase text-amber-400"></i> Tresca 9:30 AM Strategy
+            </h3>
+            <div class="space-y-2.5 text-xs text-slate-300 leading-relaxed">
+                <p>1. <strong>Arrival at 9:30 AM:</strong> Auto from KSRTC stand takes only 2 mins.</p>
+                <p>2. <strong>Reception Cloakroom:</strong> Hand over all luggage to front desk. It is 24-hr secured.</p>
+                <p>3. <strong>Freshen up:</strong> Use clean lobby washroom, change into hill clothes.</p>
+                <p>4. <strong>10:15 AM:</strong> Walk 2 mins to Vishnu Delicacy or Town Caffee for crispy dosas and filter coffee.</p>
+                <p>5. <strong>11:00 AM:</strong> Private cab arrives right at Tresca porch for Jhari Falls!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Leaflet Map & Locations
+        const LOCATIONS = {
+            tresca: { name: "Tresca A Luxury Hotel", coords: [13.3182, 75.7788], category: "Basecamp", desc: "850m from KSRTC stand. 24-hr cloakroom.", color: "pin-rose", icon: "fa-hotel", day: 1 },
+            vishnu: { name: "Vishnu Delicacy / Town Caffee", coords: [13.3195, 75.7765], category: "Food", desc: "South Indian breakfast & filter coffee on RG Road.", color: "pin-amber", icon: "fa-utensils", day: 1 },
+            jhari: { name: "Jhari (Buttermilk) Falls", coords: [13.4116, 75.7663], category: "Nature", desc: "4x4 Open Jeep off-road switch point (~₹800).", color: "pin-cyan", icon: "fa-water", day: 1 },
+            "siri-lunch": { name: "Siri Cafe & Countryside Lunch", coords: [13.3361, 75.7631], category: "Food", desc: "Malnad lunch stop along the route.", color: "pin-amber", icon: "fa-bowl-food", day: 1 },
+            mullayanagiri: { name: "Mullayanagiri Peak", coords: [13.3911, 75.7214], category: "Peak", desc: "Highest peak in Karnataka (1,930m). Windy ridge.", color: "pin-emerald", icon: "fa-mountain", day: 1 },
+            hirekolale: { name: "Hirekolale Lake", coords: [13.3639, 75.7275], category: "Sunset", desc: "Tranquil stone embankment sunset spot.", color: "pin-purple", icon: "fa-sun", day: 1 },
+            scooty: { name: "Scooty Rental Hub", coords: [13.3155, 75.7730], category: "Transport", desc: "Happy Go / Royal Brothers near Bus Stand.", color: "pin-blue", icon: "fa-motorcycle", day: 2 },
+            bababudangiri: { name: "Baba Budangiri & Z-Point", coords: [13.4241, 75.7672], category: "Nature", desc: "Scenic ghat roads & narrow ridge walk.", color: "pin-emerald", icon: "fa-person-hiking", day: 2 },
+            museum: { name: "Coffee Board Museum", coords: [13.3276, 75.7766], category: "Culture", desc: "Coffee harvesting & Cafe Agape pour-overs.", color: "pin-amber", icon: "fa-mug-hot", day: 2 },
+            belur: { name: "Belur Chennakeshava Temple", coords: [13.1623, 75.8601], category: "Heritage", desc: "12th-century Hoysala soapstone carvings.", color: "pin-purple", icon: "fa-gopuram", day: 3 },
+            shopping: { name: "Panduranga & Classic Coffee (MG Road)", coords: [13.3175, 75.7745], category: "Shopping", desc: "Fresh ground coffee beans & Malnad spices.", color: "pin-blue", icon: "fa-bag-shopping", day: 3 },
+            ksrtc: { name: "KSRTC Main Bus Stand", coords: [13.3149, 75.7722], category: "Transport", desc: "Board 11:00 PM AC Sleeper back to BLR.", color: "pin-blue", icon: "fa-bus", day: 3 }
+        };
+
+        let map, markers = {};
+
+        function initMap() {
+            map = L.map('map', { zoomControl: false }).setView([13.3650, 75.7500], 11);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            Object.entries(LOCATIONS).forEach(([key, loc]) => {
+                const iconHtml = `
+                    <div class="custom-map-pin ${loc.color}">
+                        <i class="fa-solid ${loc.icon} text-xs"></i>
+                        <span class="pin-badge">${loc.day}</span>
+                    </div>
+                `;
+                const customIcon = L.divIcon({ html: iconHtml, className: '', iconSize: [38, 38], iconAnchor: [19, 19], popupAnchor: [0, -22] });
+                const popup = `
+                    <div class="p-3 bg-slate-900 text-white rounded-xl">
+                        <span class="text-[10px] text-amber-400 uppercase font-mono font-bold block">Day ${loc.day} • ${loc.category}</span>
+                        <h5 class="font-bold text-sm text-white mt-0.5 mb-1">${loc.name}</h5>
+                        <p class="text-xs text-slate-300 leading-snug mb-2">${loc.desc}</p>
+                        <a href="https://www.google.com/maps/search/?api=1&query=${loc.coords[0]},${loc.coords[1]}" target="_blank"
+                           class="w-full py-1 bg-brand-600 text-white text-[11px] font-bold rounded flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-diamond-turn-right"></i> Navigate
+                        </a>
+                    </div>
+                `;
+                const marker = L.marker(loc.coords, { icon: customIcon }).bindPopup(popup).addTo(map);
+                markers[key] = marker;
+            });
+        }
+
+        function focusMarker(key) {
+            if (markers[key]) {
+                map.flyTo(markers[key].getLatLng(), 14, { duration: 0.8 });
+                setTimeout(() => markers[key].openPopup(), 850);
+            }
+        }
+
+        function filterDay(day) {
+            document.querySelectorAll('.day-filter-btn').forEach(btn => btn.classList.remove('active', 'bg-slate-800', 'text-amber-400', 'border-amber-500/40'));
+            const activeBtn = document.getElementById(`day-btn-${day}`);
+            if (activeBtn) activeBtn.classList.add('active', 'bg-slate-800', 'text-amber-400', 'border-amber-500/40');
+
+            document.querySelectorAll('.day-section').forEach(sec => {
+                if (day === 'all' || sec.getAttribute('data-day') == day) {
+                    sec.style.display = 'block';
+                } else {
+                    sec.style.display = 'none';
+                }
+            });
+
+            Object.entries(LOCATIONS).forEach(([key, loc]) => {
+                if (day === 'all' || loc.day == day) {
+                    markers[key].addTo(map);
+                } else {
+                    markers[key].remove();
+                }
+            });
+        }
+
+
+        // =============================================================
+        // DOMESTIC TRANSIT LOGISTICS ENGINE (GOING & RETURNING)
+        // =============================================================
+        const defaultChikmagalurTransit = {
+            outbound: {
+                title: "Going Journey: Bengaluru ➔ Chikmagalur",
+                mode: "bus",
+                modeLabel: "Overnight AC Sleeper Bus",
+                operator: "KSRTC Airavat Club Class Multi-Axle",
+                vehicleNo: "KA-01-F-9920",
+                pnr: "KSRTC-BLR-892",
+                seats: "Lower Berths 12 & 13",
+                date: "Fri, Sep 11, 2026",
+                from: "Bengaluru (Majestic / Silk Board)",
+                deptTime: "11:00 PM (Sep 11)",
+                to: "Chikmagalur (KSRTC Main Stand)",
+                arrTime: "06:30 AM / 09:30 AM (Sep 12)",
+                duration: "5h 30m – 6h 30m (245 km)",
+                notes: "Highway food stop at Paakashala Yediyur on NH 75. 2-min auto from bus stand to Tresca Hotel. Luggage drop at 24-hr cloakroom."
+            },
+            returnTrip: {
+                title: "Return Journey: Chikmagalur ➔ Bengaluru",
+                mode: "bus",
+                modeLabel: "Overnight AC Sleeper Bus",
+                operator: "KSRTC Airavat Multi-Axle",
+                vehicleNo: "KA-18-F-4411",
+                pnr: "KSRTC-RET-441",
+                seats: "Upper Berths 18 & 19",
+                date: "Mon, Sep 14, 2026",
+                from: "Chikmagalur (KSRTC Main Stand)",
+                deptTime: "10:30 PM (Sep 14)",
+                to: "Bengaluru (Majestic / Silk Board)",
+                arrTime: "05:00 AM (Tue Sep 15)",
+                duration: "5h 30m (245 km via Hassan)",
+                notes: "Settle scooty deposit by 08:30 PM, dinner on RG Road, board 10:30 PM sleeper. Coffee packages in cabin."
+            }
+        };
+
+        function getChikmagalurTransit() {
+            try {
+                const saved = localStorage.getItem('cmg_custom_transit');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    return {
+                        outbound: { ...defaultChikmagalurTransit.outbound, ...(parsed.outbound || {}) },
+                        returnTrip: { ...defaultChikmagalurTransit.returnTrip, ...(parsed.returnTrip || {}) }
+                    };
+                }
+            } catch (e) {}
+            return defaultChikmagalurTransit;
+        }
+
+        function copyCmgText(text, msg = "Copied!") {
+            navigator.clipboard.writeText(text).then(() => alert(msg));
+        }
+
+        function renderTransitCards() {
+            const transit = getChikmagalurTransit();
+            const container = document.getElementById('transit-cards-grid');
+            if (!container) return;
+
+            const out = transit.outbound;
+            const ret = transit.returnTrip;
+
+            function getModeIcon(mode) {
+                if (mode === 'train') return 'fa-train text-amber-400';
+                if (mode === 'selfdrive') return 'fa-car text-blue-400';
+                if (mode === 'cab') return 'fa-taxi text-yellow-400';
+                return 'fa-bus text-emerald-400';
+            }
+
+            container.innerHTML = `
+                <!-- Outbound Going Card -->
+                <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 hover:border-emerald-500/40 transition-all">
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-sm border border-emerald-500/30">
+                                <i class="fa-solid ${getModeIcon(out.mode)}"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400 block">Outbound • Going Journey</span>
+                                <h3 class="text-sm font-black text-white">${out.from.split('(')[0]} ➔ ${out.to.split('(')[0]}</h3>
+                            </div>
+                        </div>
+                        <button onclick="openEditTransitModal('outbound')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-bold border border-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square text-[10px]"></i> Edit
+                        </button>
+                    </div>
+
+                    <!-- Route Flow Pill -->
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-2 text-xs">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">Boarding</span>
+                                <strong class="text-white">${out.from}</strong>
+                                <span class="font-mono text-emerald-400 font-bold block mt-0.5">${out.deptTime}</span>
+                            </div>
+                            <div class="text-center px-2">
+                                <span class="text-[10px] text-slate-500 block font-mono">${out.duration || '245 km'}</span>
+                                <div class="w-16 h-0.5 bg-gradient-to-r from-emerald-500 to-teal-400 my-1"></div>
+                                <span class="text-[9px] text-slate-400 uppercase font-bold">${out.modeLabel || out.mode}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] text-slate-400 block">Arrival</span>
+                                <strong class="text-white">${out.to}</strong>
+                                <span class="font-mono text-amber-400 font-bold block mt-0.5">${out.arrTime}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                            <span class="text-[10px] text-slate-400 block">Operator / Service</span>
+                            <strong class="text-slate-200 text-[11px] block mt-0.5 truncate">${out.operator}</strong>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">PNR / Ticket Ref</span>
+                                <strong class="text-emerald-400 font-mono text-[11px] block mt-0.5">${out.pnr || 'N/A'}</strong>
+                            </div>
+                            ${out.pnr ? `<button onclick="copyCmgText('${out.pnr}', 'PNR copied!')" class="text-slate-400 hover:text-white p-1" title="Copy PNR"><i class="fa-regular fa-copy text-xs"></i></button>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs flex justify-between items-center">
+                        <span>Seats / Berths: <strong class="text-amber-300 font-mono">${out.seats || 'General'}</strong></span>
+                        <span class="text-slate-400 text-[11px]"><i class="fa-solid fa-calendar-day mr-1"></i> ${out.date}</span>
+                    </div>
+
+                    ${out.notes ? `
+                        <p class="text-[11px] text-slate-400 bg-slate-950/60 p-2 rounded-lg border border-slate-800/60 leading-relaxed">
+                            <i class="fa-solid fa-circle-info text-emerald-400 mr-1"></i> ${out.notes}
+                        </p>
+                    ` : ''}
+                </div>
+
+                <!-- Return Journey Card -->
+                <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-3 hover:border-indigo-500/40 transition-all">
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-500/20 flex items-center justify-center text-sm border border-indigo-500/30">
+                                <i class="fa-solid ${getModeIcon(ret.mode)}"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-400 block">Return • Homebound Journey</span>
+                                <h3 class="text-sm font-black text-white">${ret.from.split('(')[0]} ➔ ${ret.to.split('(')[0]}</h3>
+                            </div>
+                        </div>
+                        <button onclick="openEditTransitModal('returnTrip')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-bold border border-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square text-[10px]"></i> Edit
+                        </button>
+                    </div>
+
+                    <!-- Route Flow Pill -->
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-2 text-xs">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">Boarding</span>
+                                <strong class="text-white">${ret.from}</strong>
+                                <span class="font-mono text-indigo-400 font-bold block mt-0.5">${ret.deptTime}</span>
+                            </div>
+                            <div class="text-center px-2">
+                                <span class="text-[10px] text-slate-500 block font-mono">${ret.duration || '245 km'}</span>
+                                <div class="w-16 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-400 my-1"></div>
+                                <span class="text-[9px] text-slate-400 uppercase font-bold">${ret.modeLabel || ret.mode}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] text-slate-400 block">Drop Point</span>
+                                <strong class="text-white">${ret.to}</strong>
+                                <span class="font-mono text-amber-400 font-bold block mt-0.5">${ret.arrTime}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                            <span class="text-[10px] text-slate-400 block">Operator / Service</span>
+                            <strong class="text-slate-200 text-[11px] block mt-0.5 truncate">${ret.operator}</strong>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">PNR / Ticket Ref</span>
+                                <strong class="text-indigo-400 font-mono text-[11px] block mt-0.5">${ret.pnr || 'N/A'}</strong>
+                            </div>
+                            ${ret.pnr ? `<button onclick="copyCmgText('${ret.pnr}', 'PNR copied!')" class="text-slate-400 hover:text-white p-1" title="Copy PNR"><i class="fa-regular fa-copy text-xs"></i></button>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs flex justify-between items-center">
+                        <span>Seats / Berths: <strong class="text-amber-300 font-mono">${ret.seats || 'General'}</strong></span>
+                        <span class="text-slate-400 text-[11px]"><i class="fa-solid fa-calendar-day mr-1"></i> ${ret.date}</span>
+                    </div>
+
+                    ${ret.notes ? `
+                        <p class="text-[11px] text-slate-400 bg-slate-950/60 p-2 rounded-lg border border-slate-800/60 leading-relaxed">
+                            <i class="fa-solid fa-circle-info text-indigo-400 mr-1"></i> ${ret.notes}
+                        </p>
+                    ` : ''}
+                </div>
+            `;
+
+            // Update Itinerary Banners
+            const day1Banner = document.getElementById('day1-transit-banner');
+            if (day1Banner) {
+                day1Banner.innerHTML = `
+                    <div class="mt-2.5 p-2.5 bg-emerald-950/40 rounded-xl border border-emerald-500/30 text-xs space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-emerald-300 flex items-center gap-1.5"><i class="fa-solid ${getModeIcon(out.mode)}"></i> Going Transit (${out.modeLabel || out.mode})</span>
+                            <button onclick="openEditTransitModal('outbound')" class="text-[10px] text-emerald-400 underline font-bold">Edit [${out.pnr || 'Transit'}]</button>
+                        </div>
+                        <div class="text-[11px] text-slate-300">${out.operator} • Boarded: <strong>${out.from}</strong> (${out.deptTime}) ➔ Landed: <strong>${out.to}</strong> (${out.arrTime})</div>
+                        <div class="text-[10px] text-slate-400">Seats: <strong class="text-amber-300 font-mono">${out.seats}</strong> • PNR: <span class="font-mono text-emerald-400 font-bold">${out.pnr}</span></div>
+                    </div>
+                `;
+            }
+
+            const day3Banner = document.getElementById('day3-transit-banner');
+            if (day3Banner) {
+                day3Banner.innerHTML = `
+                    <div class="mt-2.5 p-2.5 bg-indigo-950/40 rounded-xl border border-indigo-500/30 text-xs space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-indigo-300 flex items-center gap-1.5"><i class="fa-solid ${getModeIcon(ret.mode)}"></i> Return Transit (${ret.modeLabel || ret.mode})</span>
+                            <button onclick="openEditTransitModal('returnTrip')" class="text-[10px] text-indigo-400 underline font-bold">Edit [${ret.pnr || 'Transit'}]</button>
+                        </div>
+                        <div class="text-[11px] text-slate-300">${ret.operator} • Boarding: <strong>${ret.from}</strong> (${ret.deptTime}) ➔ Drop: <strong>${ret.to}</strong> (${ret.arrTime})</div>
+                        <div class="text-[10px] text-slate-400">Seats: <strong class="text-amber-300 font-mono">${ret.seats}</strong> • PNR: <span class="font-mono text-indigo-400 font-bold">${ret.pnr}</span></div>
+                    </div>
+                `;
+            }
+        }
+
+        function openEditTransitModal(leg = 'outbound') {
+            document.getElementById('edit-transit-leg').value = leg;
+            loadTransitEditForm();
+            document.getElementById('edit-transit-modal').classList.remove('hidden');
+        }
+
+        function closeEditTransitModal() {
+            document.getElementById('edit-transit-modal').classList.add('hidden');
+        }
+
+        function setTransitMode(mode) {
+            document.getElementById('edit-transit-mode').value = mode;
+            ['bus', 'train', 'selfdrive', 'cab'].forEach(m => {
+                const btn = document.getElementById(`cmg-mode-${m}`);
+                if (btn) {
+                    if (m === mode) {
+                        btn.className = "py-1.5 rounded-lg bg-emerald-600 text-white font-bold transition-colors";
+                    } else {
+                        btn.className = "py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors";
+                    }
+                }
+            });
+        }
+
+        function loadTransitEditForm() {
+            const leg = document.getElementById('edit-transit-leg').value;
+            const transit = getChikmagalurTransit();
+            const item = transit[leg] || defaultChikmagalurTransit[leg];
+            if (!item) return;
+
+            setTransitMode(item.mode || 'bus');
+            document.getElementById('edit-transit-operator').value = item.operator || '';
+            document.getElementById('edit-transit-vehicleno').value = item.vehicleNo || '';
+            document.getElementById('edit-transit-from').value = item.from || '';
+            document.getElementById('edit-transit-to').value = item.to || '';
+            document.getElementById('edit-transit-dept').value = item.deptTime || '';
+            document.getElementById('edit-transit-arr').value = item.arrTime || '';
+            document.getElementById('edit-transit-pnr').value = item.pnr || '';
+            document.getElementById('edit-transit-seats').value = item.seats || '';
+            document.getElementById('edit-transit-notes').value = item.notes || '';
+        }
+
+        function saveEditedTransit() {
+            const leg = document.getElementById('edit-transit-leg').value;
+            const transit = getChikmagalurTransit();
+            const mode = document.getElementById('edit-transit-mode').value;
+
+            let modeLabel = 'Overnight AC Sleeper Bus';
+            if (mode === 'train') modeLabel = 'Express Train (via Birur/Kadur)';
+            else if (mode === 'selfdrive') modeLabel = 'Self-Drive Car (NH 75)';
+            else if (mode === 'cab') modeLabel = 'Outstation Private Cab';
+
+            transit[leg] = {
+                ...(transit[leg] || defaultChikmagalurTransit[leg]),
+                mode,
+                modeLabel,
+                operator: document.getElementById('edit-transit-operator').value.trim(),
+                vehicleNo: document.getElementById('edit-transit-vehicleno').value.trim(),
+                from: document.getElementById('edit-transit-from').value.trim(),
+                to: document.getElementById('edit-transit-to').value.trim(),
+                deptTime: document.getElementById('edit-transit-dept').value.trim(),
+                arrTime: document.getElementById('edit-transit-arr').value.trim(),
+                pnr: document.getElementById('edit-transit-pnr').value.trim(),
+                seats: document.getElementById('edit-transit-seats').value.trim(),
+                notes: document.getElementById('edit-transit-notes').value.trim()
+            };
+
+            localStorage.setItem('cmg_custom_transit', JSON.stringify(transit));
+            closeEditTransitModal();
+            renderTransitCards();
+        }
+
+        function resetChikmagalurTransitLeg() {
+            const leg = document.getElementById('edit-transit-leg').value;
+            if (confirm("Reset this journey leg to default KSRTC schedule?")) {
+                const transit = getChikmagalurTransit();
+                transit[leg] = { ...defaultChikmagalurTransit[leg] };
+                localStorage.setItem('cmg_custom_transit', JSON.stringify(transit));
+                loadTransitEditForm();
+                renderTransitCards();
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-brand-600', 'text-white');
+                btn.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'bg-brand-600', 'text-white');
+                activeBtn.classList.remove('text-slate-400');
+            }
+
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            const activeContent = document.getElementById(`tab-content-${tabId}`);
+            if (activeContent) activeContent.classList.add('active');
+
+            if (tabId === 'itinerary' && map) {
+                setTimeout(() => map.invalidateSize(), 200);
+            }
+        }
+
+        // Live Clock
+        function startLiveClock() {
+            function update() {
+                const now = new Date();
+                document.getElementById('live-time-cmg').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            update();
+            setInterval(update, 1000);
+        }
+
+        // Modals
+        function openTaxiModal() { document.getElementById('taxi-modal').classList.remove('hidden'); }
+        function closeTaxiModal() { document.getElementById('taxi-modal').classList.add('hidden'); }
+        function openScootyModal() { document.getElementById('scooty-modal').classList.remove('hidden'); }
+        function closeScootyModal() { document.getElementById('scooty-modal').classList.add('hidden'); }
+        function openHotelModal() { document.getElementById('hotel-modal').classList.remove('hidden'); }
+        function closeHotelModal() { document.getElementById('hotel-modal').classList.add('hidden'); }
+        function openEmergencyModal() { document.getElementById('emergency-modal').classList.remove('hidden'); }
+        function closeEmergencyModal() { document.getElementById('emergency-modal').classList.add('hidden'); }
+        function openHotelStrategyModal() { openHotelModal(); }
+
+        // Checklist with Progress Bar
+        const CHECKLIST_DATA = [
+            { id: "c1", item: "Valid Physical Driver's License (mandatory for scooty rental)", cat: "Documents" },
+            { id: "c2", item: "Cash ₹1,500–₹2,000 for Jhari Falls 4x4 Jeep & forest checkpost", cat: "Essentials" },
+            { id: "c3", item: "Light Windcheater / Rain Jacket (windy at Mullayanagiri)", cat: "Clothing" },
+            { id: "c4", item: "Trekking / sports shoes with good traction", cat: "Clothing" },
+            { id: "c5", item: "Sunglasses & UV Sunscreen for morning scooty cruising", cat: "Personal" },
+            { id: "c6", item: "Power bank for long hill battery drain", cat: "Electronics" },
+            { id: "c7", item: "Offline Google Maps downloaded for Chikmagalur district", cat: "Digital" },
+            { id: "c8", item: "Extra space in backpack for Panduranga coffee powder & spices", cat: "Shopping" }
+        ];
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist-items');
+            const saved = JSON.parse(localStorage.getItem('cmg_checklist') || "{}");
+            
+            let checkedCount = 0;
+            container.innerHTML = CHECKLIST_DATA.map(item => {
+                const checked = saved[item.id] || false;
+                if (checked) checkedCount++;
+                return `
+                    <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-slate-700 transition-colors">
+                        <input type="checkbox" onchange="toggleCheck('${item.id}', this.checked)" ${checked ? 'checked' : ''} class="mt-1 w-4 h-4 rounded text-brand-600 focus:ring-brand-500 bg-slate-800 border-slate-700">
+                        <div class="flex-1 text-xs">
+                            <span class="font-bold text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 uppercase font-mono mr-1.5">${item.cat}</span>
+                            <span class="${checked ? 'line-through text-slate-500' : 'text-slate-200'} font-medium">${item.item}</span>
+                        </div>
+                    </label>
+                `;
+            }).join('');
+
+            // Update Progress Bar
+            const percent = Math.round((checkedCount / CHECKLIST_DATA.length) * 100);
+            document.getElementById('pack-percent').textContent = `${percent}% (${checkedCount}/${CHECKLIST_DATA.length})`;
+            document.getElementById('pack-progress-bar').style.width = `${percent}%`;
+        }
+
+        function toggleCheck(id, checked) {
+            const saved = JSON.parse(localStorage.getItem('cmg_checklist') || "{}");
+            saved[id] = checked;
+            localStorage.setItem('cmg_checklist', JSON.stringify(saved));
+            renderChecklist();
+        }
+
+        function resetChecklist() {
+            localStorage.removeItem('cmg_checklist');
+            renderChecklist();
+        }
+
+        function toggleLightMode() {
+            document.documentElement.classList.toggle('light-mode');
+        }
+
+        function toggleSeniorPacing() {
+            alert("Senior Comfort Mode: Itinerary highlights relaxed walking paces and minimizes steep stairs at peak spots.");
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTransitCards();
+            initMap();
+            startLiveClock();
+            renderChecklist();
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            }
+        });
+    </script>
+</body>
+</html>

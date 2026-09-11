@@ -23,6 +23,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
+    <!-- Security Vault & Emergency SOS Modules -->
+    <script src="pin_security.js"></script>
+    <script src="emergency_sos.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -196,8 +199,12 @@
                     <i class="fa-solid fa-motorcycle text-blue-200"></i> Scooty
                 </button>
                 <!-- Emergency Contacts -->
-                <button onclick="openEmergencyModal()" class="px-2 py-1 bg-rose-700/80 hover:bg-rose-600 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow" title="Emergency SOS & Forest Dept">
-                    <i class="fa-solid fa-phone text-rose-300"></i> SOS
+                <button onclick="window.openEmergencySosModal('india')" class="px-2 py-1 bg-rose-700/80 hover:bg-rose-600 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow" title="Emergency SOS & Hospitals">
+                    <i class="fa-solid fa-truck-medical text-rose-300"></i> SOS
+                </button>
+                <!-- 🔒 Lock Vault Button -->
+                <button onclick="window.vaultSecurity.lock()" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow" title="Lock Travel Vault">
+                    <i class="fa-solid fa-lock text-emerald-400"></i> Lock
                 </button>
                 <!-- Senior Comfort Mode -->
                 <button onclick="toggleSeniorPacing()" id="senior-pace-btn" class="px-2 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg flex items-center gap-1 text-[11px]" title="Senior Comfort Pacing">

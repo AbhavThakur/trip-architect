@@ -134,6 +134,24 @@
                     <span class="hidden sm:inline">Add Trip</span>
                 </button>
 
+                <!-- 🚨 Emergency SOS Button -->
+                <button onclick="window.openEmergencySosModal()" class="px-3 py-1.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-500/40 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all shadow-sm active:scale-95" title="Emergency SOS & Medical ICE">
+                    <i class="fa-solid fa-truck-medical text-rose-400"></i>
+                    <span class="hidden sm:inline">SOS</span>
+                </button>
+
+                <!-- 🔒 Lock Vault Button -->
+                <button onclick="window.vaultSecurity.lock()" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95" title="Lock Travel Vault">
+                    <i class="fa-solid fa-lock text-emerald-400"></i>
+                    <span class="hidden lg:inline">Lock</span>
+                </button>
+
+                <!-- ⚛️ Modern React Hub Link -->
+                <a href="react_app.html" class="px-2.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all" title="Launch Modern Vite + React App">
+                    <i class="fa-brands fa-react text-cyan-300"></i>
+                    <span class="hidden md:inline">React Hub</span>
+                </a>
+
                 <!-- How It Works / AGENTS.md Button -->
                 <button onclick="openHowItWorksModal()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all" title="How AI maintains multiple trips">
                     <i class="fa-solid fa-robot text-blue-400"></i>
@@ -616,6 +634,9 @@
     </div>
 
     <!-- Application Script -->
+        <!-- Security Vault & Emergency SOS Modules -->
+    <script src="pin_security.js"></script>
+    <script src="emergency_sos.js"></script>
     <script src="trips_registry.js"></script>
     <script>
         let currentFilter = 'all';

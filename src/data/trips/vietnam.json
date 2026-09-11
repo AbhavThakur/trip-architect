@@ -1,0 +1,125 @@
+{
+  "id": "vietnam-2026",
+  "title": "Vietnam Master Expedition",
+  "destination": "Hanoi, Ha Long Bay, Da Nang & Hoi An",
+  "flag": "\ud83c\uddfb\ud83c\uddf3",
+  "status": "past",
+  "category": "international",
+  "dates": "Dec 3 \u2013 10, 2026",
+  "daysCount": 8,
+  "travelers": "5 Adults",
+  "heroGradient": "from-red-950 via-slate-900 to-amber-950",
+  "badge": "Master Companion \u2022 8 Days",
+  "accentColor": "#ef4444",
+  "url": "vietnam_trip_architect_5_0.html",
+  "summary": "Comprehensive multi-city journey featuring Hanoi Old Quarter street egg coffee, emerald waters of Ha Long Bay overnight cruise, Ba Na Hills Golden Bridge, and lantern-lit Hoi An ancient town.",
+  "basecamp": {
+    "name": "Luxury City Hotels + 5-Star Ha Long Bay Cruise",
+    "location": "Hanoi Old Quarter & Da Nang Beachfront",
+    "checkIn": "02:00 PM",
+    "checkOut": "12:00 PM",
+    "arrivalStrategy": "Early morning arrival at Noi Bai T2: Private 9-seater limousine transfer to hotel, baggage drop at concierge, and walking exploration around Hoan Kiem Lake."
+  },
+  "flights": [
+    {
+      "sector": "Delhi Parents Inbound",
+      "pax": "2 Parents",
+      "isConnecting": true,
+      "route": "DEL \u2794 BKK \u2794 HAN",
+      "leg1": "DEL (Delhi T3) \u2794 BKK (Suvarnabhumi) \u2022 IndiGo 6E 1053 \u2022 23:30 (Dec 3) \u2794 05:15 AM (Dec 4)",
+      "layover": "Bangkok (BKK) \u2022 2h 15m (Wheelchair assistance / Int'l transit)",
+      "leg2": "BKK \u2794 HAN (Noi Bai T2) \u2022 Vietnam Airlines VN 610 \u2022 07:30 AM (Dec 4) \u2794 09:25 AM (Dec 4)",
+      "pnr": "VN-DEL-784"
+    },
+    {
+      "sector": "Bengaluru Adults Inbound",
+      "pax": "3 Adults",
+      "isConnecting": true,
+      "route": "BLR \u2794 DMK \u2794 HAN",
+      "leg1": "BLR (Bengaluru T2) \u2794 DMK (Don Mueang) \u2022 Thai AirAsia FD 138 \u2022 23:10 (Dec 3) \u2794 04:30 AM (Dec 4)",
+      "layover": "Bangkok (DMK) \u2022 2h 45m (Through-checked baggage to Hanoi T2)",
+      "leg2": "DMK \u2794 HAN (Noi Bai T2) \u2022 Thai AirAsia FD 642 \u2022 07:15 AM (Dec 4) \u2794 08:45 AM (Dec 4)",
+      "pnr": "AA-BLR-921"
+    }
+  ],
+  "features": [
+    {
+      "icon": "plane",
+      "label": "DEL/BLR Connecting Flight Matrix"
+    },
+    {
+      "icon": "calculator",
+      "label": "Dynamic Per-Pax Split Budget"
+    },
+    {
+      "icon": "volume-2",
+      "label": "Veg Dining Vietnamese Audio Cards"
+    },
+    {
+      "icon": "shield",
+      "label": "Passport, Visa & Backup Sync"
+    }
+  ],
+  "budget": {
+    "total": 385000,
+    "currency": "INR",
+    "paxCount": 5,
+    "categories": [
+      {
+        "name": "Flights (International & Domestic)",
+        "amount": 165000,
+        "icon": "plane"
+      },
+      {
+        "name": "Hotels & 5-Star Cruise",
+        "amount": 115000,
+        "icon": "hotel"
+      },
+      {
+        "name": "VIP Private Transfers & Limousines",
+        "amount": 42000,
+        "icon": "car"
+      },
+      {
+        "name": "Dining & Curated Vegetarian Food",
+        "amount": 38000,
+        "icon": "utensils"
+      },
+      {
+        "name": "Sightseeing, Cable Cars & Entry Fees",
+        "amount": 25000,
+        "icon": "ticket"
+      }
+    ]
+  },
+  "itinerary": [
+    {
+      "day": "Day 1 (Dec 4)",
+      "title": "Arrival in Hanoi, Noi Bai VIP Limousine, Old Quarter & Water Puppet Show"
+    },
+    {
+      "day": "Day 2 (Dec 5)",
+      "title": "Ho Chi Minh Mausoleum, Train Street Egg Coffee & Temple of Literature"
+    },
+    {
+      "day": "Day 3 (Dec 6)",
+      "title": "Transfer to Ha Long Bay, Embark 5-Star Balcony Cruise, Kayaking in Karsts"
+    },
+    {
+      "day": "Day 4 (Dec 7)",
+      "title": "Tai Chi at Sunrise, Sung Sot Cave, Flight to Da Nang, Dragon Bridge Show"
+    },
+    {
+      "day": "Day 5 (Dec 8)",
+      "title": "Ba Na Hills Cable Car, Giant Golden Hands Bridge, French Village"
+    },
+    {
+      "day": "Day 6 (Dec 9)",
+      "title": "Marble Mountains, UNESCO Lantern Town of Hoi An, Thu Bon River Boats"
+    },
+    {
+      "day": "Day 7 (Dec 10)",
+      "title": "Souvenir & Silk Tailoring Shopping, Flight to Hanoi & Homebound Journey"
+    }
+  ]
+}

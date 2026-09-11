@@ -212,6 +212,12 @@
                 <button onclick="toggleSeniorPacing()" id="senior-pace-btn" class="px-2 py-1 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg flex items-center gap-1 text-[11px]" title="Senior Comfort Mode">
                     <i class="fa-solid fa-person-walking-with-cane"></i>
                 </button>
+                <button onclick="window.openEmergencySosModal('vietnam')" class="px-2 py-1 bg-rose-700/80 hover:bg-rose-600 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow" title="Emergency SOS & Hospitals">
+                    <i class="fa-solid fa-truck-medical text-rose-300"></i> SOS
+                </button>
+                <button onclick="window.vaultSecurity.lock()" class="px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 rounded-lg flex items-center gap-1 text-[11px] active:scale-95 shadow" title="Lock Travel Vault">
+                    <i class="fa-solid fa-lock text-emerald-400"></i> Lock
+                </button>
                 <button onclick="openLostSosModal()" class="w-7 h-7 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg flex items-center justify-center text-xs active:scale-95" title="SOS Beacon">
                     <i class="fa-solid fa-location-crosshairs"></i>
                 </button>
@@ -1381,6 +1387,9 @@
 
     <!-- 6. JAVASCRIPT MASTER SUITE -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Security Vault & Emergency SOS Modules -->
+    <script src="pin_security.js"></script>
+    <script src="emergency_sos.js"></script>
     <script>
         let selectedDayFilter = 'all';
         let selectedCategoryFilter = 'all';

@@ -4,8 +4,10 @@
   "description": "Personal Travel Architect & Master Multi-Trip Hub for Offline & Mobile Expeditions",
   "main": "index.html",
   "scripts": {
-    "dev": "npx serve . -l 3000",
-    "start": "npx serve . -l 3000"
+    "dev": "vite",
+    "start": "npx serve . -l 3000",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "keywords": [
     "travel",
@@ -16,5 +18,15 @@
     "travel-companion"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
+    "vite": "^8.3.0"
+  },
+  "dependencies": {
+    "lucide-react": "^1.45.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "type": "module"
 }

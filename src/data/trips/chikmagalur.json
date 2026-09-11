@@ -1,0 +1,196 @@
+{
+  "id": "chikmagalur-2026",
+  "title": "Chikmagalur Coffee & Cloud Peaks",
+  "destination": "Chikmagalur, Karnataka, India",
+  "flag": "\ud83c\uddee\ud83c\uddf3",
+  "status": "upcoming",
+  "category": "domestic",
+  "dates": "Sep 12 \u2013 14, 2026",
+  "daysCount": 3,
+  "travelers": "2\u20133 Travelers",
+  "heroGradient": "from-emerald-950 via-teal-900 to-slate-950",
+  "badge": "Upcoming \u2022 Western Ghats",
+  "accentColor": "#10b981",
+  "url": "chikmagalur_trip_architect.html",
+  "summary": "3-day weekend escape across lush coffee plantations, rugged 4x4 jeep trails to roaring waterfalls, highest peak trekking at Mullayanagiri (1,930m), and scenic ridge cruising on 125cc scooties.",
+  "basecamp": {
+    "name": "Tresca A Luxury Hotel",
+    "location": "RG Road, Vijayapura (Opp. Renukacharya Kalyana Mantapa)",
+    "proximity": "850m from KSRTC Main Bus Stand (~2 min auto)",
+    "checkIn": "12:00 PM",
+    "checkOut": "11:00 AM",
+    "arrivalStrategy": "9:30 AM arrival: Drop bags at 24-hr cloakroom, freshen up in lobby washroom, and head out immediately for breakfast and sightseeing without carrying luggage."
+  },
+  "transit": {
+    "outbound": {
+      "title": "Going Journey: Bengaluru \u2794 Chikmagalur",
+      "mode": "bus",
+      "modeLabel": "Overnight AC Sleeper Bus",
+      "operator": "KSRTC Airavat Club Class Multi-Axle",
+      "vehicleNo": "KA-01-F-9920",
+      "pnr": "KSRTC-BLR-892",
+      "seats": "Lower Berths 12 & 13",
+      "date": "Fri, Sep 11, 2026",
+      "from": "Bengaluru (Majestic / Silk Board)",
+      "deptTime": "11:00 PM (Sep 11)",
+      "to": "Chikmagalur (KSRTC Main Stand)",
+      "arrTime": "06:30 AM / 09:30 AM (Sep 12)",
+      "duration": "5h 30m \u2013 6h 30m (245 km)",
+      "notes": "Highway food stop at Paakashala Yediyur on NH 75. 2-min auto from bus stand to Tresca Hotel."
+    },
+    "returnTrip": {
+      "title": "Return Journey: Chikmagalur \u2794 Bengaluru",
+      "mode": "bus",
+      "modeLabel": "Overnight AC Sleeper Bus",
+      "operator": "KSRTC Airavat Multi-Axle",
+      "vehicleNo": "KA-18-F-4411",
+      "pnr": "KSRTC-RET-441",
+      "seats": "Upper Berths 18 & 19",
+      "date": "Mon, Sep 14, 2026",
+      "from": "Chikmagalur (KSRTC Main Stand)",
+      "deptTime": "10:30 PM (Sep 14)",
+      "to": "Bengaluru (Majestic / Silk Board)",
+      "arrTime": "05:00 AM (Tue Sep 15)",
+      "duration": "5h 30m (245 km via Hassan)",
+      "notes": "Settle scooty deposit by 08:30 PM, dinner on RG Road, board 10:30 PM sleeper. Coffee packages in cabin."
+    }
+  },
+  "features": [
+    {
+      "icon": "route",
+      "label": "Going & Return Transit Matrix"
+    },
+    {
+      "icon": "calculator",
+      "label": "Custom Split Budget"
+    },
+    {
+      "icon": "map-pin",
+      "label": "Offline Maps & Elevation"
+    },
+    {
+      "icon": "check-square",
+      "label": "Mountain Packing Checklist"
+    }
+  ],
+  "budget": {
+    "total": 24800,
+    "currency": "INR",
+    "paxCount": 2,
+    "categories": [
+      {
+        "name": "Hotels & Stays (Tresca 2 Nights)",
+        "amount": 7600,
+        "icon": "hotel"
+      },
+      {
+        "name": "Transit & Rentals (KSRTC + 4x4 Jeep + Scooty)",
+        "amount": 9200,
+        "icon": "bus"
+      },
+      {
+        "name": "Dining & Malnad Food",
+        "amount": 4500,
+        "icon": "utensils"
+      },
+      {
+        "name": "Entry Tickets & Guide Fees",
+        "amount": 1500,
+        "icon": "ticket"
+      },
+      {
+        "name": "Emergency & Coffee Shopping Buffer",
+        "amount": 2000,
+        "icon": "shield"
+      }
+    ]
+  },
+  "itinerary": [
+    {
+      "day": "Day 1 (Sat Sep 12)",
+      "title": "Arrival, Bag Drop at Tresca, Private Cab to Jhari Falls & Mullayanagiri Sunset",
+      "highlight": "Mullayanagiri Peak (1,930m) & 4x4 Jeep Waterfall Descent",
+      "events": [
+        {
+          "time": "09:30 AM",
+          "title": "Arrival at KSRTC Stand & Bag Drop at Tresca",
+          "desc": "2-min auto to hotel, cloakroom drop, change into hill clothes."
+        },
+        {
+          "time": "10:30 AM",
+          "title": "Breakfast at Vishnu Delicacy & Cab Pickup",
+          "desc": "Authentic Mangalore buns, filter coffee, board private sightseeing cab."
+        },
+        {
+          "time": "12:00 PM",
+          "title": "Jhari (Buttermilk) Falls 4x4 Jeep Off-road",
+          "desc": "Board 4x4 open jeep down bumpy dirt trails to the roaring estate waterfall."
+        },
+        {
+          "time": "03:30 PM",
+          "title": "Mullayanagiri Peak Ascent (1,930m)",
+          "desc": "Ascend Karnataka's highest peak along windy ridge path."
+        },
+        {
+          "time": "05:30 PM",
+          "title": "Hirekolale Lake Sunset",
+          "desc": "Tranquil artificial lake surrounded by Western Ghats slopes."
+        }
+      ]
+    },
+    {
+      "day": "Day 2 (Sun Sep 13)",
+      "title": "125cc Scooty Pickup, Baba Budangiri & Z-Point Ridge Walk",
+      "highlight": "Ghat Riding & Cloud Walking along Z-Point",
+      "events": [
+        {
+          "time": "09:00 AM",
+          "title": "125cc Scooty Rental Pickup",
+          "desc": "Inspect brakes/tyres, take helmet, deposit ID, fill fuel at Indian Oil."
+        },
+        {
+          "time": "10:30 AM",
+          "title": "Baba Budangiri Shrine & Caves",
+          "desc": "Ride winding roads through dense green canopy to ancient shrine."
+        },
+        {
+          "time": "01:30 PM",
+          "title": "Kemmangundi & Z-Point Ridge Hike",
+          "desc": "Spectacular 3km scenic ridge walk looking down over deep valleys."
+        },
+        {
+          "time": "05:30 PM",
+          "title": "Town Caffee Estate Tasting",
+          "desc": "Artisan pour-overs and hot coffee sipping."
+        }
+      ]
+    },
+    {
+      "day": "Day 3 (Mon Sep 14)",
+      "title": "Belur Hoysala Temple / Aldur Canopy, Coffee Shopping & Night Bus",
+      "highlight": "UNESCO 12th Century Architecture & Fresh Malnad Spices",
+      "events": [
+        {
+          "time": "10:00 AM",
+          "title": "Belur Chennakeshava Temple Visit",
+          "desc": "Marvel at soapstone carvings and Hoysala architectural genius."
+        },
+        {
+          "time": "03:00 PM",
+          "title": "Coffee Board Museum & RG Road Shopping",
+          "desc": "Panduranga Arabica/Robusta coffee powder, green cardamom, black pepper."
+        },
+        {
+          "time": "08:30 PM",
+          "title": "Scooty Return & Dinner",
+          "desc": "Settle scooty deposit, leisurely South Indian dinner at Town Caffee."
+        },
+        {
+          "time": "10:30 PM",
+          "title": "Board KSRTC AC Sleeper Bus to BLR",
+          "desc": "Board night bus back to Bengaluru (arrives ~05:00 AM Tue)."
+        }
+      ]
+    }
+  ]
+}

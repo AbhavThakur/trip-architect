@@ -451,22 +451,44 @@
                 <div>
                     <span class="px-2.5 py-0.5 bg-indigo-600/30 text-indigo-300 text-[10px] font-bold rounded-full uppercase">Flight Vault</span>
                     <h2 class="text-lg font-bold font-display mt-1.5">Flight Matrix & PNRs</h2>
+                    <p class="text-[11px] text-indigo-300/80 mt-0.5">Full multi-leg connecting routes, layover hubs & live booking references</p>
                 </div>
-                <button onclick="openEditFlightModal('del_han')" class="px-3 py-1.5 bg-indigo-600 text-white font-bold rounded-xl text-xs shadow flex items-center gap-1">
+                <button onclick="openEditFlightModal('del_han')" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow-md flex items-center gap-1.5 active:scale-95 transition-transform">
                     <i class="fa-solid fa-pen-to-square"></i> Edit Flight
                 </button>
             </div>
-            <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden">
-                <div class="bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 border-b border-slate-200 dark:border-darkborder font-bold text-xs">Inbound Flights (Dec 3–4)</div>
-                <div class="overflow-x-auto"><table class="w-full text-xs text-left"><tbody id="inbound-flights-tbody" class="divide-y divide-slate-100 dark:divide-darkborder"></tbody></table></div>
+
+            <!-- Inbound Flights -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-plane-arrival text-indigo-500"></i> Inbound Flights (Dec 3–4)
+                    </span>
+                    <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">2 Connecting Hubs</span>
+                </div>
+                <div id="inbound-flights-cards" class="space-y-3"></div>
             </div>
-            <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden">
-                <div class="bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 border-b border-slate-200 dark:border-darkborder font-bold text-xs">Domestic Sectors (HAN ⇄ DAD)</div>
-                <div class="overflow-x-auto"><table class="w-full text-xs text-left"><tbody id="domestic-flights-tbody" class="divide-y divide-slate-100 dark:divide-darkborder"></tbody></table></div>
+
+            <!-- Domestic Flights -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrows-left-right text-blue-500"></i> Domestic Sectors (HAN ⇄ DAD)
+                    </span>
+                    <span class="text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">5 Adults (All)</span>
+                </div>
+                <div id="domestic-flights-cards" class="space-y-3"></div>
             </div>
-            <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden">
-                <div class="bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 border-b border-slate-200 dark:border-darkborder font-bold text-xs">Return Flights (Dec 10)</div>
-                <div class="overflow-x-auto"><table class="w-full text-xs text-left"><tbody id="outbound-flights-tbody" class="divide-y divide-slate-100 dark:divide-darkborder"></tbody></table></div>
+
+            <!-- Return Flights -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-plane-departure text-purple-500"></i> Return Flights (Dec 10/11)
+                    </span>
+                    <span class="text-[11px] font-semibold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">Homebound</span>
+                </div>
+                <div id="outbound-flights-cards" class="space-y-3"></div>
             </div>
         </div>
 
@@ -610,8 +632,13 @@
                 </button>
                 <button onclick="exportTripBackup()" class="bg-white dark:bg-darkcard p-3.5 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-left flex flex-col justify-between hover:border-amber-500 transition-all">
                     <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-600 flex items-center justify-center text-sm mb-2"><i class="fa-solid fa-cloud-arrow-down"></i></div>
-                    <div><strong class="block font-bold">Backup Plan</strong><span class="text-slate-400 text-[10px]">Save JSON offline</span></div>
+                    <div><strong class="block font-bold">Backup Plan</strong><span class="text-slate-400 text-[10px]">Export JSON file</span></div>
                 </button>
+                <button onclick="triggerImportTripBackup()" class="bg-white dark:bg-darkcard p-3.5 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-left flex flex-col justify-between hover:border-emerald-500 transition-all">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center text-sm mb-2"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <div><strong class="block font-bold">Restore Backup</strong><span class="text-slate-400 text-[10px]">Import JSON file</span></div>
+                </button>
+                <input type="file" id="trip-backup-import-input" accept=".json" onchange="importTripBackup(event)" class="hidden">
             </div>
         </div>
 
@@ -948,29 +975,202 @@
 
     <!-- FLIGHT EDIT MODAL -->
     <div id="edit-flight-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="if(event.target === this) closeEditFlightModal()">
-        <div class="bg-white dark:bg-darkcard rounded-t-3xl sm:rounded-3xl max-w-lg w-full p-5 shadow-2xl border border-slate-200 dark:border-darkborder max-h-[85vh] overflow-y-auto bottom-sheet-anim">
+        <div class="bg-white dark:bg-darkcard rounded-t-3xl sm:rounded-3xl max-w-lg w-full p-5 shadow-2xl border border-slate-200 dark:border-darkborder max-h-[90vh] overflow-y-auto bottom-sheet-anim">
             <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 sm:hidden"></div>
             <div class="flex justify-between items-center pb-2.5 border-b border-slate-100 dark:border-darkborder">
-                <h3 class="font-bold text-xs sm:text-sm"><i class="fa-solid fa-plane text-indigo-600 mr-1.5"></i> Edit Flight & PNR</h3>
+                <h3 class="font-bold text-xs sm:text-sm"><i class="fa-solid fa-plane text-indigo-600 mr-1.5"></i> Edit Flight Matrix</h3>
                 <button onclick="closeEditFlightModal()" class="text-slate-400 p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="mt-3 space-y-2.5 text-xs">
-                <select id="edit-flight-key" onchange="loadFlightEditForm()" class="w-full bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl font-bold border border-slate-200 dark:border-slate-700">
-                    <option value="del_han">DEL ➔ HAN (Parents, Dec 3–4)</option>
-                    <option value="blr_han">BLR ➔ HAN (Adults, Dec 3–4)</option>
-                    <option value="han_dad">HAN ➔ DAD (Domestic, Dec 6)</option>
-                    <option value="dad_han">DAD ➔ HAN (Domestic, Dec 9)</option>
-                    <option value="han_del">HAN ➔ DEL (Parents Return, Dec 10)</option>
-                    <option value="han_blr">HAN ➔ BLR (Adults Return, Dec 10)</option>
-                </select>
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="edit-flight-airline" placeholder="Airline" class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <input type="text" id="edit-flight-number" placeholder="Flight Number" class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-mono">
+            <div class="mt-3 space-y-3 text-xs">
+                <!-- Sector Selector -->
+                <div>
+                    <label class="font-bold block mb-1 text-slate-700 dark:text-slate-300">Select Sector:</label>
+                    <select id="edit-flight-key" onchange="loadFlightEditForm()" class="w-full bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl font-bold border border-slate-200 dark:border-slate-700">
+                        <option value="del_han">DEL ➔ HAN (Parents Inbound, Dec 3–4)</option>
+                        <option value="blr_han">BLR ➔ HAN (Adults Inbound, Dec 3–4)</option>
+                        <option value="han_dad">HAN ➔ DAD (Domestic Flight, Dec 6)</option>
+                        <option value="dad_han">DAD ➔ HAN (Domestic Return, Dec 10)</option>
+                        <option value="han_del">HAN ➔ DEL (Parents Return, Dec 10/11)</option>
+                        <option value="han_blr">HAN ➔ BLR (Adults Return, Dec 10/11)</option>
+                    </select>
                 </div>
-                <input type="text" id="edit-flight-pnr" placeholder="PNR / Booking Ref" class="w-full bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-mono font-bold text-indigo-600">
-                <div class="pt-1 flex justify-end gap-2">
-                    <button onclick="closeEditFlightModal()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl font-bold">Cancel</button>
-                    <button onclick="saveEditedFlight()" class="px-3.5 py-1.5 bg-indigo-600 text-white rounded-xl font-bold shadow">Save Flight</button>
+
+                <!-- Flight Mode Segmented Switcher -->
+                <input type="hidden" id="edit-flight-is-connecting" value="true">
+                <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl font-bold text-xs">
+                    <button type="button" id="btn-mode-direct" onclick="setFlightModalMode(false)" class="py-1.5 rounded-lg text-center transition-all text-slate-500">
+                        ✈️ Direct Non-Stop
+                    </button>
+                    <button type="button" id="btn-mode-connecting" onclick="setFlightModalMode(true)" class="py-1.5 rounded-lg text-center transition-all bg-white dark:bg-darkcard text-indigo-600 shadow-xs">
+                        🔄 Connecting (Layover)
+                    </button>
+                </div>
+
+                <!-- 1. CONNECTING FLIGHT VIEW -->
+                <div id="connecting-flight-fields" class="space-y-3">
+                    <!-- Leg 1 -->
+                    <div class="p-3 bg-indigo-50/50 dark:bg-indigo-950/30 rounded-2xl border border-indigo-100 dark:border-indigo-900/60 space-y-2">
+                        <div class="font-bold text-indigo-900 dark:text-indigo-300 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center text-[10px]">1</span>
+                            Leg 1: Departure ➔ Layover Hub
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Origin Airport:</span>
+                                <input type="text" id="edit-leg1-from" placeholder="e.g. BLR (Bengaluru T2)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Layover Hub Airport:</span>
+                                <input type="text" id="edit-leg1-to" placeholder="e.g. DMK (Bangkok)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Airline:</span>
+                                <input type="text" id="edit-leg1-airline" placeholder="e.g. Thai AirAsia" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Flight No:</span>
+                                <input type="text" id="edit-leg1-flightno" placeholder="e.g. FD 138" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono font-bold">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Departure Time:</span>
+                                <input type="text" id="edit-leg1-dept" placeholder="e.g. 23:10 (Dec 3)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Arrival at Hub:</span>
+                                <input type="text" id="edit-leg1-arr" placeholder="e.g. 04:30 AM (Dec 4)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Layover Hub -->
+                    <div class="p-3 bg-amber-50/60 dark:bg-amber-950/30 rounded-2xl border border-amber-200/70 dark:border-amber-900/60 space-y-2">
+                        <div class="font-bold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-hourglass-half text-amber-600"></i> Layover / Transit Hub
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Layover Airport/City:</span>
+                                <input type="text" id="edit-layover-airport" placeholder="e.g. Bangkok (DMK)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Layover Duration:</span>
+                                <input type="text" id="edit-layover-duration" placeholder="e.g. 2h 45m" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono font-bold">
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block mb-0.5">Transit & Baggage Note:</span>
+                            <input type="text" id="edit-layover-note" placeholder="e.g. Baggage through-checked / Terminal transit" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
+                        </div>
+                    </div>
+
+                    <!-- Leg 2 -->
+                    <div class="p-3 bg-indigo-50/50 dark:bg-indigo-950/30 rounded-2xl border border-indigo-100 dark:border-indigo-900/60 space-y-2">
+                        <div class="font-bold text-indigo-900 dark:text-indigo-300 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center text-[10px]">2</span>
+                            Leg 2: Layover Hub ➔ Final Destination
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Departing Hub:</span>
+                                <input type="text" id="edit-leg2-from" placeholder="e.g. DMK (Bangkok)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Final Destination:</span>
+                                <input type="text" id="edit-leg2-to" placeholder="e.g. HAN (Hanoi T2)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Airline:</span>
+                                <input type="text" id="edit-leg2-airline" placeholder="e.g. Thai AirAsia" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Flight No:</span>
+                                <input type="text" id="edit-leg2-flightno" placeholder="e.g. FD 642" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono font-bold">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Departure Time:</span>
+                                <input type="text" id="edit-leg2-dept" placeholder="e.g. 07:15 AM (Dec 4)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Final Arrival:</span>
+                                <input type="text" id="edit-leg2-arr" placeholder="e.g. 08:45 AM (Dec 4)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. DIRECT FLIGHT VIEW -->
+                <div id="direct-flight-fields" class="space-y-3 hidden">
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Origin Airport:</span>
+                                <input type="text" id="edit-direct-from" placeholder="e.g. HAN (Hanoi T1)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Destination Airport:</span>
+                                <input type="text" id="edit-direct-to" placeholder="e.g. DAD (Da Nang)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Airline:</span>
+                                <input type="text" id="edit-direct-airline" placeholder="e.g. Vietnam Airlines" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Flight Number:</span>
+                                <input type="text" id="edit-direct-flightno" placeholder="e.g. VN 171" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono font-bold">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Departure Time:</span>
+                                <input type="text" id="edit-direct-dept" placeholder="e.g. 14:30 (Dec 6)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block mb-0.5">Arrival Time:</span>
+                                <input type="text" id="edit-direct-arr" placeholder="e.g. 15:50 (Dec 6)" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shared Metadata (PNR, Total Duration, Notes) -->
+                <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[10px] text-slate-500 block mb-0.5">PNR / Booking Ref:</span>
+                            <input type="text" id="edit-flight-pnr" placeholder="e.g. AA-BLR-921" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block mb-0.5">Total Travel Duration:</span>
+                            <input type="text" id="edit-flight-total-duration" placeholder="e.g. 8h 05m" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 font-mono">
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-500 block mb-0.5">Passenger Notes / Requests:</span>
+                        <input type="text" id="edit-flight-notes" placeholder="e.g. Wheelchair assistance / Veg meal pre-booked" class="w-full bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700">
+                    </div>
+                </div>
+
+                <!-- Footer Buttons -->
+                <div class="pt-2 flex items-center justify-between gap-2">
+                    <button type="button" onclick="resetFlightSectorToDefault()" class="px-3 py-1.5 text-[11px] font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset Sector
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="closeEditFlightModal()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl font-bold">Cancel</button>
+                        <button type="button" onclick="saveEditedFlight()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-md active:scale-95 transition-transform">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> Save Flight
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1184,6 +1384,9 @@
     <script>
         let selectedDayFilter = 'all';
         let selectedCategoryFilter = 'all';
+        let activeBudgetCategory = 'all';
+        let flatItineraryStops = [];
+        let currentHeroStopIdx = 0;
         let leafletMap = null;
         let mapMarkers = [];
         let routePolylines = [];
@@ -1200,12 +1403,162 @@
         };
 
         const defaultFlightsData = {
-            del_han: { sector: "DEL ➔ HAN", passengers: "2 Parents (Delhi)", airline: "Vietnam Airlines / IndiGo", flightNo: "VN 970 / 6E 1645", pnr: "VN-DEL-784", dept: "~23:30 (Dec 3)", arr: "~05:30 AM (Dec 4)" },
-            blr_han: { sector: "BLR ➔ HAN", passengers: "3 Adults (Bengaluru)", airline: "AirAsia / IndiGo", flightNo: "FD 138 ➔ FD 642", pnr: "AA-BLR-921", dept: "~23:10 (Dec 3)", arr: "~08:45 AM (Dec 4)" },
-            han_dad: { sector: "HAN ➔ DAD", passengers: "5 Adults", airline: "Vietnam Airlines / VietJet", flightNo: "VN 171 / VJ 517", pnr: "VN-DOM-332", dept: "~14:30 (Dec 6)", arr: "~15:50 (Dec 6)" },
-            dad_han: { sector: "DAD ➔ HAN", passengers: "5 Adults", airline: "Vietnam Airlines / VietJet", flightNo: "VN 178 / VJ 522", pnr: "VN-DOM-664", dept: "~13:30 (Dec 10)", arr: "~14:50 (Dec 10)" },
-            han_del: { sector: "HAN ➔ DEL", passengers: "2 Parents (Delhi)", airline: "Vietnam Airlines / IndiGo", flightNo: "VN 971", pnr: "VN-RET-881", dept: "~19:00 (Dec 11)", arr: "~22:00 (Dec 11)" },
-            han_blr: { sector: "HAN ➔ BLR", passengers: "3 Adults (Bengaluru)", airline: "AirAsia / IndiGo", flightNo: "FD 643 ➔ FD 137", pnr: "AA-RET-994", dept: "~17:30 – 19:00", arr: "~00:30 AM (Dec 12)" }
+            del_han: {
+                sector: "DEL ➔ HAN",
+                passengers: "2 Parents (Delhi)",
+                isConnecting: true,
+                airline: "IndiGo + Vietnam Airlines",
+                flightNo: "6E 1053 ➔ VN 610",
+                pnr: "VN-DEL-784",
+                dept: "23:30 (Dec 3)",
+                arr: "09:25 AM (Dec 4)",
+                totalDuration: "7h 30m",
+                notes: "Wheelchair assistance requested at Bangkok transit hub",
+                from: "DEL (Delhi T3)",
+                to: "HAN (Hanoi Noi Bai T2)",
+                leg1: {
+                    from: "DEL (Delhi T3)",
+                    to: "BKK (Bangkok Suvarnabhumi)",
+                    airline: "IndiGo",
+                    flightNo: "6E 1053",
+                    dept: "23:30 (Dec 3)",
+                    arr: "05:15 AM (Dec 4)",
+                    duration: "4h 15m"
+                },
+                layover: {
+                    airport: "BKK (Bangkok Suvarnabhumi)",
+                    city: "Bangkok",
+                    duration: "2h 15m",
+                    note: "International transit terminal / Baggage through-checked"
+                },
+                leg2: {
+                    from: "BKK (Bangkok Suvarnabhumi)",
+                    to: "HAN (Hanoi Noi Bai T2)",
+                    airline: "Vietnam Airlines",
+                    flightNo: "VN 610",
+                    dept: "07:30 AM (Dec 4)",
+                    arr: "09:25 AM (Dec 4)",
+                    duration: "1h 55m"
+                }
+            },
+            blr_han: {
+                sector: "BLR ➔ HAN",
+                passengers: "3 Adults (Bengaluru)",
+                isConnecting: true,
+                airline: "Thai AirAsia",
+                flightNo: "FD 138 ➔ FD 642",
+                pnr: "AA-BLR-921",
+                dept: "23:10 (Dec 3)",
+                arr: "08:45 AM (Dec 4)",
+                totalDuration: "8h 05m",
+                notes: "Baggage through-checked to Hanoi T2",
+                from: "BLR (Bengaluru T2)",
+                to: "HAN (Hanoi Noi Bai T2)",
+                leg1: {
+                    from: "BLR (Bengaluru T2)",
+                    to: "DMK (Bangkok Don Mueang)",
+                    airline: "Thai AirAsia",
+                    flightNo: "FD 138",
+                    dept: "23:10 (Dec 3)",
+                    arr: "04:30 AM (Dec 4)",
+                    duration: "3h 50m"
+                },
+                layover: {
+                    airport: "DMK (Bangkok Don Mueang)",
+                    city: "Bangkok",
+                    duration: "2h 45m",
+                    note: "Don Mueang International Transit Hub"
+                },
+                leg2: {
+                    from: "DMK (Bangkok Don Mueang)",
+                    to: "HAN (Hanoi Noi Bai T2)",
+                    airline: "Thai AirAsia",
+                    flightNo: "FD 642",
+                    dept: "07:15 AM (Dec 4)",
+                    arr: "08:45 AM (Dec 4)",
+                    duration: "1h 30m"
+                }
+            },
+            han_dad: {
+                sector: "HAN ➔ DAD",
+                passengers: "5 Adults (All)",
+                isConnecting: false,
+                airline: "Vietnam Airlines",
+                flightNo: "VN 171",
+                pnr: "VN-DOM-332",
+                dept: "14:30 (Dec 6)",
+                arr: "15:50 (Dec 6)",
+                totalDuration: "1h 20m",
+                from: "HAN (Hanoi T1 Domestic)",
+                to: "DAD (Da Nang)",
+                notes: "Direct domestic sector (1h 20m non-stop)"
+            },
+            dad_han: {
+                sector: "DAD ➔ HAN",
+                passengers: "5 Adults (All)",
+                isConnecting: false,
+                airline: "Vietnam Airlines",
+                flightNo: "VN 178",
+                pnr: "VN-DOM-664",
+                dept: "13:30 (Dec 10)",
+                arr: "14:50 (Dec 10)",
+                totalDuration: "1h 20m",
+                from: "DAD (Da Nang)",
+                to: "HAN (Hanoi T1 Domestic)",
+                notes: "Direct domestic return flight (1h 20m non-stop)"
+            },
+            han_del: {
+                sector: "HAN ➔ DEL",
+                passengers: "2 Parents (Delhi)",
+                isConnecting: false,
+                airline: "Vietnam Airlines",
+                flightNo: "VN 971",
+                pnr: "VN-RET-881",
+                dept: "19:00 (Dec 10/11)",
+                arr: "22:00 (Dec 10/11)",
+                totalDuration: "4h 30m",
+                from: "HAN (Hanoi T2 International)",
+                to: "DEL (Delhi T3)",
+                notes: "Direct non-stop flight home to Delhi"
+            },
+            han_blr: {
+                sector: "HAN ➔ BLR",
+                passengers: "3 Adults (Bengaluru)",
+                isConnecting: true,
+                airline: "Thai AirAsia",
+                flightNo: "FD 643 ➔ FD 137",
+                pnr: "AA-RET-994",
+                dept: "17:30 (Dec 10/11)",
+                arr: "00:30 AM (Next Day)",
+                totalDuration: "8h 30m",
+                notes: "Connecting via Bangkok Don Mueang (DMK)",
+                from: "HAN (Hanoi Noi Bai T2)",
+                to: "BLR (Bengaluru T2)",
+                leg1: {
+                    from: "HAN (Hanoi Noi Bai T2)",
+                    to: "DMK (Bangkok Don Mueang)",
+                    airline: "Thai AirAsia",
+                    flightNo: "FD 643",
+                    dept: "17:30 (Dec 10/11)",
+                    arr: "19:20 (Dec 10/11)",
+                    duration: "1h 50m"
+                },
+                layover: {
+                    airport: "DMK (Bangkok Don Mueang)",
+                    city: "Bangkok",
+                    duration: "2h 10m",
+                    note: "International transit / Gate change"
+                },
+                leg2: {
+                    from: "DMK (Bangkok Don Mueang)",
+                    to: "BLR (Bengaluru T2)",
+                    airline: "Thai AirAsia",
+                    flightNo: "FD 137",
+                    dept: "21:30 (Dec 10/11)",
+                    arr: "00:30 AM (Next Day)",
+                    duration: "4h 30m"
+                }
+            }
         };
 
         const defaultFamilyDocs = [
@@ -1665,16 +2018,31 @@
             return defaultHotelsData;
         }
 
+        function normalizeFlightData(f, def) {
+            if (!f) return { ...def };
+            const merged = { ...def, ...f };
+            if (merged.isConnecting) {
+                merged.leg1 = { ...(def.leg1 || {}), ...(f.leg1 || {}) };
+                merged.layover = { ...(def.layover || {}), ...(f.layover || {}) };
+                merged.leg2 = { ...(def.leg2 || {}), ...(f.leg2 || {}) };
+                if (!merged.airline || merged.airline === def.airline) {
+                    merged.airline = merged.leg1.airline === merged.leg2.airline ? merged.leg1.airline : `${merged.leg1.airline} + ${merged.leg2.airline}`;
+                }
+                if (!merged.flightNo || merged.flightNo === def.flightNo) {
+                    merged.flightNo = `${merged.leg1.flightNo} ➔ ${merged.leg2.flightNo}`;
+                }
+            }
+            return merged;
+        }
+
         function getFlightsData() {
             const saved = safeGetStorage('vietnam_custom_flights', null);
-            if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
-                const result = {};
-                Object.keys(defaultFlightsData).forEach(k => {
-                    result[k] = { ...defaultFlightsData[k], ...(saved[k] || {}) };
-                });
-                return result;
-            }
-            return defaultFlightsData;
+            const result = {};
+            Object.keys(defaultFlightsData).forEach(k => {
+                const userSaved = saved && typeof saved === 'object' ? saved[k] : null;
+                result[k] = normalizeFlightData(userSaved, defaultFlightsData[k]);
+            });
+            return result;
         }
 
         function getFamilyDocs() {
@@ -1754,14 +2122,97 @@
                     let placeDisplayName = p.name;
                     let deepButtons = '';
 
+                    let flightBannerHtml = '';
+
                     if (p.hotelKey && hotels[p.hotelKey]) {
                         placeDisplayName = `${hotels[p.hotelKey].name} (${hotels[p.hotelKey].city})`;
                         deepButtons += `<button onclick="event.stopPropagation(); openEditHotelModal('${p.hotelKey}')" class="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 font-bold text-xs flex items-center gap-1"><i class="fa-solid fa-hotel"></i> Edit Stay [${hotels[p.hotelKey].pnr}]</button>`;
                     }
-                    if (p.flightKey && flights[p.flightKey]) {
+
+                    if (p.flightKey === 'del_han') {
+                        const del = flights.del_han || defaultFlightsData.del_han;
+                        const blr = flights.blr_han || defaultFlightsData.blr_han;
+                        placeDisplayName = `Noi Bai Airport Arrival • Connecting Flights`;
+                        deepButtons += `
+                            <button onclick="event.stopPropagation(); openEditFlightModal('del_han')" class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center gap-1">
+                                <i class="fa-solid fa-plane"></i> Edit DEL [${del.pnr}]
+                            </button>
+                            <button onclick="event.stopPropagation(); openEditFlightModal('blr_han')" class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center gap-1">
+                                <i class="fa-solid fa-plane"></i> Edit BLR [${blr.pnr}]
+                            </button>
+                        `;
+                        flightBannerHtml = `
+                            <div class="mt-2.5 p-2.5 bg-indigo-50/70 dark:bg-indigo-950/40 rounded-xl border border-indigo-200/70 dark:border-indigo-800/80 space-y-2 text-xs">
+                                <div class="flex items-center justify-between font-bold text-indigo-900 dark:text-indigo-200 text-[11px]">
+                                    <span class="flex items-center gap-1"><i class="fa-solid fa-plane-arrival text-indigo-600"></i> Connecting Flight Details (Dec 3–4)</span>
+                                    <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-normal">HAN T2 Terminal</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-indigo-100 dark:border-indigo-900/60 space-y-1">
+                                        <div class="flex justify-between items-start">
+                                            <span class="font-bold text-[11px] text-slate-900 dark:text-white">🇮🇳 Delhi Parents (2 Pax)</span>
+                                            <span class="font-mono font-bold text-[10px] text-indigo-600 cursor-pointer" onclick="event.stopPropagation(); copyToClipboard('${del.pnr}')" title="Copy PNR">${del.pnr} <i class="fa-regular fa-copy"></i></span>
+                                        </div>
+                                        <div class="text-[10px] text-slate-500">${del.airline} • <strong class="font-mono">${del.flightNo}</strong></div>
+                                        ${del.isConnecting && del.layover ? `<div class="text-[10px] text-amber-700 dark:text-amber-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-hourglass-half"></i> Layover: ${del.layover.airport || del.layover.city} (${del.layover.duration})</div>` : ''}
+                                        <div class="text-[10px] text-slate-600 dark:text-slate-300">Dept: <span class="font-mono">${del.dept}</span> ➔ Land: <strong class="text-emerald-600 font-mono">${del.arr}</strong></div>
+                                    </div>
+                                    <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-indigo-100 dark:border-indigo-900/60 space-y-1">
+                                        <div class="flex justify-between items-start">
+                                            <span class="font-bold text-[11px] text-slate-900 dark:text-white">🇮🇳 BLR Group (3 Pax)</span>
+                                            <span class="font-mono font-bold text-[10px] text-indigo-600 cursor-pointer" onclick="event.stopPropagation(); copyToClipboard('${blr.pnr}')" title="Copy PNR">${blr.pnr} <i class="fa-regular fa-copy"></i></span>
+                                        </div>
+                                        <div class="text-[10px] text-slate-500">${blr.airline} • <strong class="font-mono">${blr.flightNo}</strong></div>
+                                        ${blr.isConnecting && blr.layover ? `<div class="text-[10px] text-amber-700 dark:text-amber-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-hourglass-half"></i> Layover: ${blr.layover.airport || blr.layover.city} (${blr.layover.duration})</div>` : ''}
+                                        <div class="text-[10px] text-slate-600 dark:text-slate-300">Dept: <span class="font-mono">${blr.dept}</span> ➔ Land: <strong class="text-emerald-600 font-mono">${blr.arr}</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else if (p.flightKey === 'han_del') {
+                        const hanDel = flights.han_del || defaultFlightsData.han_del;
+                        const hanBlr = flights.han_blr || defaultFlightsData.han_blr;
+                        placeDisplayName = `Board Flights Home (Delhi & Bengaluru)`;
+                        deepButtons += `
+                            <button onclick="event.stopPropagation(); openEditFlightModal('han_del')" class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center gap-1">
+                                <i class="fa-solid fa-plane"></i> Edit DEL Return [${hanDel.pnr}]
+                            </button>
+                            <button onclick="event.stopPropagation(); openEditFlightModal('han_blr')" class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center gap-1">
+                                <i class="fa-solid fa-plane"></i> Edit BLR Return [${hanBlr.pnr}]
+                            </button>
+                        `;
+                        flightBannerHtml = `
+                            <div class="mt-2.5 p-2.5 bg-purple-50/70 dark:bg-purple-950/40 rounded-xl border border-purple-200/70 dark:border-purple-800/80 space-y-2 text-xs">
+                                <div class="flex items-center justify-between font-bold text-purple-900 dark:text-purple-200 text-[11px]">
+                                    <span class="flex items-center gap-1"><i class="fa-solid fa-plane-departure text-purple-600"></i> Homebound Flights</span>
+                                    <span class="text-[10px] text-purple-600 dark:text-purple-400 font-normal">HAN T2 International</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-purple-100 dark:border-purple-900/60 space-y-1">
+                                        <div class="flex justify-between items-start">
+                                            <span class="font-bold text-[11px] text-slate-900 dark:text-white">DEL Parents Return</span>
+                                            <span class="font-mono font-bold text-[10px] text-purple-600 cursor-pointer" onclick="event.stopPropagation(); copyToClipboard('${hanDel.pnr}')" title="Copy PNR">${hanDel.pnr} <i class="fa-regular fa-copy"></i></span>
+                                        </div>
+                                        <div class="text-[10px] text-slate-500">${hanDel.airline} • <strong class="font-mono">${hanDel.flightNo}</strong></div>
+                                        <div class="text-[10px] text-slate-600 dark:text-slate-300">Dept: <strong class="text-indigo-600 font-mono">${hanDel.dept}</strong> ➔ Arr: <span class="font-mono">${hanDel.arr}</span></div>
+                                    </div>
+                                    <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-purple-100 dark:border-purple-900/60 space-y-1">
+                                        <div class="flex justify-between items-start">
+                                            <span class="font-bold text-[11px] text-slate-900 dark:text-white">BLR Group Return</span>
+                                            <span class="font-mono font-bold text-[10px] text-purple-600 cursor-pointer" onclick="event.stopPropagation(); copyToClipboard('${hanBlr.pnr}')" title="Copy PNR">${hanBlr.pnr} <i class="fa-regular fa-copy"></i></span>
+                                        </div>
+                                        <div class="text-[10px] text-slate-500">${hanBlr.airline} • <strong class="font-mono">${hanBlr.flightNo}</strong></div>
+                                        ${hanBlr.isConnecting && hanBlr.layover ? `<div class="text-[10px] text-amber-700 dark:text-amber-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-hourglass-half"></i> Layover: ${hanBlr.layover.airport || hanBlr.layover.city} (${hanBlr.layover.duration})</div>` : ''}
+                                        <div class="text-[10px] text-slate-600 dark:text-slate-300">Dept: <strong class="text-indigo-600 font-mono">${hanBlr.dept}</strong> ➔ Arr: <span class="font-mono">${hanBlr.arr}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else if (p.flightKey && flights[p.flightKey]) {
                         placeDisplayName = `${flights[p.flightKey].airline} • ${flights[p.flightKey].flightNo} (${flights[p.flightKey].sector})`;
                         deepButtons += `<button onclick="event.stopPropagation(); openEditFlightModal('${p.flightKey}')" class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center gap-1"><i class="fa-solid fa-plane"></i> Edit Flight [${flights[p.flightKey].pnr}]</button>`;
                     }
+
                     if (p.ticketLink) {
                         deepButtons += `<a href="${p.ticketLink}" target="_blank" onclick="event.stopPropagation()" class="px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 font-bold text-xs flex items-center gap-1"><i class="fa-solid fa-ticket"></i> Tickets</a>`;
                     }
@@ -1789,6 +2240,7 @@
                                         </div>
                                         <h3 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white mt-0.5 leading-snug">${placeDisplayName}</h3>
                                         <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">${p.desc}</p>
+                                        ${flightBannerHtml}
                                         <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
                                             ${deepButtons}
                                             ${tagsHtml}
@@ -2137,33 +2589,128 @@
             plotEnhancedMarkers(selectedDayFilter, selectedCategoryFilter);
         }
 
+        function renderFlightCard(key, f) {
+            const isConnecting = f.isConnecting === true;
+            return `
+                <div class="p-4 bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-2xl shadow-sm hover:border-indigo-300 dark:hover:border-indigo-800 transition-colors space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-darkborder pb-2.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-sm font-black text-slate-900 dark:text-white font-display">${f.sector}</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isConnecting ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'}">
+                                ${isConnecting ? '🔄 Connecting (Layover)' : '✈️ Direct Non-Stop'}
+                            </span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">${f.passengers}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono text-xs font-bold px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors" onclick="copyToClipboard('${f.pnr}', 'Copied PNR: ${f.pnr}')" title="Click to copy PNR">
+                                <i class="fa-regular fa-copy text-[11px]"></i> PNR: ${f.pnr}
+                            </span>
+                            <button onclick="openEditFlightModal('${key}')" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-xs flex items-center gap-1 active:scale-95 transition-transform">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+
+                    ${isConnecting ? `
+                        <div class="space-y-2 text-xs">
+                            <!-- Leg 1 -->
+                            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px] font-bold">1</div>
+                                    <div>
+                                        <span class="font-bold text-slate-900 dark:text-white">${f.leg1.from} ➔ ${f.leg1.to}</span>
+                                        <span class="text-[11px] text-slate-500 dark:text-slate-400 block">${f.leg1.airline} • <strong class="font-mono">${f.leg1.flightNo}</strong></span>
+                                    </div>
+                                </div>
+                                <div class="text-right font-mono text-[11px]">
+                                    <span class="text-slate-800 dark:text-slate-200 font-bold block">${f.leg1.dept}</span>
+                                    <span class="text-slate-400 block text-[10px]">Arr: ${f.leg1.arr}</span>
+                                </div>
+                            </div>
+
+                            <!-- Layover Pill -->
+                            <div class="px-3 py-2 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-900/60 rounded-xl flex items-center justify-between text-[11px] text-amber-900 dark:text-amber-200">
+                                <span class="flex items-center gap-1.5 font-bold">
+                                    <i class="fa-solid fa-hourglass-half text-amber-600"></i> Layover at ${f.layover.airport || f.layover.city}
+                                </span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold font-mono px-2 py-0.5 bg-amber-100 dark:bg-amber-900/60 rounded text-amber-800 dark:text-amber-200">${f.layover.duration}</span>
+                                    <span class="text-[10px] text-amber-700 dark:text-amber-400 hidden sm:inline font-medium">(${f.layover.note})</span>
+                                </div>
+                            </div>
+
+                            <!-- Leg 2 -->
+                            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px] font-bold">2</div>
+                                    <div>
+                                        <span class="font-bold text-slate-900 dark:text-white">${f.leg2.from} ➔ ${f.leg2.to}</span>
+                                        <span class="text-[11px] text-slate-500 dark:text-slate-400 block">${f.leg2.airline} • <strong class="font-mono">${f.leg2.flightNo}</strong></span>
+                                    </div>
+                                </div>
+                                <div class="text-right font-mono text-[11px]">
+                                    <span class="text-slate-800 dark:text-slate-200 font-bold block">${f.leg2.dept}</span>
+                                    <span class="text-slate-400 block text-[10px]">Arr: ${f.leg2.arr}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ` : `
+                        <!-- Direct Flight Single Bar -->
+                        <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-xs">
+                            <div>
+                                <span class="font-bold text-slate-900 dark:text-white">${f.from || f.sector.split('➔')[0].trim()} ➔ ${f.to || f.sector.split('➔')[1].trim()}</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400 block">${f.airline} • <strong class="font-mono">${f.flightNo}</strong></span>
+                            </div>
+                            <div class="text-right font-mono text-[11px]">
+                                <span class="text-slate-800 dark:text-slate-200 font-bold block">${f.dept}</span>
+                                <span class="text-slate-400 block text-[10px]">Arr: ${f.arr}</span>
+                            </div>
+                        </div>
+                    `}
+
+                    <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-darkborder">
+                        <span class="flex items-center gap-1">
+                            <i class="fa-solid fa-clock text-slate-400"></i> Total Travel Time: <strong class="text-slate-700 dark:text-slate-300 font-mono">${f.totalDuration || 'Direct'}</strong>
+                        </span>
+                        ${f.notes ? `<span class="italic text-[10px] text-slate-400"><i class="fa-solid fa-circle-info mr-0.5"></i> ${f.notes}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
         function renderFlightTables() {
             const flights = getFlightsData();
-            const inTbody = document.getElementById('inbound-flights-tbody');
-            if (inTbody) {
+
+            // 1. Inbound cards
+            const inboundContainer = document.getElementById('inbound-flights-cards');
+            if (inboundContainer) {
                 const del = flights.del_han || defaultFlightsData.del_han;
                 const blr = flights.blr_han || defaultFlightsData.blr_han;
-                inTbody.innerHTML = `
-                    <tr class="p-3"><td class="p-2.5"><strong>${del.sector || 'DEL ➔ HAN'}</strong><br><span class="text-slate-500">${del.airline || ''} • ${del.flightNo || ''}</span></td><td class="p-2.5 text-right font-mono font-bold text-indigo-600">${del.pnr || ''}</td></tr>
-                    <tr class="p-3 bg-slate-50/50 dark:bg-slate-800/40"><td class="p-2.5"><strong>${blr.sector || 'BLR ➔ HAN'}</strong><br><span class="text-slate-500">${blr.airline || ''} • ${blr.flightNo || ''}</span></td><td class="p-2.5 text-right font-mono font-bold text-indigo-600">${blr.pnr || ''}</td></tr>
+                inboundContainer.innerHTML = `
+                    ${renderFlightCard('del_han', del)}
+                    ${renderFlightCard('blr_han', blr)}
                 `;
             }
-            const domTbody = document.getElementById('domestic-flights-tbody');
-            if (domTbody) {
+
+            // 2. Domestic cards
+            const domesticContainer = document.getElementById('domestic-flights-cards');
+            if (domesticContainer) {
                 const hanDad = flights.han_dad || defaultFlightsData.han_dad;
                 const dadHan = flights.dad_han || defaultFlightsData.dad_han;
-                domTbody.innerHTML = `
-                    <tr class="p-3"><td class="p-2.5"><strong>${hanDad.sector || 'HAN ➔ DAD'}</strong><br><span class="text-slate-500">${hanDad.airline || ''} • ${hanDad.flightNo || ''}</span></td><td class="p-2.5 text-right font-mono font-bold text-indigo-600">${hanDad.pnr || ''}</td></tr>
-                    <tr class="p-3 bg-slate-50/50 dark:bg-slate-800/40"><td class="p-2.5"><strong>${dadHan.sector || 'DAD ➔ HAN'}</strong><br><span class="text-slate-500">${dadHan.airline || ''} • ${dadHan.flightNo || ''}</span></td><td class="p-2.5 text-right font-mono font-bold text-indigo-600">${dadHan.pnr || ''}</td></tr>
+                domesticContainer.innerHTML = `
+                    ${renderFlightCard('han_dad', hanDad)}
+                    ${renderFlightCard('dad_han', dadHan)}
                 `;
             }
-            const outTbody = document.getElementById('outbound-flights-tbody');
-            if (outTbody) {
+
+            // 3. Outbound / Return cards
+            const outboundContainer = document.getElementById('outbound-flights-cards');
+            if (outboundContainer) {
                 const hanDel = flights.han_del || defaultFlightsData.han_del;
                 const hanBlr = flights.han_blr || defaultFlightsData.han_blr;
-                outTbody.innerHTML = `
-                    <tr class="p-3"><td class="p-2.5"><strong>${hanDel.sector || 'HAN ➔ DEL'}</strong><br><span class="text-slate-500">${hanDel.airline || ''} • ${hanDel.flightNo || ''}</span></td><td class="p-2.5 text-right font-mono font-bold text-indigo-600">${hanDel.pnr || ''}</td></tr>
-                    <tr class="p-3 bg-slate-50/50 dark:bg-slate-800/40"><td class="p-2.5"><strong>${hanBlr.sector || 'HAN ➔ BLR'}</strong><br><span class="text-slate-500">${hanBlr.airline || ''} • ${hanBlr.flightNo || ''}</span></td><td class="p-2.5 text-right font-mono font-bold text-indigo-600">${hanBlr.pnr || ''}</td></tr>
+                outboundContainer.innerHTML = `
+                    ${renderFlightCard('han_del', hanDel)}
+                    ${renderFlightCard('han_blr', hanBlr)}
                 `;
             }
         }
@@ -2173,35 +2720,176 @@
             loadFlightEditForm();
             document.getElementById('edit-flight-modal').classList.remove('hidden');
         }
-        function closeEditFlightModal() { document.getElementById('edit-flight-modal').classList.add('hidden'); }
+
+        function closeEditFlightModal() {
+            document.getElementById('edit-flight-modal').classList.add('hidden');
+        }
+
+        function setFlightModalMode(isConnecting) {
+            document.getElementById('edit-flight-is-connecting').value = isConnecting ? 'true' : 'false';
+            const connBtn = document.getElementById('btn-mode-connecting');
+            const directBtn = document.getElementById('btn-mode-direct');
+            const connFields = document.getElementById('connecting-flight-fields');
+            const directFields = document.getElementById('direct-flight-fields');
+
+            if (isConnecting) {
+                connBtn.className = "py-1.5 rounded-lg text-center transition-all bg-white dark:bg-darkcard text-indigo-600 shadow-xs font-bold";
+                directBtn.className = "py-1.5 rounded-lg text-center transition-all text-slate-500 font-bold";
+                connFields.classList.remove('hidden');
+                directFields.classList.add('hidden');
+            } else {
+                directBtn.className = "py-1.5 rounded-lg text-center transition-all bg-white dark:bg-darkcard text-indigo-600 shadow-xs font-bold";
+                connBtn.className = "py-1.5 rounded-lg text-center transition-all text-slate-500 font-bold";
+                directFields.classList.remove('hidden');
+                connFields.classList.add('hidden');
+            }
+        }
 
         function loadFlightEditForm() {
             const key = document.getElementById('edit-flight-key').value;
-            const f = getFlightsData()[key];
-            if (f) {
-                document.getElementById('edit-flight-airline').value = f.airline;
-                document.getElementById('edit-flight-number').value = f.flightNo;
-                document.getElementById('edit-flight-pnr').value = f.pnr;
-            }
+            const flights = getFlightsData();
+            const f = flights[key] || defaultFlightsData[key];
+            if (!f) return;
+
+            const isConnecting = f.isConnecting === true;
+            setFlightModalMode(isConnecting);
+
+            // Connecting fields
+            const leg1 = f.leg1 || {};
+            document.getElementById('edit-leg1-from').value = leg1.from || f.from || '';
+            document.getElementById('edit-leg1-to').value = leg1.to || (f.layover ? f.layover.airport : '');
+            document.getElementById('edit-leg1-airline').value = leg1.airline || f.airline || '';
+            document.getElementById('edit-leg1-flightno').value = leg1.flightNo || f.flightNo || '';
+            document.getElementById('edit-leg1-dept').value = leg1.dept || f.dept || '';
+            document.getElementById('edit-leg1-arr').value = leg1.arr || '';
+
+            const layover = f.layover || {};
+            document.getElementById('edit-layover-airport').value = layover.airport || layover.city || '';
+            document.getElementById('edit-layover-duration').value = layover.duration || '';
+            document.getElementById('edit-layover-note').value = layover.note || '';
+
+            const leg2 = f.leg2 || {};
+            document.getElementById('edit-leg2-from').value = leg2.from || (f.layover ? f.layover.airport : '');
+            document.getElementById('edit-leg2-to').value = leg2.to || f.to || '';
+            document.getElementById('edit-leg2-airline').value = leg2.airline || f.airline || '';
+            document.getElementById('edit-leg2-flightno').value = leg2.flightNo || f.flightNo || '';
+            document.getElementById('edit-leg2-dept').value = leg2.dept || '';
+            document.getElementById('edit-leg2-arr').value = leg2.arr || f.arr || '';
+
+            // Direct fields
+            document.getElementById('edit-direct-from').value = f.from || '';
+            document.getElementById('edit-direct-to').value = f.to || '';
+            document.getElementById('edit-direct-airline').value = f.airline || '';
+            document.getElementById('edit-direct-flightno').value = f.flightNo || '';
+            document.getElementById('edit-direct-dept').value = f.dept || '';
+            document.getElementById('edit-direct-arr').value = f.arr || '';
+
+            // Shared
+            document.getElementById('edit-flight-pnr').value = f.pnr || '';
+            document.getElementById('edit-flight-total-duration').value = f.totalDuration || '';
+            document.getElementById('edit-flight-notes').value = f.notes || '';
         }
 
         function saveEditedFlight() {
             const key = document.getElementById('edit-flight-key').value;
             const flights = getFlightsData();
-            if (!flights[key]) flights[key] = { ...defaultFlightsData[key] };
-            flights[key].airline = document.getElementById('edit-flight-airline').value.trim();
-            flights[key].flightNo = document.getElementById('edit-flight-number').value.trim();
-            flights[key].pnr = document.getElementById('edit-flight-pnr').value.trim();
+            const isConnecting = document.getElementById('edit-flight-is-connecting').value === 'true';
+
+            const pnr = document.getElementById('edit-flight-pnr').value.trim();
+            const totalDuration = document.getElementById('edit-flight-total-duration').value.trim();
+            const notes = document.getElementById('edit-flight-notes').value.trim();
+
+            if (isConnecting) {
+                const leg1 = {
+                    from: document.getElementById('edit-leg1-from').value.trim(),
+                    to: document.getElementById('edit-leg1-to').value.trim(),
+                    airline: document.getElementById('edit-leg1-airline').value.trim(),
+                    flightNo: document.getElementById('edit-leg1-flightno').value.trim(),
+                    dept: document.getElementById('edit-leg1-dept').value.trim(),
+                    arr: document.getElementById('edit-leg1-arr').value.trim()
+                };
+                const layover = {
+                    airport: document.getElementById('edit-layover-airport').value.trim(),
+                    city: document.getElementById('edit-layover-airport').value.trim(),
+                    duration: document.getElementById('edit-layover-duration').value.trim(),
+                    note: document.getElementById('edit-layover-note').value.trim()
+                };
+                const leg2 = {
+                    from: document.getElementById('edit-leg2-from').value.trim(),
+                    to: document.getElementById('edit-leg2-to').value.trim(),
+                    airline: document.getElementById('edit-leg2-airline').value.trim(),
+                    flightNo: document.getElementById('edit-leg2-flightno').value.trim(),
+                    dept: document.getElementById('edit-leg2-dept').value.trim(),
+                    arr: document.getElementById('edit-leg2-arr').value.trim()
+                };
+
+                const combinedAirline = leg1.airline === leg2.airline ? leg1.airline : `${leg1.airline} + ${leg2.airline}`;
+                const combinedFlightNo = `${leg1.flightNo} ➔ ${leg2.flightNo}`;
+
+                flights[key] = {
+                    ...(flights[key] || defaultFlightsData[key] || {}),
+                    isConnecting: true,
+                    airline: combinedAirline,
+                    flightNo: combinedFlightNo,
+                    pnr,
+                    dept: leg1.dept,
+                    arr: leg2.arr,
+                    totalDuration,
+                    notes,
+                    from: leg1.from,
+                    to: leg2.to,
+                    leg1,
+                    layover,
+                    leg2
+                };
+            } else {
+                const directAirline = document.getElementById('edit-direct-airline').value.trim();
+                const directFlightNo = document.getElementById('edit-direct-flightno').value.trim();
+                const directFrom = document.getElementById('edit-direct-from').value.trim();
+                const directTo = document.getElementById('edit-direct-to').value.trim();
+                const directDept = document.getElementById('edit-direct-dept').value.trim();
+                const directArr = document.getElementById('edit-direct-arr').value.trim();
+
+                flights[key] = {
+                    ...(flights[key] || defaultFlightsData[key] || {}),
+                    isConnecting: false,
+                    airline: directAirline,
+                    flightNo: directFlightNo,
+                    from: directFrom,
+                    to: directTo,
+                    pnr,
+                    dept: directDept,
+                    arr: directArr,
+                    totalDuration,
+                    notes
+                };
+            }
+
             safeSetStorage('vietnam_custom_flights', flights);
             closeEditFlightModal();
             renderFlightTables();
             renderItineraryTimeline();
         }
 
+        function resetFlightSectorToDefault() {
+            const key = document.getElementById('edit-flight-key').value;
+            const def = defaultFlightsData[key];
+            if (!def) return;
+            if (confirm(`Reset sector ${def.sector} to default flight schedule?`)) {
+                const flights = getFlightsData();
+                flights[key] = { ...def };
+                safeSetStorage('vietnam_custom_flights', flights);
+                loadFlightEditForm();
+                renderFlightTables();
+                renderItineraryTimeline();
+            }
+        }
+
         function renderChecklist() {
             const container = document.getElementById('checklist-phases-container');
             if (!container) return;
             const saved = safeGetStorage('vietnam_cl_state', {}) || {};
+            const customTasks = safeGetStorage('vietnam_cl_custom_tasks', []) || [];
             let total = 0, done = 0;
             container.innerHTML = '';
 
@@ -2218,6 +2906,27 @@
                         </label>
                     `;
                 });
+
+                // Custom tasks under this phase
+                const phaseCustom = customTasks.filter(c => c.phaseId === p.id);
+                phaseCustom.forEach(ct => {
+                    total++;
+                    const checked = saved[ct.id] ? 'checked' : '';
+                    if (saved[ct.id]) done++;
+                    tasksHtml += `
+                        <div class="flex items-start justify-between py-2 border-t border-dashed border-slate-100 dark:border-darkborder">
+                            <label class="flex items-start gap-2.5 cursor-pointer flex-1">
+                                <input type="checkbox" id="${ct.id}" ${checked} onchange="saveChecklistState()" class="mt-0.5 w-4 h-4 text-indigo-600 rounded">
+                                <div class="text-xs">
+                                    <strong class="text-indigo-700 dark:text-indigo-300">${ct.text}</strong>
+                                    <span class="ml-1 text-[9px] bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded font-bold">Custom</span>
+                                </div>
+                            </label>
+                            <button onclick="removeCustomChecklistItem('${ct.id}')" class="text-slate-400 hover:text-rose-500 p-1 text-xs" title="Delete custom item"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    `;
+                });
+
                 container.innerHTML += `
                     <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-3.5 shadow-sm">
                         <div class="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-darkborder"><h3 class="font-bold text-xs">${p.title}</h3><span class="text-[9px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded font-bold">${p.badge}</span></div>
@@ -2225,6 +2934,22 @@
                     </div>
                 `;
             });
+
+            // Bottom Add Custom Task card
+            container.innerHTML += `
+                <div class="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2.5">
+                    <div>
+                        <strong class="text-xs text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-plus text-brand-600"></i> Add Personal Checklist Tasks
+                        </strong>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Custom medications, camera gear, or special family packing items</p>
+                    </div>
+                    <button onclick="promptAddCustomChecklistItem()" class="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs shadow-xs flex items-center gap-1.5 active:scale-95 transition-transform">
+                        <i class="fa-solid fa-plus"></i> Add Item
+                    </button>
+                </div>
+            `;
+
             const pct = total > 0 ? Math.round((done / total) * 100) : 0;
             const bar = document.getElementById('cl-prog-bar');
             if (bar) bar.style.width = `${pct}%`;
@@ -2238,8 +2963,46 @@
                 const el = document.getElementById(t.id);
                 if (el) state[t.id] = el.checked;
             }));
+            const customTasks = safeGetStorage('vietnam_cl_custom_tasks', []) || [];
+            customTasks.forEach(ct => {
+                const el = document.getElementById(ct.id);
+                if (el) state[ct.id] = el.checked;
+            });
             safeSetStorage('vietnam_cl_state', state);
             renderChecklist();
+        }
+
+        function promptAddCustomChecklistItem() {
+            const taskText = prompt("Enter custom checklist item (e.g. Extra inhaler, Universal adapter, Sunscreen SPF 50):");
+            if (!taskText || !taskText.trim()) return;
+
+            const categoryChoice = prompt("Choose Phase:\n1 = Pre-Trip (e-Visas & Forex)\n2 = Luggage & Packing (Clothing & Shoes)\n3 = Senior Comfort & Meds\n4 = Hand Baggage & Documents", "2");
+            let targetPhaseId = 'pack';
+            if (categoryChoice === '1' || (categoryChoice && categoryChoice.toLowerCase().includes('pre'))) targetPhaseId = 'pre';
+            else if (categoryChoice === '3' || (categoryChoice && categoryChoice.toLowerCase().includes('med'))) targetPhaseId = 'med';
+            else if (categoryChoice === '4' || (categoryChoice && categoryChoice.toLowerCase().includes('doc'))) targetPhaseId = 'doc';
+
+            const customTasks = safeGetStorage('vietnam_cl_custom_tasks', []) || [];
+            const newTask = {
+                id: 'cust_cl_' + Date.now(),
+                text: taskText.trim(),
+                phaseId: targetPhaseId
+            };
+            customTasks.push(newTask);
+            safeSetStorage('vietnam_cl_custom_tasks', customTasks);
+            renderChecklist();
+        }
+
+        function removeCustomChecklistItem(taskId) {
+            if (confirm("Remove this custom checklist item?")) {
+                let customTasks = safeGetStorage('vietnam_cl_custom_tasks', []) || [];
+                customTasks = customTasks.filter(t => t.id !== taskId);
+                safeSetStorage('vietnam_cl_custom_tasks', customTasks);
+                const saved = safeGetStorage('vietnam_cl_state', {}) || {};
+                delete saved[taskId];
+                safeSetStorage('vietnam_cl_state', saved);
+                renderChecklist();
+            }
         }
 
         function toggleAllChecklist(checked) {
@@ -2324,7 +3087,6 @@ Please provide your best package quote in VND. Thank you!`;
             });
         }
 
-        let activeBudgetCategory = 'all';
         let currentBudgetStatus = 'booked';
         let currentBudgetCategory = 'flights';
 
@@ -2827,8 +3589,7 @@ Please provide your best package quote in VND. Thank you!`;
         }
 
         /* 📍 HERO SCHEDULE STOP CYCLER */
-        let flatItineraryStops = [];
-        let currentHeroStopIdx = 0;
+        
 
         function initHeroStops() {
             flatItineraryStops = [];
@@ -2895,13 +3656,51 @@ Please provide your best package quote in VND. Thank you!`;
         }
 
         function exportTripBackup() {
-            const data = { hotels: getHotelsData(), flights: getFlightsData(), docs: getFamilyDocs(), checklist: safeGetStorage('vietnam_cl_state', {}) || {} };
+            const data = {
+                app: "VietnamTripArchitect",
+                version: "5.0",
+                exportedAt: new Date().toISOString(),
+                hotels: getHotelsData(),
+                flights: getFlightsData(),
+                docs: getFamilyDocs(),
+                checklist: safeGetStorage('vietnam_cl_state', {}) || {},
+                checklistCustom: safeGetStorage('vietnam_cl_custom_tasks', []) || [],
+                budget: safeGetStorage('vietnam_custom_budget', null)
+            };
             const a = document.createElement('a');
             a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-            a.download = "vietnam_master_trip_backup.json";
+            a.download = `vietnam_master_trip_backup_${new Date().toISOString().slice(0, 10)}.json`;
             document.body.appendChild(a);
             a.click();
             a.remove();
+        }
+
+        function triggerImportTripBackup() {
+            const input = document.getElementById('trip-backup-import-input');
+            if (input) input.click();
+        }
+
+        function importTripBackup(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.hotels) safeSetStorage('vietnam_custom_hotels', data.hotels);
+                    if (data.flights) safeSetStorage('vietnam_custom_flights', data.flights);
+                    if (data.docs) safeSetStorage('vietnam_family_docs', data.docs);
+                    if (data.checklist) safeSetStorage('vietnam_cl_state', data.checklist);
+                    if (data.checklistCustom) safeSetStorage('vietnam_cl_custom_tasks', data.checklistCustom);
+                    if (data.budget) safeSetStorage('vietnam_custom_budget', data.budget);
+
+                    alert("✅ Master trip backup successfully restored!");
+                    location.reload();
+                } catch (err) {
+                    alert("❌ Failed to parse backup file: " + err.message);
+                }
+            };
+            reader.readAsText(file);
         }
 
         function copyToClipboard(text, msg = "Copied!") {

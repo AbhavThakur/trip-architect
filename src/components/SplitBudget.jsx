@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   Calculator, Users, Plus, DollarSign, Calendar, X, Tag,
-  Plane, Hotel, Car, Ticket, Utensils, Shield, ShoppingBag,
+  Plane, Hotel, Car, Anchor, Ticket, Utensils, Shield, ShoppingBag,
   RotateCcw, PenSquare, Trash2, CheckCircle2, Clock, Receipt,
   Check, ArrowRight
 } from "lucide-react";
@@ -10,6 +10,7 @@ export const BUDGET_CATEGORIES = {
   all: { label: "All", icon: Tag, color: "purple" },
   flights: { label: "Flights", icon: Plane, color: "indigo" },
   stays: { label: "Stays", icon: Hotel, color: "blue" },
+  cruise: { label: "Aqua Cruise", icon: Anchor, color: "teal" },
   transport: { label: "Cabs & Limo", icon: Car, color: "sky" },
   tours: { label: "Tours & Tickets", icon: Ticket, color: "amber" },
   food: { label: "Food & Dining", icon: Utensils, color: "emerald" },
@@ -19,30 +20,31 @@ export const BUDGET_CATEGORIES = {
 
 const QUICK_DATE_PRESETS = [
   { label: "Dec 3 Departure", value: "2026-12-03" },
-  { label: "Dec 4 Hanoi", value: "2026-12-04" },
-  { label: "Dec 5 Ninh Binh", value: "2026-12-05" },
-  { label: "Dec 6 Fly Da Nang", value: "2026-12-06" },
-  { label: "Dec 7 Hoi An", value: "2026-12-07" },
-  { label: "Dec 8 Ba Na Hills", value: "2026-12-08" },
-  { label: "Dec 10 Farewell", value: "2026-12-10" },
-  { label: "Dec 11 Return", value: "2026-12-11" }
+  { label: "Dec 4 Da Nang Beach", value: "2026-12-04" },
+  { label: "Dec 5 Ba Na Hills", value: "2026-12-05" },
+  { label: "Dec 6 Marble Mtns & Hoi An", value: "2026-12-06" },
+  { label: "Dec 7 Fly Hanoi", value: "2026-12-07" },
+  { label: "Dec 8 Ninh Binh", value: "2026-12-08" },
+  { label: "Dec 9 Aqua Cruise", value: "2026-12-09" },
+  { label: "Dec 10 Return to Delhi", value: "2026-12-10" }
 ];
 
 export default function SplitBudget({ budget, onSaveBudget, tripId }) {
   if (!budget) return null;
 
   const defaultItems = [
-    { item: "International Flights (DEL & BLR)", details: "5 return tickets (2 DEL Parents + 3 BLR Adults)", total: 140000, pax: 5, category: "flights", date: "2026-12-03", status: "estimated" },
-    { item: "Domestic Flights (HAN ⇄ DAD)", details: "5 round-trip tickets (VN Airlines / VietJet)", total: 35000, pax: 5, category: "flights", date: "2026-12-06", status: "estimated" },
-    { item: "Vietnam E-Visas", details: "/person for 5 pax (Gov Portal)", total: 10500, pax: 5, category: "visas", date: "2026-11-05", status: "estimated" },
-    { item: "Hanoi Hotels (3 Nights Total)", details: "La Siesta Classic (Double + Triple Suites)", total: 33000, pax: 5, category: "stays", date: "2026-12-03", status: "estimated" },
-    { item: "Hoi An Garden Resort (2 Nights)", details: "La Siesta Resort (Double + Grand Suites)", total: 24000, pax: 5, category: "stays", date: "2026-12-06", status: "estimated" },
-    { item: "Da Nang Beachfront Hotel (2 Nights)", details: "TMS Hotel Ocean View (Double + Triple Suites)", total: 22000, pax: 5, category: "stays", date: "2026-12-08", status: "estimated" },
-    { item: "9-Seater Private DCar Limousines", details: "All 9 private transfers (including Ninh Binh Full Day)", total: 38000, pax: 5, category: "transport", date: "2026-12-04", status: "estimated" },
-    { item: "Ninh Binh Day Tour & Boat Tickets", details: "Hoa Lu entry + Tam Coc Sampan rowboat fees for 5 pax", total: 12500, pax: 5, category: "tours", date: "2026-12-05", status: "estimated" },
-    { item: "Ba Na Hills Cable Car & Bridge Tickets", details: "5 Klook cable car + Golden bridge entry passes", total: 18500, pax: 5, category: "tours", date: "2026-12-08", status: "estimated" },
-    { item: "Sightseeing, Puppets & Lantern Boats", details: "Water puppets VIP, Hoi An lantern boat, Marble Mt elevator", total: 9500, pax: 5, category: "tours", date: "2026-12-04", status: "estimated" },
-    { item: "Pure Veg & Indian Dining / Cafes", details: "Sadhu, Dalcheeni, Baba's Kitchen, Ưu Đàm Chay & Egg Coffee", total: 42000, pax: 5, category: "food", date: "2026-12-03", status: "estimated" }
+    { item: "International Flights (DEL & BLR to HAN)", details: "IndiGo 6E-676 + 6E-6517 + 6E-1631 (PNRs: OB5L6J, GI2EGR)", total: 85000, pax: 5, category: "flights", date: "2026-12-03", status: "paid" },
+    { item: "Return International Flights (HAN to DEL)", details: "VietJet VJ-971 Confirmed for all 5 Pax (PNR: 58FTFJ)", total: 67000, pax: 5, category: "flights", date: "2026-12-10", status: "paid" },
+    { item: "Domestic Flights (HAN ➔ DAD & DAD ➔ HAN)", details: "Morning connector Dec 4 + Midday connector Dec 7 (5 Pax)", total: 35000, pax: 5, category: "flights", date: "2026-12-04", status: "estimated" },
+    { item: "Da Nang Beachfront Hotel (3 Nights)", details: "TMS Hotel Da Nang Beach (Premier Oceanfront Suite)", total: 48000, pax: 5, category: "stays", date: "2026-12-04", status: "estimated" },
+    { item: "Hanoi Old Quarter Hotel (2 Nights)", details: "Peridot Grand Luxury Boutique Hotel Connecting Suites", total: 36000, pax: 5, category: "stays", date: "2026-12-07", status: "estimated" },
+    { item: "Aqua Cruise Halong Bay 2D1N (Overnight)", details: "5-Star Luxury Private Balcony Cabins + Full Board Meals", total: 58000, pax: 5, category: "cruise", date: "2026-12-09", status: "estimated" },
+    { item: "Ba Na Hills Sun World Day Trip", details: "Cable car roundtrip + Golden Bridge + Buffet lunch (5 Pax)", total: 18000, pax: 5, category: "tours", date: "2026-12-05", status: "estimated" },
+    { item: "Marble Mountains & Hoi An Day Trip", details: "Cave entry + Cam Thanh coconut basket boats + Lantern boat", total: 10000, pax: 5, category: "tours", date: "2026-12-06", status: "estimated" },
+    { item: "Ninh Binh Day Tour (Trang An & Mua Cave)", details: "Private 9-seater limo + Trang An sampan boat + guide", total: 14000, pax: 5, category: "tours", date: "2026-12-08", status: "estimated" },
+    { item: "Airport Transfers & 9-Seater Private Limousines", details: "Da Nang airport pickups + Halong expressway private transfers", total: 22000, pax: 5, category: "transport", date: "2026-12-04", status: "estimated" },
+    { item: "Pure Vegetarian & Indian Gourmet Dining", details: "7 days dining budget across Da Nang, Hoi An, Hanoi, and excursions", total: 20000, pax: 5, category: "food", date: "2026-12-04", status: "estimated" },
+    { item: "Vietnam E-Visas & Travel Insurance", details: "Official single-entry e-visas ($25/each) + Comprehensive senior travel cover", total: 13000, pax: 5, category: "visas", date: "2026-11-20", status: "paid" }
   ];
 
   const initialItems = budget.items && budget.items.length > 0

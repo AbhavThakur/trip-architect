@@ -12,7 +12,9 @@ export function getRegisteredTrips() {
     try {
       const parsed = JSON.parse(custom);
       if (Array.isArray(parsed)) {
-        return [...STATIC_TRIPS, ...parsed];
+        // Exclude any custom trips that have the same ID as official static trips
+        const filtered = parsed.filter(c => !STATIC_TRIPS.some(s => s.id === c.id));
+        return [...STATIC_TRIPS, ...filtered];
       }
     } catch (e) {
       console.error('Failed to parse custom trips', e);

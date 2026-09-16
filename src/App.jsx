@@ -22,6 +22,12 @@ export default function App() {
   const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [isTaxiModalOpen, setIsTaxiModalOpen] = useState(false);
+  const [activeTaxiStop, setActiveTaxiStop] = useState(null);
+
+  const handleOpenTaxi = (stop = null) => {
+    setActiveTaxiStop(stop || null);
+    setIsTaxiModalOpen(true);
+  };
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
   const [isFxModalOpen, setIsFxModalOpen] = useState(false);
   const [isLuggageModalOpen, setIsLuggageModalOpen] = useState(false);
@@ -155,7 +161,7 @@ export default function App() {
         onOpenSyncModal={() => setIsSyncModalOpen(true)}
         isCloudSynced={isCloudSynced}
         onOpenFx={() => setIsFxModalOpen(true)}
-        onOpenTaxi={() => setIsTaxiModalOpen(true)}
+        onOpenTaxi={() => handleOpenTaxi(null)}
         onOpenDocs={() => setIsDocsModalOpen(true)}
         onOpenLostSos={() => setIsLostSosModalOpen(true)}
         onOpenLuggage={() => setIsLuggageModalOpen(true)}
@@ -172,7 +178,7 @@ export default function App() {
             trip={currentTrip}
             onBack={navigateBack}
             seniorMode={seniorMode}
-            onOpenTaxi={() => setIsTaxiModalOpen(true)}
+            onOpenTaxi={() => handleOpenTaxi(null)}
             onOpenDocs={() => setIsDocsModalOpen(true)}
         onOpenLostSos={() => setIsLostSosModalOpen(true)}
         onOpenLuggage={() => setIsLuggageModalOpen(true)}
@@ -200,7 +206,11 @@ export default function App() {
       {/* Taxi Driver Address Card Modal */}
       <TaxiCardModal
         isOpen={isTaxiModalOpen}
-        onClose={() => setIsTaxiModalOpen(false)}
+        onClose={() => {
+          setIsTaxiModalOpen(false);
+          setActiveTaxiStop(null);
+        }}
+        customStop={activeTaxiStop}
       />
 
       {/* Family Travel Docs Vault Modal */}

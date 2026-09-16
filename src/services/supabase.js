@@ -106,19 +106,47 @@ export async function fetchTripFromCloud(tripId, fallbackData) {
         .maybeSingle();
 
       if (!error && data && data.data) {
-        localStorage.setItem(cacheKey, JSON.stringify(data.data));
-        return { data: data.data, source: "cloud", updatedAt: data.updated_at };
+        const cloudTrip = data.data;
+        // Check if cloud data is outdated compared to updated fallback blueprint
+        const isCloudStale = fallbackData && (
+          cloudTrip.dates !== fallbackData.dates ||
+          cloudTrip.daysCount !== fallbackData.daysCount ||
+          cloudTrip.itinerary?.[0]?.title !== fallbackData.itinerary?.[0]?.title
+        );
+
+        if (isCloudStale) {
+          console.log("Cloud trip is stale compared to latest blueprint. Updating Supabase...");
+          await saveTripToCloud(tripId, fallbackData);
+          localStorage.setItem(cacheKey, JSON.stringify(fallbackData));
+          return { data: fallbackData, source: "cloud_resynced" };
+        }
+
+        localStorage.setItem(cacheKey, JSON.stringify(cloudTrip));
+        return { data: cloudTrip, source: "cloud", updatedAt: data.updated_at };
       }
     } catch (e) {
       console.warn("Cloud fetch failed, falling back to local cache:", e);
     }
   }
 
-  // Local fallback
+  // Local fallback with stale cache detection
   try {
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
-      return { data: JSON.parse(cached), source: "cache" };
+      const parsed = JSON.parse(cached);
+      // Validate that cached blueprint matches current dates and day count
+      const isDatesMatch = !fallbackData?.dates || parsed.dates === fallbackData.dates;
+      const isDaysMatch = !fallbackData?.daysCount || parsed.daysCount === fallbackData.daysCount;
+      const hasBudget = !!parsed.budget;
+      const isItineraryLenMatch = !fallbackData?.itinerary || (parsed.itinerary && parsed.itinerary.length === fallbackData.itinerary.length);
+
+      if (isDatesMatch && isDaysMatch && hasBudget && isItineraryLenMatch) {
+        return { data: { ...fallbackData, ...parsed }, source: "cache" };
+      } else {
+        // Cache is stale compared to fresh blueprint; update localStorage with new blueprint
+        localStorage.setItem(cacheKey, JSON.stringify(fallbackData));
+        return { data: fallbackData, source: "static" };
+      }
     }
   } catch (e) {}
 

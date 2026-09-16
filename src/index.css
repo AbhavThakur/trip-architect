@@ -85,6 +85,6 @@ html.dark body,
 .pin-pink { background: linear-gradient(135deg, #ec4899, #be185d); }
 
 /* Leaflet Map Dark Mode Tile inversion matching original companion */
-.dark #map:not(.satellite-mode) .leaflet-tile-pane {
+.dark #map.osm-inverted .leaflet-tile-pane {
   filter: invert(100%) hue-rotate(180deg) brightness(88%) contrast(90%);
 }

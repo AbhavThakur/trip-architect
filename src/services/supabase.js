@@ -139,8 +139,13 @@ export async function fetchTripFromCloud(tripId, fallbackData) {
       const isDaysMatch = !fallbackData?.daysCount || parsed.daysCount === fallbackData.daysCount;
       const hasBudget = !!parsed.budget;
       const isItineraryLenMatch = !fallbackData?.itinerary || (parsed.itinerary && parsed.itinerary.length === fallbackData.itinerary.length);
+      const isChecklistValid = !fallbackData?.checklist || (
+        Array.isArray(parsed.checklist) &&
+        parsed.checklist.length === fallbackData.checklist.length &&
+        parsed.checklist[0]?.items
+      );
 
-      if (isDatesMatch && isDaysMatch && hasBudget && isItineraryLenMatch) {
+      if (isDatesMatch && isDaysMatch && hasBudget && isItineraryLenMatch && isChecklistValid) {
         return { data: { ...fallbackData, ...parsed }, source: "cache" };
       } else {
         // Cache is stale compared to fresh blueprint; update localStorage with new blueprint

@@ -414,25 +414,59 @@
 
         <!-- TAB 2: PRE-DEPARTURE CHECKLIST -->
         <div id="tab-checklist" class="tab-content space-y-3.5">
-            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                    <span class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded-full uppercase border border-emerald-500/30">Action Checklist</span>
-                    <h2 class="text-lg font-bold font-display mt-1.5">Pre-Departure Phased Plan</h2>
-                    <p class="text-slate-300 text-xs">Tap checkboxes to save progress locally on your phone.</p>
-                    <div class="flex items-center gap-2 mt-2">
-                        <button onclick="toggleAllChecklist(true)" class="px-2.5 py-1 bg-emerald-600/80 hover:bg-emerald-600 text-white font-bold rounded-xl text-[10px]"><i class="fa-solid fa-check-double mr-1"></i>Check All</button>
-                        <button onclick="toggleAllChecklist(false)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-[10px] border border-slate-700"><i class="fa-solid fa-rotate-left mr-1"></i>Reset</button>
+            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-3.5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded-full uppercase border border-emerald-500/30">Action Checklist</span>
+                            <span id="cl-total-badge" class="text-[11px] text-slate-400 font-mono">48 Checkpoints</span>
+                        </div>
+                        <h2 class="text-lg sm:text-xl font-bold font-display mt-1">Pre-Departure Phased Plan</h2>
+                        <p class="text-slate-300 text-xs">Visas, checked baggage buffer, DCar, eSIMs, forex & emergency sustenance.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleAllChecklist(true)" class="px-3 py-1.5 bg-emerald-600/90 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-sm active:scale-95">
+                            <i class="fa-solid fa-check-double"></i> Check All
+                        </button>
+                        <button onclick="resetChecklist()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs border border-slate-700 flex items-center gap-1.5 transition-all active:scale-95">
+                            <i class="fa-solid fa-rotate-left"></i> Reset
+                        </button>
+                        <button onclick="openAddChecklistModal()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-sm active:scale-95">
+                            <i class="fa-solid fa-plus"></i> Add Task
+                        </button>
                     </div>
                 </div>
-                <div class="bg-slate-800 border border-slate-700 p-3 rounded-2xl min-w-[160px]">
-                    <div class="flex justify-between text-xs font-bold mb-1">
-                        <span>Readiness:</span>
-                        <span id="cl-prog-text" class="text-gold-400">0%</span>
+
+                <!-- Readiness Progress Bar -->
+                <div class="bg-slate-950/70 border border-slate-800 p-3.5 rounded-2xl space-y-2">
+                    <div class="flex justify-between text-xs font-bold">
+                        <span class="text-slate-300 flex items-center gap-1.5">
+                            <span>Readiness Gauge</span>
+                            <span id="cl-status-msg" class="text-emerald-400 font-normal text-[11px]"></span>
+                        </span>
+                        <span id="cl-prog-text" class="text-amber-400 font-mono">0% (0/0)</span>
                     </div>
-                    <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-700">
-                        <div id="cl-prog-bar" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                    <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-800 p-0.5">
+                        <div id="cl-prog-bar" class="bg-gradient-to-r from-amber-500 via-emerald-500 to-teal-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
                     </div>
                 </div>
+
+                <!-- Search & Status Filter Controls -->
+                <div class="flex flex-col sm:flex-row gap-2 pt-1 border-t border-slate-800/80">
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-magnifying-glass text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 text-xs"></i>
+                        <input type="text" id="cl-search-input" oninput="onChecklistSearch(this.value)" placeholder="Search visas, medicines, clothing, forex, baggage..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-8 pr-8 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-500 transition-colors">
+                        <button id="cl-clear-search-btn" onclick="clearChecklistSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0 text-[11px] font-bold">
+                        <button onclick="setChecklistStatusFilter('all')" id="cl-filter-all" class="px-2.5 py-1.5 rounded-xl bg-slate-700 text-white transition-all">All (<span id="cl-cnt-all">0</span>)</button>
+                        <button onclick="setChecklistStatusFilter('pending')" id="cl-filter-pending" class="px-2.5 py-1.5 rounded-xl bg-slate-950/80 text-amber-400 border border-slate-800 hover:bg-slate-800 transition-all">Pending (<span id="cl-cnt-pending">0</span>)</button>
+                        <button onclick="setChecklistStatusFilter('done')" id="cl-filter-done" class="px-2.5 py-1.5 rounded-xl bg-slate-950/80 text-emerald-400 border border-slate-800 hover:bg-slate-800 transition-all">Done (<span id="cl-cnt-done">0</span>)</button>
+                    </div>
+                </div>
+
+                <!-- Phase Filter Tabs -->
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1" id="cl-phase-chips-container"></div>
             </div>
             <div class="space-y-3" id="checklist-phases-container"></div>
         </div>
@@ -650,33 +684,241 @@
 
         <!-- TAB 8: SHOPPING & 50% BARGAINING -->
         <div id="tab-shopping" class="tab-content space-y-3.5">
-            <div class="bg-gradient-to-r from-pink-950 to-slate-900 text-white rounded-3xl p-4 sm:p-5 border border-pink-800 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                    <span class="px-2.5 py-0.5 bg-pink-500/20 text-pink-300 text-[10px] font-bold rounded-full uppercase">Market Tool</span>
-                    <h2 class="text-lg font-bold font-display mt-1.5">50% Bargaining Counter</h2>
-                </div>
-                <div class="flex flex-col gap-2">
-                    <div class="bg-slate-900 border border-pink-500/40 p-3 rounded-2xl flex items-center gap-3">
-                        <input type="number" id="bargain-input" value="800000" class="w-24 bg-slate-950 text-white px-2 py-1 rounded-xl border border-slate-700 font-bold text-sm text-right" oninput="calculateBargain()">
-                        <div class="h-6 w-px bg-slate-700"></div>
-                        <div>
-                            <div id="bargain-offer-vnd" class="text-sm font-black text-emerald-400">400,000 VND</div>
-                            <div id="bargain-offer-inr" class="text-[10px] text-slate-400">≈ ₹1,320</div>
+            <!-- 1. Street Bargaining Counter Hero -->
+            <div class="bg-gradient-to-r from-pink-950 via-slate-900 to-slate-950 text-white rounded-3xl p-4 sm:p-6 border border-pink-800/60 shadow-xl space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="space-y-1.5">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 bg-pink-500/20 text-pink-300 text-[10px] font-bold rounded-full uppercase tracking-wider font-mono border border-pink-500/30">
+                                Market Counter Tool
+                            </span>
+                            <span class="text-[11px] text-pink-400 font-mono">1 INR ≈ 303 VND</span>
                         </div>
+                        <h2 class="text-lg sm:text-xl font-bold font-display mt-1">Street Bargaining Calculator & Counter-Offer Engine</h2>
+                        <p class="text-slate-300 text-xs max-w-lg leading-relaxed">
+                            Vendors at Hàng Dầu (shoes), Night Markets, and Han Market quote 2x–3x. Choose your negotiation discount level and counter with confidence.
+                        </p>
                     </div>
-                    <div class="grid grid-cols-6 gap-1">
-                        <button onclick="setBargain(150000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-bold border border-slate-700">150k</button>
-                        <button onclick="setBargain(300000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-bold border border-slate-700">300k</button>
-                        <button onclick="setBargain(500000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-bold border border-slate-700">500k</button>
-                        <button onclick="setBargain(800000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-bold border border-slate-700">800k</button>
-                        <button onclick="setBargain(1500000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-bold border border-slate-700">1.5M</button>
-                        <button onclick="setBargain(2500000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-bold border border-slate-700">2.5M</button>
+
+                    <!-- Interactive Counter Box -->
+                    <div class="bg-slate-950/90 p-4 sm:p-5 rounded-2xl border border-pink-500/40 space-y-3 shrink-0 shadow-lg min-w-[320px]">
+                        <div class="grid grid-cols-2 gap-3 pb-2 border-b border-slate-800">
+                            <div class="space-y-1">
+                                <label class="text-[10px] text-slate-400 uppercase font-mono block font-bold">Seller Asks (VND)</label>
+                                <div class="relative">
+                                    <input type="number" id="bargain-input" value="800000" step="50000" class="w-full bg-slate-900 text-white font-mono font-bold text-sm px-3 py-2 rounded-xl border border-slate-700 text-right focus:outline-none focus:border-pink-500 transition-colors" oninput="calculateBargain()">
+                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 font-mono">₫</span>
+                                </div>
+                                <div id="bargain-ask-inr" class="text-[10px] text-slate-400 text-right font-mono">≈ ₹2,640</div>
+                            </div>
+
+                            <div class="space-y-1 text-right">
+                                <label id="bargain-offer-label" class="text-[10px] text-emerald-400 uppercase font-mono block font-bold">You Offer (50%)</label>
+                                <div class="bg-emerald-950/50 border border-emerald-800/60 rounded-xl px-3 py-1.5">
+                                    <div id="bargain-offer-vnd" class="text-sm sm:text-base font-black text-emerald-400 font-mono">400,000 VND</div>
+                                    <div id="bargain-offer-inr" class="text-[11px] text-emerald-300/80 font-mono font-bold">≈ ₹1,320</div>
+                                </div>
+                                <div id="bargain-savings-note" class="text-[10px] text-pink-300 font-mono">Save 50% (₹1,320)</div>
+                            </div>
+                        </div>
+
+                        <!-- Discount Percentage Level Selector -->
+                        <div class="space-y-1">
+                            <span class="text-[10px] text-slate-400 uppercase font-mono block">Counter-Offer Strategy:</span>
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <button type="button" onclick="setBargainDiscount(40)" id="bdisc-40" class="bdisc-btn py-1.5 px-2 rounded-xl text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 text-center transition-all">
+                                    <span class="block text-xs font-mono">40% Offer</span>
+                                    <span class="text-[9px] block opacity-80">Tough Stalls</span>
+                                </button>
+                                <button type="button" onclick="setBargainDiscount(50)" id="bdisc-50" class="bdisc-btn py-1.5 px-2 rounded-xl text-[11px] font-bold border border-pink-500 bg-pink-600 text-white text-center transition-all shadow-sm">
+                                    <span class="block text-xs font-mono">50% Golden</span>
+                                    <span class="text-[9px] block opacity-80">Standard Rule</span>
+                                </button>
+                                <button type="button" onclick="setBargainDiscount(60)" id="bdisc-60" class="bdisc-btn py-1.5 px-2 rounded-xl text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 text-center transition-all">
+                                    <span class="block text-xs font-mono">60% Gentle</span>
+                                    <span class="text-[9px] block opacity-80">Cashews & Silk</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Preset Chips -->
+                        <div class="pt-1">
+                            <span class="text-[9px] text-slate-500 uppercase font-mono block mb-1">Common Sticker Quotes:</span>
+                            <div class="grid grid-cols-7 gap-1">
+                                <button onclick="setBargain(150000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-mono font-bold border border-slate-800 hover:border-pink-500/40">150k</button>
+                                <button onclick="setBargain(300000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-mono font-bold border border-slate-800 hover:border-pink-500/40">300k</button>
+                                <button onclick="setBargain(500000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-mono font-bold border border-slate-800 hover:border-pink-500/40">500k</button>
+                                <button onclick="setBargain(800000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-mono font-bold border border-slate-800 hover:border-pink-500/40">800k</button>
+                                <button onclick="setBargain(1200000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-mono font-bold border border-slate-800 hover:border-pink-500/40">1.2M</button>
+                                <button onclick="setBargain(2000000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-mono font-bold border border-slate-800 hover:border-pink-500/40">2.0M</button>
+                                <button onclick="setBargain(3000000)" class="bg-slate-900 hover:bg-slate-800 text-pink-300 py-1 rounded-lg text-[10px] font-mono font-bold border border-slate-800 hover:border-pink-500/40">3.0M</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden">
-                <div class="bg-slate-900 text-white px-3.5 py-2.5 text-xs font-bold">Master Shopping Guide (All 8 Days)</div>
-                <div class="overflow-x-auto"><table class="w-full text-xs text-left"><tbody id="shopping-guide-tbody" class="divide-y divide-slate-100 dark:divide-darkborder"></tbody></table></div>
+
+            <!-- 2. Vietnamese Bargaining Audio Phrase Cards -->
+            <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-4 sm:p-5 space-y-3.5 shadow-sm">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-darkborder">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-xl bg-pink-100 dark:bg-pink-950 text-pink-600 dark:text-pink-400 flex items-center justify-center text-sm font-bold">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xs sm:text-sm">Vietnamese Market Bargaining Phrases</h3>
+                            <p class="text-[11px] text-slate-500">Tap the speaker icon to play native pronunciation to the seller</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] bg-pink-50 dark:bg-pink-950 text-pink-600 dark:text-pink-300 px-2.5 py-0.5 rounded-full font-bold border border-pink-200 dark:border-pink-800">
+                        8 Audio Cards
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5" id="bargain-phrases-container"></div>
+            </div>
+
+            <!-- 3. Street Bargaining 5 Golden Rules -->
+            <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-4 sm:p-5 space-y-3 shadow-sm">
+                <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+                    The 5 Golden Rules of Street Bargaining in Vietnam
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 text-xs">
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
+                        <span class="text-pink-600 dark:text-pink-400 font-mono font-bold block text-[10px]">Rule 1 • The 50% Anchor</span>
+                        <strong class="block font-bold text-xs text-slate-900 dark:text-white">Start at 50%</strong>
+                        <p class="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
+                            At Hàng Dầu & night markets, always counter with half. You will usually settle around 60–65% of the original quote.
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
+                        <span class="text-amber-600 dark:text-amber-400 font-mono font-bold block text-[10px]">Rule 2 • The Walkaway</span>
+                        <strong class="block font-bold text-xs text-slate-900 dark:text-white">Walkaway Bluff</strong>
+                        <p class="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
+                            If the vendor declines, smile, say <em>"Cảm ơn"</em> (thank you) and take 3 steps away. 80% of stalls call you back immediately!
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
+                        <span class="text-rose-600 dark:text-rose-400 font-mono font-bold block text-[10px]">Rule 3 • Morning Luck</span>
+                        <strong class="block font-bold text-xs text-slate-900 dark:text-white">Mở Hàng Etiquette</strong>
+                        <p class="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
+                            Never bargain aggressively before 9 AM or with the day's first vendor if not buying; locals believe it brings bad luck.
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
+                        <span class="text-emerald-600 dark:text-emerald-400 font-mono font-bold block text-[10px]">Rule 4 • Cash is King</span>
+                        <strong class="block font-bold text-xs text-slate-900 dark:text-white">Avoid 3% Card Fee</strong>
+                        <p class="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
+                            Market merchants charge a 3% swipe fee on Visa/Mastercard. Cash in crisp VND bills gets you immediate price cuts.
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
+                        <span class="text-indigo-600 dark:text-indigo-400 font-mono font-bold block text-[10px]">Rule 5 • Bundle Up</span>
+                        <strong class="block font-bold text-xs text-slate-900 dark:text-white">Group Buying Power</strong>
+                        <p class="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
+                            Traveling as 5 adults? Pick 3–4 pairs of shoes or 5 silk scarves at the same stall for immediate wholesale pricing.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Airport 8.5% VAT Tax Refund Calculator & Guide -->
+            <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-950 text-white rounded-3xl p-4 sm:p-5 border border-indigo-800/60 shadow-xl space-y-3.5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-indigo-900/60 pb-3">
+                    <div>
+                        <span class="px-2.5 py-0.5 bg-indigo-500/20 text-indigo-300 text-[10px] font-bold rounded-full uppercase tracking-wider font-mono border border-indigo-500/30">
+                            Airport Cash Rebate
+                        </span>
+                        <h3 class="text-base font-bold font-display mt-1 flex items-center gap-2">
+                            <i class="fa-solid fa-receipt text-amber-400"></i>
+                            Airport 8.5% VAT Tax Refund Calculator (Noi Bai T2 & Da Nang)
+                        </h3>
+                    </div>
+
+                    <div class="flex items-center gap-3 bg-slate-950/80 p-3 rounded-2xl border border-indigo-800/60 shrink-0">
+                        <div>
+                            <label class="text-[10px] text-slate-400 uppercase font-mono block">Bill Amount (VND)</label>
+                            <input type="number" id="vat-calc-input" value="3500000" step="500000" class="w-32 bg-slate-900 text-white font-mono font-bold text-sm px-2.5 py-1 rounded-xl border border-slate-700 text-right focus:border-indigo-500 outline-none" oninput="calculateVatRefund()">
+                        </div>
+                        <div class="h-8 w-px bg-slate-800"></div>
+                        <div class="text-right">
+                            <label class="text-[10px] text-emerald-400 uppercase font-mono block font-bold">Cash Refund (8.5%)</label>
+                            <div id="vat-refund-vnd" class="text-sm font-black text-emerald-400 font-mono">297,500 VND</div>
+                            <div id="vat-refund-inr" class="text-[10px] text-slate-400 font-mono">≈ ₹982</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <strong class="text-amber-400 font-mono">Step 1 • In Store</strong>
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">Min 2M VND</span>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-[11px]">
+                            Present your original Indian passport when buying gadgets at FPT Shop, TopZone, or silk at Khai Silk. Ask for the green <em>"VAT Refund Declaration Form"</em> with store stamp.
+                        </p>
+                    </div>
+                    <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <strong class="text-indigo-400 font-mono">Step 2 • Customs Inspection</strong>
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono font-bold">Pillar 10 T2</span>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-[11px]">
+                            At Noi Bai HAN T2 Departure Hall (3rd floor, before security), locate Customs Inspection Counter next to Pillar 10. Present passport, tax invoice, and unopened items for physical stamp.
+                        </p>
+                    </div>
+                    <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <strong class="text-emerald-400 font-mono">Step 3 • Cash Collection</strong>
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">USD or VND</span>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-[11px]">
+                            Pass immigration and security to the international boarding area. Visit the BIDV / Vietcombank refund counter to collect your 8.5% net cash payout in clean USD or VND!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Master Curated Vietnam Shopping Directory -->
+            <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden shadow-sm space-y-3 p-4 sm:p-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-darkborder">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-xl bg-pink-100 dark:bg-pink-950 text-pink-600 dark:text-pink-400 flex items-center justify-center text-sm font-bold">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xs sm:text-sm">Master Shopping Directory (Hanoi • Hoi An • Da Nang)</h3>
+                            <p class="text-[11px] text-slate-500">Curated tested items, fair market target rates, and bargaining quality checks</p>
+                        </div>
+                    </div>
+
+                    <div class="relative min-w-[220px]">
+                        <i class="fa-solid fa-magnifying-glass text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 text-xs"></i>
+                        <input type="text" id="shop-search-input" oninput="onShoppingSearch(this.value)" placeholder="Search shoes, silk, cashews..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-7 py-1.5 text-xs outline-none focus:border-pink-500">
+                        <button id="shop-clear-search-btn" onclick="clearShoppingSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+
+                <!-- Category Pills Bar -->
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1" id="shop-category-pills"></div>
+
+                <!-- Gems Table -->
+                <div class="overflow-x-auto rounded-xl border border-slate-100 dark:border-darkborder">
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+                            <tr>
+                                <th class="py-2.5 px-3">Category</th>
+                                <th class="py-2.5 px-3">Recommended Items</th>
+                                <th class="py-2.5 px-3">Best Verified Location</th>
+                                <th class="py-2.5 px-3">Realistic Target Price</th>
+                                <th class="py-2.5 px-3">Quality & Bargaining Rule</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shopping-guide-tbody" class="divide-y divide-slate-100 dark:divide-darkborder"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -838,6 +1080,35 @@
     </div>
 
     <!-- 5. BOTTOM SHEET MODALS -->
+
+    <!-- ADD CUSTOM CHECKLIST TASK MODAL -->
+    <div id="add-cl-task-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="if(event.target === this) closeAddChecklistModal()">
+        <div class="bg-white dark:bg-darkcard rounded-t-3xl sm:rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-200 dark:border-darkborder bottom-sheet-anim">
+            <div class="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 sm:hidden"></div>
+            <div class="flex justify-between items-center pb-2.5 border-b border-slate-100 dark:border-darkborder">
+                <h3 class="font-bold text-xs sm:text-sm flex items-center gap-2"><i class="fa-solid fa-circle-plus text-brand-600"></i> Add Personal Checklist Task</h3>
+                <button onclick="closeAddChecklistModal()" class="text-slate-400 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="add-cl-task-form" onsubmit="saveCustomChecklistTask(event)" class="mt-3 space-y-3 text-xs">
+                <div>
+                    <label class="font-bold block mb-1 text-slate-700 dark:text-slate-300">Target Phase:</label>
+                    <select id="add-cl-phase-select" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 font-bold outline-none text-slate-800 dark:text-white"></select>
+                </div>
+                <div>
+                    <label class="font-bold block mb-1 text-slate-700 dark:text-slate-300">Task Title:</label>
+                    <input type="text" id="add-cl-task-text" required placeholder="e.g., Inhaler & Doctor's Slip, SD Card, Universal Adapter" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 font-bold outline-none text-slate-800 dark:text-white">
+                </div>
+                <div>
+                    <label class="font-bold block mb-1 text-slate-700 dark:text-slate-300">Notes / Details (Optional):</label>
+                    <input type="text" id="add-cl-task-desc" placeholder="e.g., Pack 1 in cabin bag, 1 in suitcase" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none text-slate-800 dark:text-white">
+                </div>
+                <div class="pt-2 flex justify-end gap-2 border-t border-slate-100 dark:border-darkborder">
+                    <button type="button" onclick="closeAddChecklistModal()" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">Cancel</button>
+                    <button type="submit" class="px-4 py-1.5 rounded-xl bg-brand-600 text-white font-bold shadow">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- FAST FX CONVERTER MODAL -->
     <div id="fx-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="if(event.target === this) closeFxModal()">
@@ -1387,9 +1658,8 @@
 
     <!-- 6. JAVASCRIPT MASTER SUITE -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Security Vault & Emergency SOS Modules -->
-    <script src="pin_security.js"></script>
-    <script src="emergency_sos.js"></script>
+    <script src="../pin_security.js" onerror="this.onerror=null;this.src='pin_security.js'"></script>
+    <script src="../emergency_sos.js" onerror="this.onerror=null;this.src='emergency_sos.js'"></script>
     <script>
         let selectedDayFilter = 'all';
         let selectedCategoryFilter = 'all';
@@ -1798,21 +2068,166 @@
         ];
 
         const checklistPhases = [
-            { phase: 1, title: "Phase 1: Immediate Action (Flights & Stays)", badge: "Immediate", tasks: [{ id: "c1_1", text: "Book Flights (DEL & BLR ➔ HAN)", desc: "VN970 & FD642." }, { id: "c1_2", text: "Book Domestic Flights (HAN ⇄ DAD)", desc: "Dec 6 & Dec 10." }, { id: "c1_3", text: "Pre-purchase 20-25kg Checked Bag", desc: "For cashews & shoes." }, { id: "c1_4", text: "Reserve Hotels in Hanoi, Hoi An & Da Nang", desc: "With 'Pure Veg for 5' note." }] },
-            { phase: 2, title: "Phase 2: 30 Days Prior (E-Visas)", badge: "30 Days Out", tasks: [{ id: "c2_1", text: "Apply on Official Gov Portal (evisa.gov.vn)", desc: "$25 fee. Entry: Noi Bai." }, { id: "c2_2", text: "Verify Passport MRZ Match", desc: "Check bottom 2 lines of passport." }] },
-            { phase: 3, title: "Phase 3: 15 Days Prior (DCar & Tickets)", badge: "15 Days Out", tasks: [{ id: "c3_1", text: "Reserve Private 9-Seater DCar Limousine", desc: "For North & Central legs." }, { id: "c3_2", text: "Book Water Puppet VIP Tickets", desc: "Dec 4 06:15 PM show." }, { id: "c3_3", text: "Book Ba Na Hills Cable Car Tickets", desc: "Dec 8 Golden Bridge." }] },
-            { phase: 4, title: "Phase 4: 7 Days Prior (Apps & Forex)", badge: "7 Days Out", tasks: [{ id: "c4_1", text: "Setup Grab App & Link Zero-Forex Card", desc: "Card verified." }, { id: "c4_2", text: "Buy Airalo / Klook eSIMs", desc: "Activate for 5 phones." }, { id: "c4_3", text: "Withdraw $400-$500 Crisp $100 USD Bills", desc: "For gold shop exchange." }] },
-            { phase: 5, title: "Phase 5: On Ground (VAT Refund)", badge: "On Ground", tasks: [{ id: "c5_1", text: "Collect VAT Forms (Hóa Đơn GTGT)", desc: "Purchases > 2M VND." }, { id: "c5_2", text: "Claim 8.5% Cash Refund at HAN T2", desc: "3rd Floor Customs before security." }] }
+            {
+                id: "phase_1",
+                phase: 1,
+                title: "Phase 1: Passports, E-Visas & Document Vault",
+                badge: "Mandatory",
+                icon: "fa-passport",
+                tasks: [
+                    { id: "c1_1", text: "Check Passports for 6+ Months Validity", desc: "Verify expiry date is well past June 2027 for all 5 travelers." },
+                    { id: "c1_2", text: "Official Vietnam E-Visa Approvals (evisa.gov.vn)", desc: "$25/pax official gov portal. Entry port: Noi Bai International Airport (HAN)." },
+                    { id: "c1_3", text: "Print 2 Physical Color Copies of Each E-Visa", desc: "Required at Indian airline check-in & Hanoi immigration. Keep 1 in cabin bag, 1 in suitcase." },
+                    { id: "c1_4", text: "Verify Machine-Readable Zone (MRZ) on E-Visa", desc: "Double check exact surname, given names, and passport number against bottom passport lines." },
+                    { id: "c1_5", text: "Passport Backup Photos (4x6 cm White Background)", desc: "Carry 2 physical passport photos each in document pouch for emergency backup." },
+                    { id: "c1_6", text: "Comprehensive International Travel Insurance", desc: "Coverage for all 5 pax including flight delays, baggage loss, hospitalization, and emergency medical." }
+                ]
+            },
+            {
+                id: "phase_2",
+                phase: 2,
+                title: "Phase 2: Flights & Checked Baggage Buffer",
+                badge: "Critical",
+                icon: "fa-plane-departure",
+                tasks: [
+                    { id: "c2_1", text: "Confirm International Inbound/Outbound Flights", desc: "DEL & BLR connecting flights to Hanoi (HAN) via Bangkok/Kuala Lumpur. PNRs recorded offline." },
+                    { id: "c2_2", text: "Confirm Domestic Flights (HAN ⇄ DAD)", desc: "VietJet / Vietnam Airlines flights between Hanoi and Da Nang (Dec 6 & Dec 10)." },
+                    { id: "c2_3", text: "Pre-purchase 20–25kg Checked Baggage per Couple", desc: "Essential for shoe shopping on Hàng Dầu, vacuum cashews from Han Market, and silk fabrics." },
+                    { id: "c2_4", text: "Web Check-in & Forward Row Seat Selection", desc: "Complete 24 hours prior to departure. Choose forward aisle seats for elderly parents." }
+                ]
+            },
+            {
+                id: "phase_3",
+                phase: 3,
+                title: "Phase 3: Hotels, Ha Long Cruise & VIP Tickets",
+                badge: "Bookings",
+                icon: "fa-hotel",
+                tasks: [
+                    { id: "c3_1", text: "Hanoi Old Quarter Hotel Confirmation", desc: "Boutique hotel with elevator access; requested connecting rooms and quiet upper-floor wing." },
+                    { id: "c3_2", text: "5-Star Ha Long Bay Overnight Balcony Cruise", desc: "Reconfirm 2 luxury connecting balcony cabins + pure vegetarian Indian dining confirmation in writing." },
+                    { id: "c3_3", text: "Hoi An Ancient Riverside Resort & Da Nang Beach Hotel", desc: "Reconfirmed early check-in or luggage storage protocol." },
+                    { id: "c3_4", text: "Reserve 9-Seater Ford Transit DCar VIP Limousine", desc: "Private VIP van with captain reclining leather seats for North (Hanoi-Ninh Binh) and Central legs." },
+                    { id: "c3_5", text: "Thang Long Water Puppet Front-Row VIP Tickets", desc: "Book official 06:15 PM evening show tickets in advance to skip tourist ticket queues." },
+                    { id: "c3_6", text: "Sun World Ba Na Hills Cable Car + Golden Bridge Vouchers", desc: "Pre-purchased QR code vouchers for fast-track entry at Hoi An Station cable car." }
+                ]
+            },
+            {
+                id: "phase_4",
+                phase: 4,
+                title: "Phase 4: Forex, Banking & Zero-Forex Cards",
+                badge: "Finance",
+                icon: "fa-coins",
+                tasks: [
+                    { id: "c4_1", text: "Load Zero-Forex Multi-Currency Travel Cards", desc: "Niyo Global / Scapia / Fi Federal cards loaded in INR for 0% markup POS & Grab transactions." },
+                    { id: "c4_2", text: "Enable International E-Com & POS Limits in Banking Apps", desc: "Check HDFC/ICICI/SBI apps and set card international usage limits to ₹1,00,000+ per card." },
+                    { id: "c4_3", text: "Withdraw $400–$600 Crisp Uncreased $100 USD Bills", desc: "Must be Series 2013 or newer with zero tears, stamps or folds for highest gold shop exchange in Hanoi (Hà Trung)." },
+                    { id: "c4_4", text: "Carry 2 Backup Physical Credit Cards", desc: "Keep separate in secondary wallet; enable international email OTP for emergency bookings." }
+                ]
+            },
+            {
+                id: "phase_5",
+                phase: 5,
+                title: "Phase 5: eSIMs, Grab App & Offline Navigation",
+                badge: "Tech & Nav",
+                icon: "fa-mobile-screen",
+                tasks: [
+                    { id: "c5_1", text: "Purchase & Setup Vietnam Travel eSIMs (Viettel)", desc: "Buy Viettel / Vinaphone unlimited data packages via Airalo or Klook for all 5 phones." },
+                    { id: "c5_2", text: "Install Grab App & Link Zero-Forex Card in India", desc: "Crucial: link card while still in India to receive bank SMS OTP. Works seamlessly upon landing." },
+                    { id: "c5_3", text: "Download Offline Google Maps for Hanoi, Ninh Binh & Da Nang", desc: "Pre-download complete regional offline map sectors on all devices for navigation without data." },
+                    { id: "c5_4", text: "Download Google Translate Vietnamese Offline Pack", desc: "Download Vietnamese camera translation and voice model offline." }
+                ]
+            },
+            {
+                id: "phase_6",
+                phase: 6,
+                title: "Phase 6: Luggage, Wardrobe & Senior Comfort",
+                badge: "Packing",
+                icon: "fa-suitcase-rolling",
+                tasks: [
+                    { id: "c6_1", text: "Comfortable Walking Sneakers with Cushioning", desc: "Broken-in footwear for walking Old Quarter cobblestones, Ba Na Hills, and Marble Mountains stairs." },
+                    { id: "c6_2", text: "Light Cardigan / Windbreaker Jacket", desc: "Essential for cool Ha Long Bay sea breezes (18°C–20°C in Dec) and high-altitude Ba Na Hills summit." },
+                    { id: "c6_3", text: "Modest Temple Attire (Shoulders & Knees Covered)", desc: "Required for entry to Tran Quoc Pagoda, Temple of Literature, and Linh Ung Pagoda Da Nang." },
+                    { id: "c6_4", text: "Compact Travel Umbrellas / Ponchos", desc: "Lightweight foldable umbrellas for brief passing tropical showers." },
+                    { id: "c6_5", text: "Senior Knee Support Sleeves & Walking Aid", desc: "Elastic knee compression braces and foldable walking stick for senior comfort during climbs." }
+                ]
+            },
+            {
+                id: "phase_7",
+                phase: 7,
+                title: "Phase 7: Medical, First-Aid & Pharma Kit",
+                badge: "Health",
+                icon: "fa-kit-medical",
+                tasks: [
+                    { id: "c7_1", text: "2-Week Buffer of Daily Prescription Medicines", desc: "Blood pressure, diabetes, thyroid medicines in original strip packaging with doctor's English prescription." },
+                    { id: "c7_2", text: "Avomine / Dramamine (Motion Sickness Tablets)", desc: "Take 30 mins before Ha Long Bay cruise boarding, Tam Coc sampan boat, and winding Ba Na Hills highway." },
+                    { id: "c7_3", text: "Emergency Travel Pharma Kit", desc: "Crocin (Paracetamol), Cetirizine, Digene/Pudinhara, Imodium, ORS hydration salts, and Band-Aids." },
+                    { id: "c7_4", text: "DEET Mosquito Repellent & Soothing Balm", desc: "Odomos / DEET spray for evening walks around Hoan Kiem Lake, Ninh Binh greenery, and Coconut Forest." },
+                    { id: "c7_5", text: "Volini Pain Relief Spray & Hot Gel", desc: "Instant muscle relief for calves and lower back after full walking days." }
+                ]
+            },
+            {
+                id: "phase_8",
+                phase: 8,
+                title: "Phase 8: Pure Veg & Jain Sustenance Pack",
+                badge: "Pure Veg",
+                icon: "fa-leaf",
+                tasks: [
+                    { id: "c8_1", text: "Ready-to-Eat Meal Pouches (MTR / Haldiram)", desc: "10–12 heat-and-eat meal pouches (Dal Makhani, Palak Paneer, Rajma, Jeera Rice) for backup dinners." },
+                    { id: "c8_2", text: "Dry Snacks Pack (Thepla, Khakhra & Roasted Makhana)", desc: "Vacuum-sealed Theplas (lasts 10 days), spiced Khakhras, and dry roasted nuts for day trips." },
+                    { id: "c8_3", text: "Instant Poha / Upma Cups & Tea Bags", desc: "Just add hot water cups for 5:30 AM early morning flight check-outs before hotel breakfast opens." },
+                    { id: "c8_4", text: "Travel Immersion Heating Coil / Foldable Kettle", desc: "Compact 300W boiling coil to boil drinking water and heat ready-to-eat pouches in hotel rooms." },
+                    { id: "c8_5", text: "Indian Spice Kit (Chaat Masala, Chili Flakes & Peri-Peri)", desc: "Essential small containers to add zest and familiar warmth to plain stir-fried morning greens." }
+                ]
+            },
+            {
+                id: "phase_9",
+                phase: 9,
+                title: "Phase 9: Departure Day Handbag Checklist",
+                badge: "Airport Day",
+                icon: "fa-briefcase",
+                tasks: [
+                    { id: "c9_1", text: "Document Zipper Pouch in Carry-On Bag", desc: "All 5 passports, visa printouts, flight e-tickets, hotel booking printouts within quick reach." },
+                    { id: "c9_2", text: "Strictly Cabin-Only: Power Banks (< 20,000 mAh)", desc: "Lithium batteries are strictly prohibited in checked luggage in Vietnam. Keep in handbag." },
+                    { id: "c9_3", text: "Universal Power Plug Adapters (Type A / C / G)", desc: "Vietnam wall sockets accommodate flat 2-pin (Type A) and round 2-pin (Type C)." },
+                    { id: "c9_4", text: "Emergency Cash Envelope in Handbag", desc: "Keep $100 USD notes and ₹3,000 INR securely in inner zipper pocket." }
+                ]
+            },
+            {
+                id: "phase_10",
+                phase: 10,
+                title: "Phase 10: On-Ground VAT 8.5% Cash Refund",
+                badge: "On Ground",
+                icon: "fa-receipt",
+                tasks: [
+                    { id: "c10_1", text: "Request Official 'Hóa Đơn GTGT' Green VAT Invoice", desc: "For retail purchases > 2,000,000 VND at participating stores (FPT Shop, TopZone, Khai Silk)." },
+                    { id: "c10_2", text: "Inspect Goods at Noi Bai T2 Customs Pillar 10", desc: "Visit Customs Inspection Counter on 3rd floor before passport control. Present items and receipts." },
+                    { id: "c10_3", text: "Collect Cash Refund in USD or VND at Airport Bank Booth", desc: "Head to BIDV or Vietcombank counter past security to collect instant net 8.5% cash refund." }
+                ]
+            }
         ];
 
         const masterShoppingData = [
-            { category: "Electronics & Tech", items: "Keychron keyboards, GaN chargers", location: "FPT Shop / TopZone", price: "10-20% below India MRP", rule: "Claim 8.5% VAT refund at HAN T2." },
-            { category: "First-Copy Shoes", items: "New Balance (550, 9060), Sambas", location: "Hàng Dầu Street", price: "₹1,300 – ₹2,200", rule: "Start bargaining at 50%." },
-            { category: "Sportswear", items: "North Face Gore-Tex jackets", location: "Đinh Liệt Street", price: "₹1,150 – ₹1,800", rule: "Test YKK metal zippers." },
-            { category: "Custom Tailoring", items: "Custom linen suits & blazers", location: "Hoi An (Yaly / Bebe)", price: "Blazers: ₹2k; Suits: ₹7k", rule: "24h delivery to resort." },
-            { category: "Grade 1 Cashews", items: "Roasted salted ('Loại 1')", location: "Han Market / WinMart", price: "₹500 – ₹700 / kg", rule: "Look for 'Loại 1' vacuum pack." },
-            { category: "Coffee & Phin", items: "Trung Nguyên Legend No. 4/5", location: "WinMart / Hàng Buồm", price: "₹300 – ₹600 / 500g", rule: "Fixed government price." },
-            { category: "Mulberry Silk", items: "100% pure silk scarves", location: "Hàng Gai Street", price: "₹400 – ₹1,200", rule: "Packs completely flat." }
+            { category: "First-Copy Shoes", items: "New Balance (550, 9060), Adidas Sambas, Nike Pegasus, Hokas", location: "Hàng Dầu Street (Hanoi) & Da Nang Night Market", price: "₹1,300 – ₹2,200 (400k – 700k VND)", rule: "Start bargaining at 50% of quoted price. Check stitching, removable insoles, and try both shoes before paying." },
+            { category: "Sportswear & Jackets", items: "North Face Gore-Tex waterproof jackets, Arc'teryx & Patagonia fleeces", location: "Đinh Liệt Street (Hanoi) & Han Market (Da Nang)", price: "₹1,150 – ₹1,800 (350k – 550k VND)", rule: "Test metal YKK zippers, internal seam waterproof taping, and hood drawstrings." },
+            { category: "Custom Tailoring", items: "24-hour bespoke linen shirts, lightweight suits & silk blazers", location: "Hoi An Ancient Town (Yaly Couture / Bebe / A Dong Silk)", price: "Linen shirts: ₹1,200 | Blazers: ₹2,500 | Suits: ₹7,000", rule: "Order on Day 3 afternoon; fitting done next morning, final delivery directly to resort." },
+            { category: "Grade 1 Cashews", items: "Roasted salted jumbo cashews with skin ('Loại 1 Bình Phước')", location: "Han Market (Chợ Hàn) & Con Market, Da Nang", price: "₹500 – ₹700 / kg (150k – 210k VND)", rule: "Insist on 'Loại 1' vacuum pack. Taste test before buying. Ask for 20-30% discount when buying 3kg+." },
+            { category: "Coffee & Phin", items: "Trung Nguyên Legend No. 4 & 5, Sang Tao Arabica & Phin drip filters", location: "WinMart Supermarket & Hàng Buồm Street, Hanoi", price: "₹300 – ₹600 / 500g tin (100k – 200k VND)", rule: "Fixed government retail price in WinMart. Avoid roadside repackaged beans with artificial butter." },
+            { category: "Mulberry Silk", items: "100% pure Mulberry silk scarves, ties & kimonos", location: "Hàng Gai (Silk Street, Hanoi) & Hoi An Silk Village", price: "₹400 – ₹1,200 (120k – 380k VND)", rule: "Packs completely flat in suitcase. Real silk burns to fine ash with burnt hair aroma; synthetic melts into hard ball." },
+            { category: "Collapsible Lanterns", items: "Foldable silk & bamboo lanterns (diamond, lotus, teardrop)", location: "Hoi An Night Market (Nguyễn Hoàng St)", price: "₹150 – ₹400 (50k – 120k VND)", rule: "They fold completely flat for suitcase packing. Buy 4-5 pieces for home decor and gifts." },
+            { category: "Marble & Stone", items: "Hand-carved jade miniature Buddhas, marble mortar & pestle, feng shui bracelets", location: "Non Nuoc Stone Carving Village (Marble Mountains, Da Nang)", price: "₹300 – ₹2,500 (100k – 800k VND)", rule: "Request bubble-wrap packaging for flight carry-on. Ask for certificate of authentic natural stone." },
+            { category: "Ninh Binh Handicrafts", items: "Woven water hyacinth tote bags, bamboo coasters & crispy burnt rice", location: "Trang An pier handicraft stalls & Hoa Lu village", price: "₹150 – ₹400 (50k – 120k VND)", rule: "Lightweight and eco-friendly. Verify crispy burnt rice has vegetarian mushroom sauce packaging." },
+            { category: "Electronics & Tech", items: "Keychron mechanical keyboards, GaN travel chargers, Apple accessories", location: "FPT Shop / TopZone / CellphoneS (Hanoi & Da Nang)", price: "10-20% below India MRP", rule: "Present passport at checkout for official VAT refund invoice. Claim 8.5% net cash refund at HAN T2 airport." }
+        ];
+
+        const bargainingPhrasesData = [
+            { vietnamese: "Bao nhiêu tiền?", phonetic: "Bow nyew tyen?", english: "How much does this cost?", tag: "Opening" },
+            { vietnamese: "Đắt quá!", phonetic: "Dat kwah!", english: "Too expensive! (Express surprise)", tag: "Reaction" },
+            { vietnamese: "Bớt cho tôi đi!", phonetic: "Buht chaw toy dee!", english: "Please give me a discount!", tag: "Bargain" },
+            { vietnamese: "Năm mươi phần trăm nhé!", phonetic: "Nahm moy fahn trahm nyeh!", english: "50 percent okay?", tag: "Counter" },
+            { vietnamese: "Tôi mua hai cái, tính rẻ hơn nhé?", phonetic: "Toy moo-ah high kye, ting reh huhn nyeh?", english: "I'll buy two, can you give a better price?", tag: "Bundle" },
+            { vietnamese: "Không được thì thôi, tôi đi nhé!", phonetic: "Khawng doo-uhk tee toy, toy dee nyeh!", english: "If not, that's okay, I'm walking away!", tag: "Walkaway" },
+            { vietnamese: "Có thanh toán bằng thẻ không?", phonetic: "Caw tan twan bahng theh khawng?", english: "Do you accept credit card?", tag: "Payment" },
+            { vietnamese: "Có tính phí quẹt thẻ không?", phonetic: "Caw ting fee kwet theh khawng?", english: "Is there an extra card surcharge? (Usually 3%)", tag: "Payment" }
         ];
 
         const BUDGET_CATEGORIES = {
@@ -2894,111 +3309,250 @@
             }
         }
 
+        let currentChecklistPhase = 'all';
+        let currentChecklistStatus = 'all';
+        let currentChecklistSearch = '';
+
         function renderChecklist() {
             const container = document.getElementById('checklist-phases-container');
             if (!container) return;
             const saved = safeGetStorage('vietnam_cl_state', {}) || {};
             const customTasks = safeGetStorage('vietnam_cl_custom_tasks', []) || [];
+
+            // Render phase filter chips
+            renderChecklistPhaseChips();
+
             let total = 0, done = 0;
-            container.innerHTML = '';
+            let renderedPhasesHtml = '';
+            const searchLower = currentChecklistSearch.toLowerCase().trim();
 
             checklistPhases.forEach(p => {
-                let tasksHtml = '';
+                // Check phase filter
+                if (currentChecklistPhase !== 'all' && p.id !== currentChecklistPhase) {
+                    // Even if phase is filtered out, still count total & done for global progress
+                    p.tasks.forEach(t => {
+                        total++;
+                        if (saved[t.id]) done++;
+                    });
+                    const pCustom = customTasks.filter(c => c.phaseId === p.id);
+                    pCustom.forEach(ct => {
+                        total++;
+                        if (saved[ct.id]) done++;
+                    });
+                    return;
+                }
+
+                let visibleTasksHtml = '';
+                let phaseTotal = 0;
+                let phaseDone = 0;
+
                 p.tasks.forEach(t => {
                     total++;
-                    const checked = saved[t.id] ? 'checked' : '';
-                    if (saved[t.id]) done++;
-                    tasksHtml += `
-                        <label class="flex items-start gap-2.5 py-2 cursor-pointer">
-                            <input type="checkbox" id="${t.id}" ${checked} onchange="saveChecklistState()" class="mt-0.5 w-4 h-4 text-brand-600 rounded">
-                            <div class="text-xs"><strong>${t.text}</strong><p class="text-slate-500 text-[11px]">${t.desc}</p></div>
+                    phaseTotal++;
+                    const isChecked = !!saved[t.id];
+                    if (isChecked) {
+                        done++;
+                        phaseDone++;
+                    }
+
+                    // Apply status filter
+                    if (currentChecklistStatus === 'pending' && isChecked) return;
+                    if (currentChecklistStatus === 'done' && !isChecked) return;
+
+                    // Apply search filter
+                    if (searchLower && !t.text.toLowerCase().includes(searchLower) && !t.desc.toLowerCase().includes(searchLower)) {
+                        return;
+                    }
+
+                    visibleTasksHtml += `
+                        <label class="group flex items-start gap-3 p-3 rounded-xl transition-all cursor-pointer ${isChecked ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-transparent'}">
+                            <input type="checkbox" id="${t.id}" ${isChecked ? 'checked' : ''} onchange="toggleChecklistItem('${t.id}')" class="mt-0.5 w-4 h-4 rounded text-brand-600 border-slate-300 focus:ring-brand-500 transition-transform active:scale-90">
+                            <div class="flex-1 min-w-0">
+                                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200 block transition-colors ${isChecked ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${t.text}</span>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">${t.desc}</p>
+                            </div>
                         </label>
                     `;
                 });
 
-                // Custom tasks under this phase
+                // Custom tasks for this phase
                 const phaseCustom = customTasks.filter(c => c.phaseId === p.id);
                 phaseCustom.forEach(ct => {
                     total++;
-                    const checked = saved[ct.id] ? 'checked' : '';
-                    if (saved[ct.id]) done++;
-                    tasksHtml += `
-                        <div class="flex items-start justify-between py-2 border-t border-dashed border-slate-100 dark:border-darkborder">
-                            <label class="flex items-start gap-2.5 cursor-pointer flex-1">
-                                <input type="checkbox" id="${ct.id}" ${checked} onchange="saveChecklistState()" class="mt-0.5 w-4 h-4 text-indigo-600 rounded">
-                                <div class="text-xs">
-                                    <strong class="text-indigo-700 dark:text-indigo-300">${ct.text}</strong>
-                                    <span class="ml-1 text-[9px] bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded font-bold">Custom</span>
+                    phaseTotal++;
+                    const isChecked = !!saved[ct.id];
+                    if (isChecked) {
+                        done++;
+                        phaseDone++;
+                    }
+
+                    if (currentChecklistStatus === 'pending' && isChecked) return;
+                    if (currentChecklistStatus === 'done' && !isChecked) return;
+                    if (searchLower && !ct.text.toLowerCase().includes(searchLower)) return;
+
+                    visibleTasksHtml += `
+                        <div class="group flex items-start justify-between gap-3 p-3 rounded-xl transition-all ${isChecked ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-100 dark:border-slate-800'}">
+                            <label class="flex items-start gap-3 flex-1 min-w-0 cursor-pointer">
+                                <input type="checkbox" id="${ct.id}" ${isChecked ? 'checked' : ''} onchange="toggleChecklistItem('${ct.id}')" class="mt-0.5 w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500 transition-transform active:scale-90">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="text-xs font-semibold text-indigo-700 dark:text-indigo-300 ${isChecked ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${ct.text}</span>
+                                        <span class="text-[9px] bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.2 rounded font-bold border border-indigo-200 dark:border-indigo-800">Custom</span>
+                                    </div>
                                 </div>
                             </label>
-                            <button onclick="removeCustomChecklistItem('${ct.id}')" class="text-slate-400 hover:text-rose-500 p-1 text-xs" title="Delete custom item"><i class="fa-solid fa-trash-can"></i></button>
+                            <button onclick="removeCustomChecklistItem('${ct.id}')" class="text-slate-300 hover:text-rose-500 p-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Delete custom item">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
                         </div>
                     `;
                 });
 
-                container.innerHTML += `
-                    <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-3.5 shadow-sm">
-                        <div class="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-darkborder"><h3 class="font-bold text-xs">${p.title}</h3><span class="text-[9px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded font-bold">${p.badge}</span></div>
-                        <div class="divide-y divide-slate-100 dark:divide-darkborder">${tasksHtml}</div>
-                    </div>
-                `;
+                if (visibleTasksHtml) {
+                    const phaseProgress = phaseTotal > 0 ? Math.round((phaseDone / phaseTotal) * 100) : 0;
+                    renderedPhasesHtml += `
+                        <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-4 shadow-sm space-y-3">
+                            <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-darkborder">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">${p.title}</h3>
+                                    <span class="text-[9px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-full font-bold">${p.badge}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-mono text-slate-500">${phaseDone}/${phaseTotal} (${phaseProgress}%)</span>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                ${visibleTasksHtml}
+                            </div>
+                        </div>
+                    `;
+                }
             });
 
-            // Bottom Add Custom Task card
-            container.innerHTML += `
-                <div class="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2.5">
-                    <div>
-                        <strong class="text-xs text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-plus text-brand-600"></i> Add Personal Checklist Tasks
-                        </strong>
-                        <p class="text-[10px] text-slate-500 mt-0.5">Custom medications, camera gear, or special family packing items</p>
+            if (!renderedPhasesHtml) {
+                renderedPhasesHtml = `
+                    <div class="text-center py-12 bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-6">
+                        <i class="fa-solid fa-clipboard-check text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+                        <p class="text-sm font-bold text-slate-700 dark:text-slate-300">No checklist items match your filters</p>
+                        <p class="text-xs text-slate-400 mt-1">Try resetting the search keyword or selecting "All Phases"</p>
+                        <button onclick="setChecklistStatusFilter('all'); setChecklistPhaseFilter('all'); clearChecklistSearch();" class="mt-3 px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-300 rounded-xl text-xs font-bold">Clear Filters</button>
                     </div>
-                    <button onclick="promptAddCustomChecklistItem()" class="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs shadow-xs flex items-center gap-1.5 active:scale-95 transition-transform">
-                        <i class="fa-solid fa-plus"></i> Add Item
-                    </button>
-                </div>
-            `;
+                `;
+            }
 
+            container.innerHTML = renderedPhasesHtml;
+
+            // Update Global Progress
             const pct = total > 0 ? Math.round((done / total) * 100) : 0;
             const bar = document.getElementById('cl-prog-bar');
             if (bar) bar.style.width = `${pct}%`;
             const text = document.getElementById('cl-prog-text');
             if (text) text.innerText = `${pct}% (${done}/${total})`;
+            const countPending = document.getElementById('cl-count-pending');
+            if (countPending) countPending.innerText = total - done;
         }
 
-        function saveChecklistState() {
-            const state = {};
-            checklistPhases.forEach(p => p.tasks.forEach(t => {
-                const el = document.getElementById(t.id);
-                if (el) state[t.id] = el.checked;
-            }));
-            const customTasks = safeGetStorage('vietnam_cl_custom_tasks', []) || [];
-            customTasks.forEach(ct => {
-                const el = document.getElementById(ct.id);
-                if (el) state[ct.id] = el.checked;
+        function renderChecklistPhaseChips() {
+            const container = document.getElementById('cl-phase-chips-container');
+            if (!container) return;
+            let html = `
+                <button type="button" onclick="setChecklistPhaseFilter('all')" class="whitespace-nowrap px-3 py-1 rounded-xl text-[11px] font-bold transition-all ${currentChecklistPhase === 'all' ? 'bg-brand-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}">
+                    All Phases (${checklistPhases.length})
+                </button>
+            `;
+            checklistPhases.forEach(p => {
+                const isActive = currentChecklistPhase === p.id;
+                html += `
+                    <button type="button" onclick="setChecklistPhaseFilter('${p.id}')" class="whitespace-nowrap px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all ${isActive ? 'bg-brand-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}">
+                        ${p.badge}
+                    </button>
+                `;
             });
-            safeSetStorage('vietnam_cl_state', state);
+            container.innerHTML = html;
+        }
+
+        function toggleChecklistItem(id) {
+            const saved = safeGetStorage('vietnam_cl_state', {}) || {};
+            saved[id] = !saved[id];
+            safeSetStorage('vietnam_cl_state', saved);
             renderChecklist();
         }
 
-        function promptAddCustomChecklistItem() {
-            const taskText = prompt("Enter custom checklist item (e.g. Extra inhaler, Universal adapter, Sunscreen SPF 50):");
-            if (!taskText || !taskText.trim()) return;
+        function saveChecklistState() {
+            renderChecklist();
+        }
 
-            const categoryChoice = prompt("Choose Phase:\n1 = Pre-Trip (e-Visas & Forex)\n2 = Luggage & Packing (Clothing & Shoes)\n3 = Senior Comfort & Meds\n4 = Hand Baggage & Documents", "2");
-            let targetPhaseId = 'pack';
-            if (categoryChoice === '1' || (categoryChoice && categoryChoice.toLowerCase().includes('pre'))) targetPhaseId = 'pre';
-            else if (categoryChoice === '3' || (categoryChoice && categoryChoice.toLowerCase().includes('med'))) targetPhaseId = 'med';
-            else if (categoryChoice === '4' || (categoryChoice && categoryChoice.toLowerCase().includes('doc'))) targetPhaseId = 'doc';
+        function onChecklistSearch(val) {
+            currentChecklistSearch = val;
+            const clearBtn = document.getElementById('cl-clear-search-btn');
+            if (clearBtn) {
+                if (val && val.trim().length > 0) clearBtn.classList.remove('hidden');
+                else clearBtn.classList.add('hidden');
+            }
+            renderChecklist();
+        }
+
+        function clearChecklistSearch() {
+            currentChecklistSearch = '';
+            const input = document.getElementById('cl-search-input');
+            if (input) input.value = '';
+            const clearBtn = document.getElementById('cl-clear-search-btn');
+            if (clearBtn) clearBtn.classList.add('hidden');
+            renderChecklist();
+        }
+
+        function setChecklistStatusFilter(status) {
+            currentChecklistStatus = status;
+            ['all', 'pending', 'done'].forEach(s => {
+                const btn = document.getElementById(`cl-filter-${s}`);
+                if (!btn) return;
+                if (s === status) {
+                    btn.className = 'px-3 py-1 rounded-xl text-xs font-bold transition-all bg-brand-600 text-white shadow-xs';
+                } else {
+                    btn.className = 'px-3 py-1 rounded-xl text-xs font-bold transition-all bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700';
+                }
+            });
+            renderChecklist();
+        }
+
+        function setChecklistPhaseFilter(phaseId) {
+            currentChecklistPhase = phaseId;
+            renderChecklist();
+        }
+
+        function openAddChecklistModal() {
+            const modal = document.getElementById('add-cl-task-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => document.getElementById('cl-new-task-text')?.focus(), 100);
+            }
+        }
+
+        function closeAddChecklistModal() {
+            const modal = document.getElementById('add-cl-task-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function saveCustomChecklistTask(e) {
+            if (e) e.preventDefault();
+            const textInput = document.getElementById('cl-new-task-text');
+            const phaseSelect = document.getElementById('cl-new-task-phase');
+            const text = textInput ? textInput.value.trim() : '';
+            const phaseId = phaseSelect ? phaseSelect.value : 'p2_luggage';
+
+            if (!text) return;
 
             const customTasks = safeGetStorage('vietnam_cl_custom_tasks', []) || [];
             const newTask = {
                 id: 'cust_cl_' + Date.now(),
-                text: taskText.trim(),
-                phaseId: targetPhaseId
+                text: text,
+                phaseId: phaseId
             };
             customTasks.push(newTask);
             safeSetStorage('vietnam_cl_custom_tasks', customTasks);
+
+            if (textInput) textInput.value = '';
+            closeAddChecklistModal();
             renderChecklist();
         }
 
@@ -3019,8 +3573,19 @@
             checklistPhases.forEach(p => p.tasks.forEach(t => {
                 state[t.id] = checked;
             }));
+            const customTasks = safeGetStorage('vietnam_cl_custom_tasks', []) || [];
+            customTasks.forEach(ct => {
+                state[ct.id] = checked;
+            });
             safeSetStorage('vietnam_cl_state', state);
             renderChecklist();
+        }
+
+        function resetChecklist() {
+            if (confirm("Reset all pre-departure checklist progress to uncompleted?")) {
+                safeSetStorage('vietnam_cl_state', {});
+                renderChecklist();
+            }
         }
 
         function renderLimoTransfersTable() {
@@ -3086,14 +3651,155 @@ Please provide your best package quote in VND. Thank you!`;
             document.getElementById('lug-remaining').innerText = `${remaining} kg left`;
         }
 
+        let currentBargainDiscount = 50;
+        let currentShopCategory = 'all';
+        let currentShopSearch = '';
+
         function renderShoppingTable() {
+            renderShopCategoryPills();
+            renderBargainingPhrases();
+            calculateBargain();
+            calculateVatRefund();
+
             const tbody = document.getElementById('shopping-guide-tbody');
+            if (!tbody) return;
             tbody.innerHTML = '';
-            masterShoppingData.forEach(row => {
+
+            const searchLower = currentShopSearch.toLowerCase().trim();
+
+            const filteredData = masterShoppingData.filter(row => {
+                if (currentShopCategory !== 'all' && row.category !== currentShopCategory) return false;
+                if (searchLower) {
+                    const match = (row.items && row.items.toLowerCase().includes(searchLower)) ||
+                                  (row.category && row.category.toLowerCase().includes(searchLower)) ||
+                                  (row.location && row.location.toLowerCase().includes(searchLower)) ||
+                                  (row.rule && row.rule.toLowerCase().includes(searchLower));
+                    if (!match) return false;
+                }
+                return true;
+            });
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass text-3xl mb-2 text-slate-300 dark:text-slate-600 block"></i>
+                            <p class="font-bold text-xs">No shopping gems found for your search</p>
+                            <button onclick="clearShoppingSearch(); filterShoppingCategory('all');" class="mt-2 px-3 py-1 bg-pink-50 dark:bg-pink-950/60 text-pink-600 dark:text-pink-300 rounded-lg text-[11px] font-bold">Clear Filters</button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filteredData.forEach(row => {
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800"><td class="p-2.5"><strong>${row.category}: ${row.items}</strong><br><span class="text-slate-500 text-[10px]">${row.location}</span></td><td class="p-2.5 text-right font-bold text-emerald-600 whitespace-nowrap">${row.price}</td></tr>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 border-b border-slate-100 dark:border-darkborder transition-colors">
+                        <td class="p-3">
+                            <span class="inline-block text-[9px] px-2 py-0.5 rounded-full font-bold bg-pink-50 dark:bg-pink-950 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-800/60 mb-1">
+                                ${row.category}
+                            </span>
+                            <div class="font-bold text-xs text-slate-900 dark:text-white leading-snug">${row.items}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">${row.location}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="font-bold text-xs text-emerald-600 dark:text-emerald-400 font-mono leading-snug break-words">${row.price}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-900/40 p-2 rounded-xl border border-slate-200/60 dark:border-slate-800">
+                                <i class="fa-solid fa-lightbulb text-amber-500 mr-1 text-[10px]"></i>${row.rule || 'Bargain starting at 50% discount and inspect stitching/expiry.'}
+                            </div>
+                        </td>
+                    </tr>
                 `;
             });
+        }
+
+        function renderShopCategoryPills() {
+            const container = document.getElementById('shop-category-pills');
+            if (!container) return;
+
+            const categories = ['all', ...new Set(masterShoppingData.map(d => d.category))];
+
+            let html = '';
+            categories.forEach(cat => {
+                const isActive = currentShopCategory === cat;
+                const label = cat === 'all' ? `All Gems (${masterShoppingData.length})` : cat;
+                html += `
+                    <button type="button" onclick="filterShoppingCategory('${cat}')" class="whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all ${isActive ? 'bg-pink-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}">
+                        ${label}
+                    </button>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function onShoppingSearch(val) {
+            currentShopSearch = val;
+            const clearBtn = document.getElementById('shop-clear-search-btn');
+            if (clearBtn) {
+                if (val && val.trim().length > 0) clearBtn.classList.remove('hidden');
+                else clearBtn.classList.add('hidden');
+            }
+            renderShoppingTable();
+        }
+
+        function clearShoppingSearch() {
+            currentShopSearch = '';
+            const input = document.getElementById('shop-search-input');
+            if (input) input.value = '';
+            const clearBtn = document.getElementById('shop-clear-search-btn');
+            if (clearBtn) clearBtn.classList.add('hidden');
+            renderShoppingTable();
+        }
+
+        function filterShoppingCategory(cat) {
+            currentShopCategory = cat;
+            renderShoppingTable();
+        }
+
+        function renderBargainingPhrases() {
+            const container = document.getElementById('bargain-phrases-container');
+            if (!container) return;
+
+            let html = '';
+            bargainingPhrasesData.forEach(p => {
+                html += `
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1.5 flex flex-col justify-between group hover:border-pink-500/50 transition-all">
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-pink-100 dark:bg-pink-950 text-pink-600 dark:text-pink-300">
+                                    ${p.tag}
+                                </span>
+                                <button type="button" onclick="playBargainingPhrase('${p.vietnamese.replace(/'/g, "\\'")}')" class="w-7 h-7 rounded-xl bg-pink-600 hover:bg-pink-700 active:scale-95 text-white flex items-center justify-center text-xs transition-transform shadow-xs" title="Play pronunciation">
+                                    <i class="fa-solid fa-volume-high"></i>
+                                </button>
+                            </div>
+                            <strong class="text-xs font-bold text-slate-900 dark:text-white block pt-1">${p.vietnamese}</strong>
+                            <div class="text-[11px] font-mono text-pink-600 dark:text-pink-400">/${p.phonetic}/</div>
+                        </div>
+                        <p class="text-[11px] text-slate-600 dark:text-slate-400 border-t border-slate-200/60 dark:border-slate-700/60 pt-1.5 mt-1 leading-tight">
+                            ${p.english}
+                        </p>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function playBargainingPhrase(text) {
+            if (!('speechSynthesis' in window)) {
+                alert("Speech synthesis is not supported in this browser.");
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'vi-VN';
+            utterance.rate = 0.85;
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
         }
 
         let currentBudgetStatus = 'booked';
@@ -3586,15 +4292,71 @@ Please provide your best package quote in VND. Thank you!`;
         }
 
         function calculateBargain() {
-            const asking = parseFloat(document.getElementById('bargain-input').value) || 0;
-            const offer = Math.round(asking * 0.5);
-            document.getElementById('bargain-offer-vnd').innerText = `${offer.toLocaleString()} VND`;
-            document.getElementById('bargain-offer-inr').innerText = `≈ ₹${Math.round(offer / 303).toLocaleString('en-IN')}`;
+            const input = document.getElementById('bargain-input');
+            if (!input) return;
+            const asking = parseFloat(input.value) || 0;
+            const discountFrac = currentBargainDiscount / 100;
+            const offer = Math.round(asking * discountFrac);
+            const savingsVnd = asking - offer;
+            const offerInr = Math.round(offer / 303);
+            const savingsInr = Math.round(savingsVnd / 303);
+            const askInr = Math.round(asking / 303);
+
+            const askInrEl = document.getElementById('bargain-ask-inr');
+            if (askInrEl) askInrEl.innerText = `≈ ₹${askInr.toLocaleString('en-IN')}`;
+
+            const offerVndEl = document.getElementById('bargain-offer-vnd');
+            if (offerVndEl) offerVndEl.innerText = `${offer.toLocaleString()} VND`;
+
+            const offerInrEl = document.getElementById('bargain-offer-inr');
+            if (offerInrEl) offerInrEl.innerText = `≈ ₹${offerInr.toLocaleString('en-IN')}`;
+
+            const offerLabel = document.getElementById('bargain-offer-label');
+            if (offerLabel) offerLabel.innerText = `You Offer (${currentBargainDiscount}%)`;
+
+            const note = document.getElementById('bargain-savings-note');
+            if (note) note.innerText = `Save ${100 - currentBargainDiscount}% (₹${savingsInr.toLocaleString('en-IN')})`;
         }
 
         function setBargain(val) {
-            document.getElementById('bargain-input').value = val;
+            const input = document.getElementById('bargain-input');
+            if (input) input.value = val;
             calculateBargain();
+        }
+
+        function setBargainDiscount(pct) {
+            currentBargainDiscount = pct;
+            [40, 50, 60].forEach(p => {
+                const btn = document.getElementById(`bdisc-${p}`);
+                if (!btn) return;
+                if (p === pct) {
+                    btn.className = 'bdisc-btn py-1.5 px-2 rounded-xl text-[11px] font-bold border border-pink-500 bg-pink-600 text-white text-center transition-all shadow-sm';
+                } else {
+                    btn.className = 'bdisc-btn py-1.5 px-2 rounded-xl text-[11px] font-bold border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 text-center transition-all';
+                }
+            });
+            calculateBargain();
+        }
+
+        function calculateVatRefund() {
+            const input = document.getElementById('vat-calc-input');
+            if (!input) return;
+            const bill = parseFloat(input.value) || 0;
+            const minThreshold = 2000000;
+            const refundVndEl = document.getElementById('vat-refund-vnd');
+            const refundInrEl = document.getElementById('vat-refund-inr');
+
+            if (bill < minThreshold) {
+                if (refundVndEl) refundVndEl.innerText = '0 VND (Min 2M)';
+                if (refundInrEl) refundInrEl.innerText = 'Below Min Bill';
+                return;
+            }
+
+            const netRefund = Math.round(bill * 0.085);
+            const inr = Math.round(netRefund / 303);
+
+            if (refundVndEl) refundVndEl.innerText = `${netRefund.toLocaleString()} VND`;
+            if (refundInrEl) refundInrEl.innerText = `≈ ₹${inr.toLocaleString('en-IN')}`;
         }
 
         /* 📍 HERO SCHEDULE STOP CYCLER */

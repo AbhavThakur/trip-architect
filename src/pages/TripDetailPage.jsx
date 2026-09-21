@@ -436,7 +436,10 @@ export default function TripDetailPage({
         )}
 
         {activeTab === "checklist" && (
-          <PackingChecklist tripId={trip.id} checklist={trip.checklist} />
+          <PackingChecklist
+            tripId={trip.id}
+            checklist={Array.isArray(trip.checklist) && trip.checklist[0]?.items ? trip.checklist : initialTrip.checklist}
+          />
         )}
 
         {activeTab === "stays" && (

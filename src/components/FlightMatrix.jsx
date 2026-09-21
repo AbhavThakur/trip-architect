@@ -291,10 +291,10 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
                   <>
                     {/* Leg 1 */}
                     <div className="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                      <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 mb-1">
+                      <div className="flex items-center justify-between text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                         <span>Leg 1 Departure</span>
                         {typeof leg1 === "object" && leg1.flightNo && (
-                          <span className="font-mono font-bold text-indigo-400">{leg1.airline} • {leg1.flightNo}</span>
+                          <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{leg1.airline} • {leg1.flightNo}</span>
                         )}
                       </div>
                       {typeof leg1 === "string" ? (
@@ -313,14 +313,14 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
 
                     {/* Layover Alert */}
                     {layover && (
-                      <div className="bg-amber-950/30 p-2.5 rounded-xl border border-amber-500/30 flex items-start gap-2 text-amber-300 text-[11px]">
-                        <Clock className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
+                      <div className="bg-amber-50 dark:bg-amber-950/40 p-2.5 rounded-xl border border-amber-200 dark:border-amber-500/30 flex items-start gap-2 text-amber-900 dark:text-amber-300 text-[11px]">
+                        <Clock className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
                         <div>
                           <strong>
                             Layover: {typeof layover === "string" ? layover : `${layover.airport || layover.city || "Transit"} • ${layover.duration || ""}`}
                           </strong>
                           {typeof layover === "object" && layover.note && (
-                            <p className="text-[10px] text-amber-200/80 mt-0.5">{layover.note}</p>
+                            <p className="text-[10px] text-amber-800 dark:text-amber-200/80 mt-0.5">{layover.note}</p>
                           )}
                         </div>
                       </div>
@@ -329,10 +329,10 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
                     {/* Leg 2 */}
                     {leg2 && (
                       <div className="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                        <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 mb-1">
+                        <div className="flex items-center justify-between text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                           <span>Leg 2 Final Sector</span>
                           {typeof leg2 === "object" && leg2.flightNo && (
-                            <span className="font-mono font-bold text-indigo-400">{leg2.airline} • {leg2.flightNo}</span>
+                            <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{leg2.airline} • {leg2.flightNo}</span>
                           )}
                         </div>
                         {typeof leg2 === "string" ? (
@@ -379,8 +379,8 @@ export default function FlightMatrix({ flights = [], onSaveFlights, tripId }) {
               {/* PNR and Copy */}
               <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-darkborder text-xs">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold">Booking PNR:</span>
-                  <strong className="font-mono text-emerald-400 font-black text-xs sm:text-sm">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Booking PNR:</span>
+                  <strong className="font-mono text-emerald-700 dark:text-emerald-400 font-black text-xs sm:text-sm">
                     {f.pnr || "CONFIRMED"}
                   </strong>
                 </div>

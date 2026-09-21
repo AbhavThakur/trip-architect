@@ -1406,64 +1406,340 @@
   ],
   "checklist": [
     {
-      "id": "c-1",
-      "title": "Passports with 6+ Months Validity",
-      "category": "essential",
-      "done": true
+      "phase": "Phase 1: Passports, E-Visas & Documents",
+      "badge": "Mandatory",
+      "items": [
+        {
+          "id": "c1_1",
+          "text": "Check Passports for 6+ Months Validity",
+          "desc": "Verify expiry date is well after June 2027 for all 5 travelers.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c1_2",
+          "text": "Official Vietnam E-Visa Approvals (evisa.gov.vn)",
+          "desc": "$25 per person official gov portal. Designated entry: Noi Bai International Airport (HAN).",
+          "defaultChecked": true
+        },
+        {
+          "id": "c1_3",
+          "text": "Print 2 Physical Color Copies of Each E-Visa",
+          "desc": "Required at check-in counter in India and immigration in Hanoi. Keep 1 copy in cabin bag, 1 in luggage.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c1_4",
+          "text": "Verify Machine-Readable Zone (MRZ) on E-Visa",
+          "desc": "Double check exact surname, given names, and passport number match the 2 lines at bottom of passport.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c1_5",
+          "text": "Passport Backup Photos (4x6 cm white background)",
+          "desc": "Carry 2 physical passport photos each in document pouch for emergency on-arrival stamping.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c1_6",
+          "text": "Comprehensive International Travel Insurance",
+          "desc": "Coverage for all 5 pax including flight delays, baggage loss, emergency hospitalization, and COVID.",
+          "defaultChecked": true
+        }
+      ]
     },
     {
-      "id": "c-2",
-      "title": "Vietnam E-Visas (Official Printouts x 2 copies each)",
-      "category": "essential",
-      "done": true
+      "phase": "Phase 2: Flights & Checked Baggage Buffer",
+      "badge": "Critical",
+      "items": [
+        {
+          "id": "c2_1",
+          "text": "Confirm International Inbound/Outbound Flights",
+          "desc": "DEL & BLR connecting flights to Hanoi (HAN) via Bangkok/Kuala Lumpur. PNRs recorded offline.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c2_2",
+          "text": "Confirm Domestic Flights (HAN ⇄ DAD)",
+          "desc": "VietJet / Vietnam Airlines flights between Hanoi and Da Nang (Dec 6 & Dec 10).",
+          "defaultChecked": true
+        },
+        {
+          "id": "c2_3",
+          "text": "Pre-purchase 20–25kg Checked Baggage per Couple",
+          "desc": "Essential for shoe shopping on Hàng Dầu, vacuum cashews from Han Market, and silk fabrics.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c2_4",
+          "text": "Web Check-in & Forward Row Seat Selection",
+          "desc": "Complete 24 hours prior to departure. Choose forward aisle seats for elderly parents.",
+          "defaultChecked": false
+        }
+      ]
     },
     {
-      "id": "c-3",
-      "title": "Confirmed IndiGo Flight Tickets (PNRs: OB5L6J, GI2EGR)",
-      "category": "flights",
-      "done": true
+      "phase": "Phase 3: Hotels, Ha Long Cruise & VIP Tickets",
+      "badge": "Bookings",
+      "items": [
+        {
+          "id": "c3_1",
+          "text": "Hanoi Old Quarter Hotel Confirmation",
+          "desc": "Boutique hotel with elevator access; requested connecting rooms and quiet upper-floor wing.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c3_2",
+          "text": "5-Star Ha Long Bay Overnight Balcony Cruise",
+          "desc": "Reconfirm 2 luxury connecting balcony cabins + pure vegetarian Indian dining confirmation in writing.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c3_3",
+          "text": "Hoi An Ancient Riverside Resort & Da Nang Beach Hotel",
+          "desc": "Reconfirmed early check-in or luggage storage protocol.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c3_4",
+          "text": "Reserve 9-Seater Ford Transit DCar VIP Limousine",
+          "desc": "Private VIP van with captain reclining leather seats for North (Hanoi-Ninh Binh) and Central legs.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c3_5",
+          "text": "Thang Long Water Puppet Front-Row VIP Tickets",
+          "desc": "Book official 06:15 PM evening show tickets in advance to skip tourist ticket queues.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c3_6",
+          "text": "Sun World Ba Na Hills Cable Car + Golden Bridge Vouchers",
+          "desc": "Pre-purchased QR code vouchers for fast-track entry at Hoi An Station cable car.",
+          "defaultChecked": false
+        }
+      ]
     },
     {
-      "id": "c-4",
-      "title": "Confirmed VietJet Return Tickets (PNR: 58FTFJ)",
-      "category": "flights",
-      "done": true
+      "phase": "Phase 4: Forex, Banking & Zero-Forex Cards",
+      "badge": "Finance",
+      "items": [
+        {
+          "id": "c4_1",
+          "text": "Load Zero-Forex Multi-Currency Travel Cards",
+          "desc": "Niyo Global / Scapia / Fi Federal cards loaded in INR for 0% markup POS & Grab transactions.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c4_2",
+          "text": "Enable International E-Com & POS Limits in Banking Apps",
+          "desc": "Check HDFC/ICICI/SBI apps and set card international usage limits to ₹1,00,000+ per card.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c4_3",
+          "text": "Withdraw $400–$600 Crisp Uncreased $100 USD Bills",
+          "desc": "Must be Series 2013 or newer with zero tears, stamps or folds for highest gold shop exchange in Hanoi (Hà Trung).",
+          "defaultChecked": false
+        },
+        {
+          "id": "c4_4",
+          "text": "Carry 2 Backup Physical Credit Cards",
+          "desc": "Keep separate in secondary wallet; enable international email OTP for emergency bookings.",
+          "defaultChecked": true
+        }
+      ]
     },
     {
-      "id": "c-5",
-      "title": "Ba Na Hills Cable Car Tickets & Sun World Voucher",
-      "category": "tickets",
-      "done": false
+      "phase": "Phase 5: eSIMs, Grab App & Offline Navigation",
+      "badge": "Tech & Nav",
+      "items": [
+        {
+          "id": "c5_1",
+          "text": "Purchase & Setup Vietnam Travel eSIMs (Viettel)",
+          "desc": "Buy Viettel / Vinaphone unlimited data packages via Airalo or Klook for all 5 phones.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c5_2",
+          "text": "Install Grab App & Link Zero-Forex Card in India",
+          "desc": "Crucial: link card while still in India to receive bank SMS OTP. Works seamlessly upon landing.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c5_3",
+          "text": "Download Offline Google Maps for Hanoi, Ninh Binh & Da Nang",
+          "desc": "Pre-download complete regional offline map sectors on all devices for navigation without data.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c5_4",
+          "text": "Download Google Translate Vietnamese Offline Pack",
+          "desc": "Download Vietnamese camera translation and voice model offline.",
+          "defaultChecked": false
+        }
+      ]
     },
     {
-      "id": "c-6",
-      "title": "Aqua Cruise Halong Bay 2D1N Voucher",
-      "category": "stays",
-      "done": false
+      "phase": "Phase 6: Luggage, Wardrobe & Senior Comfort",
+      "badge": "Packing",
+      "items": [
+        {
+          "id": "c6_1",
+          "text": "Comfortable Walking Sneakers with Cushioning",
+          "desc": "Broken-in footwear for walking Old Quarter cobblestones, Ba Na Hills, and Marble Mountains stairs.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c6_2",
+          "text": "Light Cardigan / Windbreaker Jacket",
+          "desc": "Essential for cool Ha Long Bay sea breezes (18°C–20°C in Dec) and high-altitude Ba Na Hills summit.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c6_3",
+          "text": "Modest Temple Attire (Shoulders & Knees Covered)",
+          "desc": "Required for entry to Tran Quoc Pagoda, Temple of Literature, and Linh Ung Pagoda Da Nang.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c6_4",
+          "text": "Compact Travel Umbrellas / Ponchos",
+          "desc": "Lightweight foldable umbrellas for brief passing tropical showers.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c6_5",
+          "text": "Senior Knee Support Sleeves & Walking Aid",
+          "desc": "Elastic knee compression braces and foldable walking stick for senior comfort during climbs.",
+          "defaultChecked": false
+        }
+      ]
     },
     {
-      "id": "c-7",
-      "title": "International Roaming / Vietnam Travel eSIMs (Viettel)",
-      "category": "tech",
-      "done": false
+      "phase": "Phase 7: Medical, First-Aid & Pharma Kit",
+      "badge": "Health",
+      "items": [
+        {
+          "id": "c7_1",
+          "text": "2-Week Buffer of Daily Prescription Medicines",
+          "desc": "Blood pressure, diabetes, thyroid medicines in original strip packaging with doctor's English prescription.",
+          "defaultChecked": true
+        },
+        {
+          "id": "c7_2",
+          "text": "Avomine / Dramamine (Motion Sickness Tablets)",
+          "desc": "Take 30 mins before Ha Long Bay cruise boarding, Tam Coc sampan boat, and winding Ba Na Hills highway.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c7_3",
+          "text": "Emergency Travel Pharma Kit",
+          "desc": "Crocin (Paracetamol), Cetirizine, Digene/Pudinhara, Imodium, ORS hydration salts, and Band-Aids.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c7_4",
+          "text": "DEET Mosquito Repellent & Soothing Balm",
+          "desc": "Odomos / DEET spray for evening walks around Hoan Kiem Lake, Ninh Binh greenery, and Coconut Forest.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c7_5",
+          "text": "Volini Pain Relief Spray & Hot Gel",
+          "desc": "Instant muscle relief for calves and lower back after full walking days.",
+          "defaultChecked": false
+        }
+      ]
     },
     {
-      "id": "c-8",
-      "title": "Comfortable Walking Shoes for Ba Na Hills & Marble Mountains",
-      "category": "packing",
-      "done": false
+      "phase": "Phase 8: Pure Veg & Jain Sustenance Pack",
+      "badge": "Pure Veg",
+      "items": [
+        {
+          "id": "c8_1",
+          "text": "Ready-to-Eat Meal Pouches (MTR / Haldiram)",
+          "desc": "10–12 heat-and-eat meal pouches (Dal Makhani, Palak Paneer, Rajma, Jeera Rice) for backup dinners.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c8_2",
+          "text": "Dry Snacks Pack (Thepla, Khakhra & Roasted Makhana)",
+          "desc": "Vacuum-sealed Theplas (lasts 10 days), spiced Khakhras, and dry roasted nuts for day trips.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c8_3",
+          "text": "Instant Poha / Upma Cups & Tea Bags",
+          "desc": "Just add hot water cups for 5:30 AM early morning flight check-outs before hotel breakfast opens.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c8_4",
+          "text": "Travel Immersion Heating Coil / Foldable Kettle",
+          "desc": "Compact 300W boiling coil to boil drinking water and heat ready-to-eat pouches in hotel rooms.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c8_5",
+          "text": "Indian Spice Kit (Chaat Masala, Chili Flakes & Peri-Peri)",
+          "desc": "Essential small containers to add zest and familiar warmth to plain stir-fried morning greens.",
+          "defaultChecked": false
+        }
+      ]
     },
     {
-      "id": "c-9",
-      "title": "Light Cardigan / Jacket for Halong Bay Evening & Ba Na Hills",
-      "category": "clothing",
-      "done": false
+      "phase": "Phase 9: Departure Day Handbag Checklist",
+      "badge": "Airport Day",
+      "items": [
+        {
+          "id": "c9_1",
+          "text": "Document Zipper Pouch in Carry-On Bag",
+          "desc": "All 5 passports, visa printouts, flight e-tickets, hotel booking printouts within quick reach.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c9_2",
+          "text": "Strictly Cabin-Only: Power Banks (< 20,000 mAh)",
+          "desc": "Lithium batteries are strictly prohibited in checked luggage in Vietnam. Keep in handbag.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c9_3",
+          "text": "Universal Power Plug Adapters (Type A / C / G)",
+          "desc": "Vietnam wall sockets accommodate flat 2-pin (Type A) and round 2-pin (Type C).",
+          "defaultChecked": false
+        },
+        {
+          "id": "c9_4",
+          "text": "Emergency Cash Envelope in Handbag",
+          "desc": "Keep $100 USD notes and ₹3,000 INR securely in inner zipper pocket.",
+          "defaultChecked": false
+        }
+      ]
     },
     {
-      "id": "c-10",
-      "title": "Prescription Medicines & Senior First-Aid Kit",
-      "category": "health",
-      "done": false
+      "phase": "Phase 10: On-Ground VAT 8.5% Cash Refund",
+      "badge": "On Ground",
+      "items": [
+        {
+          "id": "c10_1",
+          "text": "Request Official 'Hóa Đơn GTGT' Green VAT Invoice",
+          "desc": "For retail purchases > 2,000,000 VND at participating stores (FPT Shop, TopZone, Khai Silk).",
+          "defaultChecked": false
+        },
+        {
+          "id": "c10_2",
+          "text": "Inspect Goods at Noi Bai T2 Customs Pillar 10",
+          "desc": "Visit Customs Inspection Counter on 3rd floor before passport control. Present items and receipts.",
+          "defaultChecked": false
+        },
+        {
+          "id": "c10_3",
+          "text": "Collect Cash Refund in USD or VND at Airport Bank Booth",
+          "desc": "Head to BIDV or Vietcombank counter past security to collect instant net 8.5% cash refund.",
+          "defaultChecked": false
+        }
+      ]
     }
   ],
   "vegDining": {
@@ -1482,24 +1758,115 @@
         "value": "Strict Fish Sauce (Nước Mắm) Warning"
       }
     ],
+    "phrases": [
+      {
+        "badge": "Strict Pure Veg",
+        "vietnamese": "Tôi ăn chay. Tôi không ăn thịt, cá, hải sản, và nước mắm.",
+        "phonetic": "Toy an chai. Toy khong an thit, ca, hai san, va nuoc mam.",
+        "english": "I am vegetarian. I do not eat meat, fish, seafood, or fish sauce.",
+        "category": "diet"
+      },
+      {
+        "badge": "Jain Strict (No Roots)",
+        "vietnamese": "Không thịt, không cá, không trứng, không hành tỏi.",
+        "phonetic": "Khong thit, khong ca, khong trung, khong hanh toy.",
+        "english": "No meat, no fish, no egg, no onion, no garlic (Jain dietary).",
+        "category": "jain"
+      },
+      {
+        "badge": "Egg Friendly",
+        "vietnamese": "Tôi ăn được trứng gà.",
+        "phonetic": "Toy an duoc trung ga.",
+        "english": "I can eat chicken eggs.",
+        "category": "egg"
+      },
+      {
+        "badge": "No MSG / Health",
+        "vietnamese": "Làm ơn không cho bột ngọt hoặc mì chính.",
+        "phonetic": "Lam on khong cho bot ngot hoac mi chinh.",
+        "english": "Please do not add MSG or chemical flavor enhancers.",
+        "category": "health"
+      },
+      {
+        "badge": "No Fish Sauce",
+        "vietnamese": "Không dùng nước mắm, chỉ dùng nước tương hoặc muối.",
+        "phonetic": "Khong dung nuoc mam, chi dung nuoc tuong hoac muoi.",
+        "english": "No fish sauce, please use soy sauce or salt only.",
+        "category": "condiment"
+      },
+      {
+        "badge": "Market Bargain",
+        "vietnamese": "Bớt giá cho tôi một chút được không?",
+        "phonetic": "Bot gia cho toi mot chut duoc khong?",
+        "english": "Can you please give me a small discount?",
+        "category": "bargain"
+      }
+    ],
     "vietnamesePhrases": [
       {
+        "badge": "Strict Pure Veg",
         "vietnamese": "Tôi ăn chay trường, không ăn nước mắm",
         "phonetic": "Toy an chai chuong, khong an nuoc mam",
         "english": "I am strictly vegetarian, no fish sauce please.",
         "category": "diet"
       },
       {
+        "badge": "Jain Dietary",
         "vietnamese": "Không thịt, không cá, không trứng, không hành tỏi",
         "phonetic": "Khong thit, khong ca, khong trung, khong hanh toy",
         "english": "No meat, no fish, no egg, no onion, no garlic (Jain).",
         "category": "jain"
       },
       {
+        "badge": "Soy Sauce",
         "vietnamese": "Làm ơn cho tôi nước sốt tương đậu nành",
         "phonetic": "Lam on cho toy nuoc sot tuong dau nanh",
         "english": "Please give me soy sauce instead of fish sauce.",
         "category": "condiment"
+      }
+    ],
+    "restaurants": [
+      {
+        "name": "Sadhu Vegetarian",
+        "city": "Hanoi",
+        "cuisine": "Gourmet Buddhist Chay",
+        "address": "87 Ly Thuong Kiet, Hoan Kiem (0.8 km from Old Quarter)",
+        "note": "Upscale tranquil setting, stunning lotus seed soups, spring rolls, and tofu hot pots. 100% pure veg."
+      },
+      {
+        "name": "Namaste Hanoi",
+        "city": "Hanoi",
+        "cuisine": "North & South Indian / Jain",
+        "address": "46 Tho Nhuom, Hoan Kiem",
+        "note": "Dedicated Jain thalis available without onion/garlic. Authentic dal makhani, paneer tikka, and dosas."
+      },
+      {
+        "name": "Baba's Kitchen",
+        "city": "Hoi An",
+        "cuisine": "North & South Indian",
+        "address": "115 Phan Chu Trinh, Hoi An Ancient Town",
+        "note": "Top rated Indian restaurant in Hoi An. Fresh naans, vegetarian biryani, and mango lassi."
+      },
+      {
+        "name": "Mumtaz Indian Restaurant",
+        "city": "Da Nang",
+        "cuisine": "North & South Indian / Halal",
+        "address": "231 Tran Phu, Hai Chau, Da Nang",
+        "note": "Direct view of Dragon Bridge. Extensive pure vegetarian menu with Gujarati & South Indian thalis."
+      },
+      {
+        "name": "Karma Waters",
+        "city": "Da Nang / Hoi An",
+        "cuisine": "100% Vegan & Organic Chay",
+        "address": "47-49 Nguyen Chi Thanh, Hai Chau, Da Nang",
+        "note": "Eco-friendly zero-waste vegan cafe. No dairy, no MSG, completely plant-based Vietnamese noodle bowls."
+      },
+      {
+        "name": "Annen Vegetarian Central",
+        "city": "Hoi An",
+        "cuisine": "Traditional Hoi An Chay",
+        "address": "471 Cua Dai, Hoi An",
+        "note": "Authentic Cao Lau and White Rose dumplings crafted with vegetarian mushroom broth."
       }
     ]
   },
@@ -1610,52 +1977,112 @@
   },
   "limoTransfers": [
     {
-      "route": "Da Nang Airport ➔ Beachfront Hotel",
+      "leg": "Transfer 1",
+      "date": "Fri, Dec 4 (~09:30 AM)",
+      "route": "Noi Bai Airport (HAN T2) ➔ Hanoi Old Quarter Hotel",
+      "duration": "45 mins",
+      "costVnd": "450k VND",
+      "costInr": "₹1,485",
       "vehicle": "9-Seater VIP DCar Limousine",
-      "date": "Dec 4, 2026 (10:30 AM)",
       "pax": 5,
       "luggage": "5 Large + 5 Cabin Bags",
-      "notes": "Driver meets at domestic arrivals exit holding family name sign."
+      "notes": "Unified airport pickup for both DEL & BLR flights. Driver meets at international arrivals exit holding family name sign."
     },
     {
-      "route": "Da Nang Hotel ➔ Ba Na Hills Roundtrip",
-      "vehicle": "9-Seater VIP DCar Limousine",
-      "date": "Dec 5, 2026 (08:30 AM – 17:00 PM)",
+      "leg": "Transfer 2",
+      "date": "Sat, Dec 5 (~08:00 AM)",
+      "route": "Hanoi Hotel ➔ Ninh Binh (Hoa Lu & Tam Coc) ➔ Hanoi Hotel (Full Day)",
+      "duration": "Full Day",
+      "costVnd": "2.0M VND",
+      "costInr": "₹6,600",
+      "vehicle": "9-Seater VIP DCar President",
       "pax": 5,
       "luggage": "Daypacks only",
-      "notes": "Dedicated private driver stands by at Ba Na Hills cable car station."
+      "notes": "Leather captain seats, USB outlets, cold water, expressway tolls included."
     },
     {
-      "route": "Da Nang Hotel ➔ Marble Mountains & Hoi An Roundtrip",
+      "leg": "Transfer 3",
+      "date": "Sun, Dec 6 (~11:30 AM)",
+      "route": "Hanoi Hotel ➔ Noi Bai Airport Domestic T1",
+      "duration": "40 mins",
+      "costVnd": "450k VND",
+      "costInr": "₹1,485",
       "vehicle": "9-Seater VIP DCar Limousine",
-      "date": "Dec 6, 2026 (09:00 AM – 21:00 PM)",
-      "pax": 5,
-      "luggage": "Daypacks & shopping bags",
-      "notes": "Flexible timings, waits at Hoi An town perimeter parking."
-    },
-    {
-      "route": "Hanoi ➔ Ninh Binh Roundtrip",
-      "vehicle": "9-Seater VIP DCar President Limousine",
-      "date": "Dec 8, 2026 (07:45 AM – 19:30 PM)",
-      "pax": 5,
-      "luggage": "Daypacks only",
-      "notes": "Leather captain seats, USB outlets, expressway tolls included."
-    },
-    {
-      "route": "Hanoi Old Quarter ➔ Halong Bay Aqua Cruise Port",
-      "vehicle": "Aqua Cruise Luxury Expressway Shuttle",
-      "date": "Dec 9, 2026 (08:15 AM – 11:30 AM)",
       "pax": 5,
       "luggage": "All 5 Large + Cabin Bags",
-      "notes": "Direct pickup from hotel lobby."
+      "notes": "Hotel lobby pickup to domestic departure terminal T1 for Da Nang flight."
     },
     {
-      "route": "Halong Bay Aqua Port ➔ Hanoi Noi Bai Airport (HAN T2)",
-      "vehicle": "Private 9-Seater Express Limousine",
-      "date": "Dec 10, 2026 (11:30 AM – 15:00 PM)",
+      "leg": "Transfer 4",
+      "date": "Sun, Dec 6 (~04:30 PM)",
+      "route": "Da Nang Airport (DAD) ➔ Hoi An River Resort",
+      "duration": "35 mins",
+      "costVnd": "400k VND",
+      "costInr": "₹1,320",
+      "vehicle": "9-Seater VIP DCar Limousine",
       "pax": 5,
-      "luggage": "All luggage + duty free hauls",
-      "notes": "Bypasses Hanoi downtown traffic, takes direct expressway to airport departure hall."
+      "luggage": "All 5 Large + Cabin Bags",
+      "notes": "Scenic coastal road transfer directly to Hoi An resort check-in."
+    },
+    {
+      "leg": "Transfer 5",
+      "date": "Mon, Dec 7 (~09:30 AM)",
+      "route": "Hoi An Resort ➔ Coconut Forest ➔ Hoi An Town",
+      "duration": "15 mins",
+      "costVnd": "300k VND",
+      "costInr": "₹990",
+      "vehicle": "9-Seater VIP DCar Limousine",
+      "pax": 5,
+      "luggage": "Daypacks only",
+      "notes": "Roundtrip basket boat shuttle with return to Ancient Town pedestrian gate."
+    },
+    {
+      "leg": "Transfer 6",
+      "date": "Tue, Dec 8 (~08:30 AM)",
+      "route": "Hoi An Resort ➔ Ba Na Hills ➔ Da Nang Beach Hotel",
+      "duration": "Full Day",
+      "costVnd": "1.3M VND",
+      "costInr": "₹4,290",
+      "vehicle": "9-Seater VIP DCar Limousine",
+      "pax": 5,
+      "luggage": "All luggage safely stored in van",
+      "notes": "Driver stands by at Ba Na Hills cable car base station, then drops at My Khe beach hotel."
+    },
+    {
+      "leg": "Transfer 7",
+      "date": "Wed, Dec 9 (~09:00 AM)",
+      "route": "Da Nang Hotel ➔ Marble Mt ➔ Non Nuoc ➔ Da Nang Hotel",
+      "duration": "25 mins",
+      "costVnd": "500k VND",
+      "costInr": "₹1,650",
+      "vehicle": "9-Seater VIP DCar Limousine",
+      "pax": 5,
+      "luggage": "Daypacks & shopping bags",
+      "notes": "Stands by at Marble Mountain glass elevator parking lot, craft stone carving village stop."
+    },
+    {
+      "leg": "Transfer 8",
+      "date": "Thu, Dec 10 (~11:30 AM)",
+      "route": "Da Nang Hotel ➔ DAD Airport + HAN T1 ➔ Hanoi Old Quarter",
+      "duration": "45 mins",
+      "costVnd": "700k VND",
+      "costInr": "₹2,310",
+      "vehicle": "9-Seater VIP DCar Limousine",
+      "pax": 5,
+      "luggage": "All 5 Large + Cabin Bags",
+      "notes": "Combined domestic transfer (DAD hotel drop-off + HAN domestic arrival pickup)."
+    },
+    {
+      "leg": "Transfer 9",
+      "date": "Fri, Dec 11 (~03:30 PM)",
+      "route": "Hanoi Old Quarter ➔ Noi Bai Airport T2 International",
+      "duration": "40 mins",
+      "costVnd": "450k VND",
+      "costInr": "₹1,485",
+      "vehicle": "9-Seater VIP DCar Limousine",
+      "pax": 5,
+      "luggage": "All luggage + duty free shopping",
+      "notes": "Direct expressway to international departure terminal T2 for return flights."
     }
   ],
   "familyDocs": [

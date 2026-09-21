@@ -76,7 +76,7 @@ export default function Header({
           {currentTrip && (
             <button
               onClick={onBack}
-              className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800:bg-slate-200 text-slate-300 border border-slate-800 transition-all flex items-center gap-1.5 text-xs font-bold shadow-sm"
+              className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all flex items-center gap-1.5 text-xs font-bold shadow-sm"
               title="Back to Master Hub"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-emerald-500" />

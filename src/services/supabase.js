@@ -227,3 +227,66 @@ export function subscribeToTripUpdates(tripId, onUpdate) {
     client.removeChannel(channel);
   };
 }
+
+// Supabase Storage helpers for PDF tickets & boarding passes
+export async function uploadTicketPdf(tripId, file) {
+  const client = getClient();
+  const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const filePath = `${tripId}/${Date.now()}_${cleanName}`;
+
+  if (client) {
+    try {
+      const { data, error } = await client.storage
+        .from("tickets")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: true
+        });
+
+      if (!error && data) {
+        const { data: urlData } = client.storage.from("tickets").getPublicUrl(filePath);
+        return {
+          id: "ticket_" + Date.now(),
+          name: file.name,
+          path: filePath,
+          url: urlData.publicUrl,
+          size: file.size,
+          uploadedAt: new Date().toISOString(),
+          source: "supabase"
+        };
+      }
+    } catch (err) {
+      console.warn("Supabase storage upload failed, falling back to local offline storage:", err);
+    }
+  }
+
+  // Local fallback (Base64 data URL for offline storage)
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve({
+        id: "ticket_" + Date.now(),
+        name: file.name,
+        path: filePath,
+        url: reader.result,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+        source: "local"
+      });
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+export async function deleteTicketPdf(filePath) {
+  const client = getClient();
+  if (!client || !filePath) return { success: true };
+  try {
+    const { error } = await client.storage.from("tickets").remove([filePath]);
+    if (error) console.warn("Supabase storage remove error:", error);
+    return { success: !error };
+  } catch (e) {
+    return { success: false, error: e.message };
+  }
+}

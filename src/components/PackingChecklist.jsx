@@ -211,7 +211,7 @@ export default function PackingChecklist({ tripId, checklist = [] }) {
                 </span>
               </div>
               <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-1">
-                Pre-Departure 10-Phase Checklist
+                Pre-Departure {phasesWithCustom.length > 1 ? `${phasesWithCustom.length}-Phase ` : ""}Checklist
               </h3>
             </div>
           </div>
@@ -274,7 +274,7 @@ export default function PackingChecklist({ tripId, checklist = [] }) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search visas, medicines, clothing, forex, SIM..."
+              placeholder="Search checklist, gear, tickets, medicines, attire..."
               className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-emerald-500 transition-colors"
             />
             {searchQuery && (
@@ -331,7 +331,7 @@ export default function PackingChecklist({ tripId, checklist = [] }) {
                 : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200"
             }`}
           >
-            All 10 Phases ({phasesWithCustom.length})
+            All Phases ({phasesWithCustom.length})
           </button>
           {phasesWithCustom.map((p, idx) => {
             const pDone = p.items.filter((i) => checkedMap[i.id]).length;
@@ -587,7 +587,7 @@ export default function PackingChecklist({ tripId, checklist = [] }) {
                 </div>
                 <div>
                   <h4 className="font-bold text-sm text-slate-900 dark:text-white">Add Personal Task</h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Assign to any of the 10 pre-departure phases</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Assign to any pre-departure phase</p>
                 </div>
               </div>
               <button

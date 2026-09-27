@@ -592,7 +592,23 @@ function renderPackingTab(trip) {
     const container = document.getElementById("tab-content-packing");
     if (!container) return;
 
-    const list = trip.packingList || [];
+    let list = trip.packingList || [];
+    if ((!list || list.length === 0) && Array.isArray(trip.checklist) && trip.checklist.length > 0) {
+        list = [];
+        trip.checklist.forEach(phase => {
+            const cat = phase.badge || (typeof phase.phase === 'string' ? phase.phase.split(':')[0] : 'Essential');
+            (phase.items || []).forEach(item => {
+                list.push({
+                    id: item.id,
+                    item: item.text || item.title || '',
+                    desc: item.desc || '',
+                    category: cat,
+                    checked: !!item.defaultChecked
+                });
+            });
+        });
+    }
+
     const savedStates = JSON.parse(localStorage.getItem(`packing_${trip.id}`) || "{}");
 
     container.innerHTML = `
@@ -617,12 +633,15 @@ function renderPackingTab(trip) {
                                    ${isChecked ? 'checked' : ''} 
                                    class="mt-1 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 bg-slate-800 border-slate-700">
                             <div class="flex-1 text-xs">
-                                <span class="font-bold text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 uppercase font-mono mr-1.5">
-                                    ${item.category}
-                                </span>
-                                <span class="${isChecked ? 'line-through text-slate-500' : 'text-slate-200'} font-medium">
-                                    ${item.item}
-                                </span>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="font-bold text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 uppercase font-mono">
+                                        ${item.category}
+                                    </span>
+                                    <span class="${isChecked ? 'line-through text-slate-500' : 'text-slate-200'} font-bold">
+                                        ${item.item}
+                                    </span>
+                                </div>
+                                ${item.desc ? `<p class="text-[11px] text-slate-400 mt-1 leading-relaxed ${isChecked ? 'line-through text-slate-600' : ''}">${item.desc}</p>` : ''}
                             </div>
                         </label>
                     `;

@@ -3,7 +3,8 @@ import {
   Calendar, MapPin, Users, Plane, Bus, Building,
   Calculator, ClipboardCheck, Volume2, ArrowLeft,
   Share2, Compass, AlertCircle, Cloud, CheckCircle,
-  ShoppingBag, Shield, Coins, Sparkles, UserCheck, ChevronLeft, ChevronRight, ArrowRight, RotateCcw
+  ShoppingBag, Shield, Coins, Sparkles, UserCheck, ChevronLeft, ChevronRight, ArrowRight, RotateCcw,
+  Ticket, Layers, SlidersHorizontal
 } from "lucide-react";
 
 import ItineraryTimeline from "../components/ItineraryTimeline";
@@ -18,6 +19,8 @@ import LimousineHub from "../components/LimousineHub";
 import ShoppingGuide from "../components/ShoppingGuide";
 import BottomNav from "../components/BottomNav";
 import TripAdvisorChat from "../components/TripAdvisorChat";
+import BookingDesk from "../components/BookingDesk";
+import GuideEssentialsHub from "../components/GuideEssentialsHub";
 import { fetchTripFromCloud, saveTripToCloud, subscribeToTripUpdates } from "../services/supabase";
 
 export default function TripDetailPage({
@@ -32,6 +35,27 @@ export default function TripDetailPage({
   const [activeTab, setActiveTab] = useState("itinerary");
   const [syncStatus, setSyncStatus] = useState("loading");
   const [saveIndicator, setSaveIndicator] = useState("");
+  
+  // View Mode: 'simple' (4-pillar essentials) vs 'pro' (10-tab master control)
+  const [viewMode, setViewMode] = useState(() => {
+    try {
+      return localStorage.getItem("trip_architect_view_mode") || "simple";
+    } catch (e) {
+      return "simple";
+    }
+  });
+
+  const handleSetViewMode = (mode) => {
+    setViewMode(mode);
+    try {
+      localStorage.setItem("trip_architect_view_mode", mode);
+    } catch (e) {}
+    // If switching to simple and currently on a pro-only tab, switch to guide
+    if (mode === "simple" && ["checklist", "stays", "mobility", "limo", "dining", "shopping", "tools"].includes(activeTab)) {
+      setActiveTab("guide");
+    }
+  };
+
   const tabsContainerRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -91,7 +115,7 @@ export default function TripDetailPage({
       localStorage.removeItem("trip_architect_registry_custom");
     } catch (e) {}
     setTrip(initialTrip);
-    setSaveIndicator("Reset to Latest 7-Day Blueprint!");
+    setSaveIndicator("Reset to Latest Blueprint!");
     await saveTripToCloud(initialTrip.id, initialTrip);
     setTimeout(() => setSaveIndicator(""), 3000);
   };
@@ -189,11 +213,11 @@ export default function TripDetailPage({
 
               <button
                 onClick={handleForceRefresh}
-                title="Force refresh to latest official 7-day blueprint and clear stale cache"
+                title="Force refresh to latest official blueprint and clear stale cache"
                 className="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-purple-950/80 hover:bg-purple-900 text-purple-300 border border-purple-700/60 flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>Sync Latest Blueprint</span>
+                <span>Sync Blueprint</span>
               </button>
 
               {saveIndicator && (
@@ -205,7 +229,7 @@ export default function TripDetailPage({
 
             <button
               onClick={onBack}
-              className="px-3 py-1.5 rounded-xl bg-black/40 hover:bg-black/60 text-white text-xs font-bold border border-white/15 transition-all flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-xl bg-black/40 hover:bg-black/60 text-white text-xs font-bold border border-white/15 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Hub</span>
@@ -245,182 +269,298 @@ export default function TripDetailPage({
         </div>
       </div>
 
-      {/* Navigation Tabs with Desktop & Mobile Scroll Arrows */}
-      <div className="relative flex items-center bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder p-1.5 rounded-2xl shadow-sm group">
-        {/* Left Scroll Arrow */}
-        <button
-          onClick={() => scrollTabs("left")}
-          disabled={!canScrollLeft}
-          title="Scroll Left"
-          aria-label="Scroll Tabs Left"
-          className={`flex-shrink-0 z-10 w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-            canScrollLeft
-              ? "bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm cursor-pointer"
-              : "opacity-25 cursor-not-allowed text-slate-400"
-          }`}
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-
-        {/* Scrollable Tabs Track */}
-        <nav
-          ref={tabsContainerRef}
-          onScroll={checkTabsScroll}
-          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth w-full px-1.5 py-0.5"
-        >
-          <button
-            onClick={() => setActiveTab("itinerary")}
-            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-              activeTab === "itinerary"
-                ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
-                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
-            )}
-          >
-            <Calendar className="w-3.5 h-3.5" />
-            <span>Itinerary & Map</span>
-          </button>
-
-          {trip.checklist && (
+      {/* Mode Switcher: ⚡ Essentials (Simple) vs 🛠️ Master Planner (Pro) */}
+      <div className="flex items-center justify-between flex-wrap gap-3 bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder p-2.5 sm:p-3 rounded-2xl shadow-sm">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400">View Mode:</span>
+          <div className="flex items-center bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
             <button
-              onClick={() => setActiveTab("checklist")}
-              className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-                activeTab === "checklist"
-                  ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
-              )}
+              onClick={() => handleSetViewMode("simple")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                viewMode === "simple"
+                  ? "bg-brand-600 text-white shadow-sm"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              }`}
             >
-              <ClipboardCheck className="w-3.5 h-3.5" />
-              <span>Pre-Departure Checklist</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>⚡ Essentials (Simple)</span>
             </button>
-          )}
 
-          {(trip.stays || trip.hotels) && (
             <button
-              onClick={() => setActiveTab("stays")}
-              className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-                activeTab === "stays"
-                  ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
-              )}
+              onClick={() => handleSetViewMode("pro")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                viewMode === "pro"
+                  ? "bg-purple-600 text-white shadow-sm"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              }`}
             >
-              <Building className="w-3.5 h-3.5" />
-              <span>Hotels & Stays</span>
+              <Compass className="w-3.5 h-3.5" />
+              <span>🛠️ Master Planner (Pro)</span>
             </button>
-          )}
+          </div>
+        </div>
 
-          {(hasFlights || hasTransit) && (
-            <button
-              onClick={() => setActiveTab("mobility")}
-              className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-                activeTab === "mobility"
-                  ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
-              )}
-            >
-              {hasFlights ? <Plane className="w-3.5 h-3.5" /> : <Bus className="w-3.5 h-3.5 text-sky-400" />}
-              <span>{hasFlights ? "Flight Matrix & PNRs" : "Sleeper Bus & Transit"}</span>
-            </button>
-          )}
-
-          {hasLimo && (
-            <button
-              onClick={() => setActiveTab("limo")}
-              className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-                activeTab === "limo"
-                  ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
-              )}
-            >
-              <Bus className="w-3.5 h-3.5 text-emerald-400" />
-              <span>9-Seater Limousine Hub</span>
-            </button>
-          )}
-
-          {hasVegDining && (
-            <button
-              onClick={() => setActiveTab("dining")}
-              className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-                activeTab === "dining"
-                  ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
-              )}
-            >
-              <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Veg Dining & Audio</span>
-            </button>
-          )}
-
-          {hasShopping && (
-            <button
-              onClick={() => setActiveTab("shopping")}
-              className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-                activeTab === "shopping"
-                  ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
-              )}
-            >
-              <ShoppingBag className="w-3.5 h-3.5 text-pink-400" />
-              <span>Shopping & Bargaining</span>
-            </button>
-          )}
-
-          {(trip.budget || initialTrip.budget) && (
-            <button
-              onClick={() => setActiveTab("budget")}
-              className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-                activeTab === "budget"
-                  ? "bg-purple-600 text-white shadow-md font-bold ring-2 ring-purple-400/40"
-                  : "text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900/60 font-bold border border-purple-200 dark:border-purple-800/60"
-              )}
-            >
-              <Calculator className="w-3.5 h-3.5" />
-              <span>Budget & Expenses</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                ₹4.06L
-              </span>
-            </button>
-          )}
-
-          {hasCurrency && (
-            <button
-              onClick={() => setActiveTab("tools")}
-              className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
-                activeTab === "tools"
-                  ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
-              )}
-            >
-              <Coins className="w-3.5 h-3.5 text-amber-400" />
-              <span>Tools & FX</span>
-            </button>
-          )}
-        </nav>
-
-        {/* Right Scroll Arrow with 'More' Hint */}
-        <button
-          onClick={() => scrollTabs("right")}
-          disabled={!canScrollRight}
-          title="Scroll right for Budget, Tools & more"
-          aria-label="Scroll Tabs Right"
-          className={`flex-shrink-0 z-10 h-8 px-2 sm:px-2.5 rounded-xl flex items-center justify-center gap-1 transition-all ${
-            canScrollRight
-              ? "bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/60 dark:hover:bg-purple-900/90 text-purple-700 dark:text-purple-300 shadow-sm cursor-pointer font-bold text-xs"
-              : "opacity-25 cursor-not-allowed text-slate-400"
-          }`}
-        >
-          {canScrollRight && (
-            <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">
-              More
+        <div className="text-[11px] text-slate-500 dark:text-slate-400">
+          {viewMode === "simple" ? (
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>4-Pillar Streamlined View • Perfect on the go</span>
+            </span>
+          ) : (
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+              <span>Full 10-Tab Deep Control Room</span>
             </span>
           )}
-          <ChevronRight className={`w-4 h-4 ${canScrollRight ? "animate-pulse" : ""}`} />
-        </button>
+        </div>
       </div>
+
+      {/* Navigation Tabs */}
+      {viewMode === "simple" ? (
+        /* SIMPLE MODE: 4 Core Pillars */
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder p-1.5 rounded-2xl shadow-sm">
+          <button
+            onClick={() => setActiveTab("itinerary")}
+            className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              activeTab === "itinerary"
+                ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <Calendar className="w-4 h-4 text-brand-400" />
+            <span>Itinerary & Route</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("bookings")}
+            className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              activeTab === "bookings"
+                ? "bg-emerald-600 text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <Ticket className="w-4 h-4 text-emerald-400" />
+            <span>Bookings & Passes</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("budget")}
+            className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              activeTab === "budget"
+                ? "bg-purple-600 text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <Calculator className="w-4 h-4 text-purple-400" />
+            <span>Budget & Split</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("guide")}
+            className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              activeTab === "guide"
+                ? "bg-indigo-600 text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+          >
+            <Compass className="w-4 h-4 text-indigo-400" />
+            <span>Guide & Essentials</span>
+          </button>
+        </div>
+      ) : (
+        /* PRO MODE: Full Horizontal Scrolling Track with 10 Tabs */
+        <div className="relative flex items-center bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder p-1.5 rounded-2xl shadow-sm group">
+          {/* Left Scroll Arrow */}
+          <button
+            onClick={() => scrollTabs("left")}
+            disabled={!canScrollLeft}
+            title="Scroll Left"
+            aria-label="Scroll Tabs Left"
+            className={`flex-shrink-0 z-10 w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+              canScrollLeft
+                ? "bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm cursor-pointer"
+                : "opacity-25 cursor-not-allowed text-slate-400"
+            }`}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          {/* Scrollable Tabs Track */}
+          <nav
+            ref={tabsContainerRef}
+            onScroll={checkTabsScroll}
+            className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth w-full px-1.5 py-0.5"
+          >
+            <button
+              onClick={() => setActiveTab("itinerary")}
+              className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+                activeTab === "itinerary"
+                  ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
+              )}
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Itinerary & Map</span>
+            </button>
+
+            {(trip.checklist || trip.packingList) && (
+              <button
+                onClick={() => setActiveTab("checklist")}
+                className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+                  activeTab === "checklist"
+                    ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
+                )}
+              >
+                <ClipboardCheck className="w-3.5 h-3.5" />
+                <span>Pre-Departure Checklist</span>
+              </button>
+            )}
+
+            {(trip.stays || trip.hotels) && (
+              <button
+                onClick={() => setActiveTab("stays")}
+                className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+                  activeTab === "stays"
+                    ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
+                )}
+              >
+                <Building className="w-3.5 h-3.5" />
+                <span>Hotels & Stays</span>
+              </button>
+            )}
+
+            {(hasFlights || hasTransit) && (
+              <button
+                onClick={() => setActiveTab("mobility")}
+                className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+                  activeTab === "mobility"
+                    ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
+                )}
+              >
+                {hasFlights ? <Plane className="w-3.5 h-3.5" /> : <Bus className="w-3.5 h-3.5 text-sky-400" />}
+                <span>{hasFlights ? "Flight Matrix & PNRs" : "Sleeper Bus & Transit"}</span>
+              </button>
+            )}
+
+            {hasLimo && (
+              <button
+                onClick={() => setActiveTab("limo")}
+                className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+                  activeTab === "limo"
+                    ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
+                )}
+              >
+                <Bus className="w-3.5 h-3.5 text-emerald-400" />
+                <span>9-Seater Limousine Hub</span>
+              </button>
+            )}
+
+            {hasVegDining && (
+              <button
+                onClick={() => setActiveTab("dining")}
+                className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+                  activeTab === "dining"
+                    ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
+                )}
+              >
+                <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Veg Dining & Audio</span>
+              </button>
+            )}
+
+            {hasShopping && (
+              <button
+                onClick={() => setActiveTab("shopping")}
+                className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+                  activeTab === "shopping"
+                    ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
+                )}
+              >
+                <ShoppingBag className="w-3.5 h-3.5 text-pink-400" />
+                <span>Shopping & Bargaining</span>
+              </button>
+            )}
+
+            {(trip.budget || initialTrip.budget) && (
+              <button
+                onClick={() => setActiveTab("budget")}
+                className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+                  activeTab === "budget"
+                    ? "bg-purple-600 text-white shadow-md font-bold ring-2 ring-purple-400/40"
+                    : "text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900/60 font-bold border border-purple-200 dark:border-purple-800/60"
+                )}
+              >
+                <Calculator className="w-3.5 h-3.5" />
+                <span>Budget & Expenses</span>
+                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                  {trip.budget?.totalEstimate || (trip.budget?.total ? `₹${trip.budget.total.toLocaleString('en-IN')}` : "Budget")}
+                </span>
+              </button>
+            )}
+
+            <button
+              onClick={() => setActiveTab("bookings")}
+              className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+                activeTab === "bookings"
+                  ? "bg-emerald-600 text-white shadow-md font-bold ring-2 ring-emerald-400/40"
+                  : "text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 font-bold border border-emerald-200 dark:border-emerald-800/60"
+              )}
+            >
+              <Ticket className="w-3.5 h-3.5" />
+              <span>Booking Desk</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Direct Links
+              </span>
+            </button>
+
+            {hasCurrency && (
+              <button
+                onClick={() => setActiveTab("tools")}
+                className={"px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all " + (
+                  activeTab === "tools"
+                    ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold"
+                )}
+              >
+                <Coins className="w-3.5 h-3.5 text-amber-400" />
+                <span>Tools & FX</span>
+              </button>
+            )}
+          </nav>
+
+          {/* Right Scroll Arrow with 'More' Hint */}
+          <button
+            onClick={() => scrollTabs("right")}
+            disabled={!canScrollRight}
+            title="Scroll right for Budget, Tools & more"
+            aria-label="Scroll Tabs Right"
+            className={`flex-shrink-0 z-10 h-8 px-2 sm:px-2.5 rounded-xl flex items-center justify-center gap-1 transition-all ${
+              canScrollRight
+                ? "bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/60 dark:hover:bg-purple-900/90 text-purple-700 dark:text-purple-300 shadow-sm cursor-pointer font-bold text-xs"
+                : "opacity-25 cursor-not-allowed text-slate-400"
+            }`}
+          >
+            {canScrollRight && (
+              <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">
+                More
+              </span>
+            )}
+            <ChevronRight className={`w-4 h-4 ${canScrollRight ? "animate-pulse" : ""}`} />
+          </button>
+        </div>
+      )}
 
       {/* Tab Content Display */}
       <div className="space-y-6">
         {activeTab === "itinerary" && (
           <ItineraryTimeline
+            trip={trip}
             onOpenBudget={() => setActiveTab("budget")}
             days={trip.itinerary}
             tripTitle={trip.title}
@@ -435,10 +575,26 @@ export default function TripDetailPage({
           />
         )}
 
+        {/* Simple Mode: Consolidated Guide & Essentials Hub */}
+        {activeTab === "guide" && (
+          <GuideEssentialsHub
+            trip={trip}
+            onOpenTaxi={onOpenTaxi}
+            onOpenDocs={onOpenDocs}
+            onOpenFx={onOpenFx}
+            onSwitchToProTab={(tab) => {
+              handleSetViewMode("pro");
+              setActiveTab(tab);
+            }}
+            onSaveFlights={handleSaveFlights}
+          />
+        )}
+
+        {/* Pro Mode: Dedicated granular tabs */}
         {activeTab === "checklist" && (
           <PackingChecklist
             tripId={trip.id}
-            checklist={Array.isArray(trip.checklist) && trip.checklist[0]?.items ? trip.checklist : initialTrip.checklist}
+            checklist={trip.checklist || trip.packingList || initialTrip?.checklist || []}
           />
         )}
 
@@ -466,7 +622,21 @@ export default function TripDetailPage({
         )}
 
         {activeTab === "budget" && (
-          <SplitBudget budget={trip.budget || initialTrip.budget} onSaveBudget={handleSaveBudget} />
+          <SplitBudget budget={trip.budget || initialTrip.budget} tripId={trip.id} trip={trip} onSaveBudget={handleSaveBudget} />
+        )}
+
+        {activeTab === "bookings" && (
+          <BookingDesk
+            trip={trip}
+            asTab={true}
+            onSaveTrip={async (updatedTrip) => {
+              setTrip(updatedTrip);
+              setSaveIndicator("Saving Tickets to Cloud...");
+              const res = await saveTripToCloud(updatedTrip.id, updatedTrip);
+              setSaveIndicator(res.source === "cloud_saved" ? "Tickets Saved to Supabase!" : "Tickets Saved Locally");
+              setTimeout(() => setSaveIndicator(""), 3000);
+            }}
+          />
         )}
 
         {activeTab === "tools" && (
@@ -481,57 +651,69 @@ export default function TripDetailPage({
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <button
-                onClick={() => setActiveTab("limo")}
-                className="bg-white dark:bg-darkcard p-4 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-left flex flex-col justify-between hover:border-emerald-500 transition-all group"
-              >
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center text-sm mb-2">
-                  <Bus className="w-4 h-4" />
-                </div>
-                <div>
-                  <strong className="block font-bold text-slate-900 dark:text-white">9-Seater Limousine</strong>
-                  <span className="text-slate-400 text-[10px]">9 Private legs & quote</span>
-                </div>
-              </button>
+              {hasLimo && (
+                <button
+                  onClick={() => setActiveTab("limo")}
+                  className="bg-white dark:bg-darkcard p-4 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-left flex flex-col justify-between hover:border-emerald-500 transition-all group"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center text-sm mb-2">
+                    <Bus className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <strong className="block font-bold text-slate-900 dark:text-white">9-Seater Limousine</strong>
+                    <span className="text-slate-400 text-[10px]">9 Private legs & quote</span>
+                  </div>
+                </button>
+              )}
 
-              <button
-                onClick={() => setActiveTab("shopping")}
-                className="bg-white dark:bg-darkcard p-4 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-left flex flex-col justify-between hover:border-pink-500 transition-all group"
-              >
-                <div className="w-8 h-8 rounded-xl bg-pink-100 dark:bg-pink-950 text-pink-600 flex items-center justify-center text-sm mb-2">
-                  <ShoppingBag className="w-4 h-4" />
-                </div>
-                <div>
-                  <strong className="block font-bold text-slate-900 dark:text-white">Shopping & Bargaining</strong>
-                  <span className="text-slate-400 text-[10px]">50% Rule & Markets</span>
-                </div>
-              </button>
+              {hasShopping && (
+                <button
+                  onClick={() => setActiveTab("shopping")}
+                  className="bg-white dark:bg-darkcard p-4 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-left flex flex-col justify-between hover:border-pink-500 transition-all group"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-pink-100 dark:bg-pink-950 text-pink-600 flex items-center justify-center text-sm mb-2">
+                    <ShoppingBag className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <strong className="block font-bold text-slate-900 dark:text-white">Shopping & Bargaining</strong>
+                    <span className="text-slate-400 text-[10px]">50% Rule & Markets</span>
+                  </div>
+                </button>
+              )}
 
-              <button
-                onClick={() => setActiveTab("checklist")}
-                className="bg-white dark:bg-darkcard p-4 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-left flex flex-col justify-between hover:border-amber-500 transition-all group"
-              >
-                <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-600 flex items-center justify-center text-sm mb-2">
-                  <ClipboardCheck className="w-4 h-4" />
-                </div>
-                <div>
-                  <strong className="block font-bold text-slate-900 dark:text-white">Phased Checklist</strong>
-                  <span className="text-slate-400 text-[10px]">5 Readiness Phases</span>
-                </div>
-              </button>
+              {hasChecklist && (
+                <button
+                  onClick={() => setActiveTab("checklist")}
+                  className="bg-white dark:bg-darkcard p-4 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-left flex flex-col justify-between hover:border-amber-500 transition-all group"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-600 flex items-center justify-center text-sm mb-2">
+                    <ClipboardCheck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <strong className="block font-bold text-slate-900 dark:text-white">Phased Checklist</strong>
+                    <span className="text-slate-400 text-[10px]">5 Readiness Phases</span>
+                  </div>
+                </button>
+              )}
 
-              <button
-                onClick={() => setActiveTab("mobility")}
-                className="bg-white dark:bg-darkcard p-4 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-left flex flex-col justify-between hover:border-indigo-500 transition-all group"
-              >
-                <div className="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 flex items-center justify-center text-sm mb-2">
-                  <Plane className="w-4 h-4" />
-                </div>
-                <div>
-                  <strong className="block font-bold text-slate-900 dark:text-white">Flight Matrix & PNRs</strong>
-                  <span className="text-slate-400 text-[10px]">Inbound, DAD & Return</span>
-                </div>
-              </button>
+              {(hasFlights || hasTransit) && (
+                <button
+                  onClick={() => setActiveTab("mobility")}
+                  className="bg-white dark:bg-darkcard p-4 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-left flex flex-col justify-between hover:border-indigo-500 transition-all group"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 flex items-center justify-center text-sm mb-2">
+                    {hasFlights ? <Plane className="w-4 h-4" /> : <Bus className="w-4 h-4" />}
+                  </div>
+                  <div>
+                    <strong className="block font-bold text-slate-900 dark:text-white">
+                      {hasFlights ? "Flight Matrix & PNRs" : "Transit & Passes"}
+                    </strong>
+                    <span className="text-slate-400 text-[10px]">
+                      {hasFlights ? "Inbound, DAD & Return" : "Outbound & Return Transit"}
+                    </span>
+                  </div>
+                </button>
+              )}
 
               {onOpenTaxi && (
                 <button
@@ -543,7 +725,9 @@ export default function TripDetailPage({
                   </div>
                   <div>
                     <strong className="block font-bold text-slate-900 dark:text-white">Taxi Driver Card</strong>
-                    <span className="text-slate-400 text-[10px]">Vietnamese Address & Phone</span>
+                    <span className="text-slate-400 text-[10px]">
+                      {trip.category === "international" ? "Driver Translation Card" : "Driver Card & Local Script"}
+                    </span>
                   </div>
                 </button>
               )}
@@ -583,6 +767,7 @@ export default function TripDetailPage({
         isFlight={hasFlights}
         hasVegDining={hasVegDining}
         hasCurrency={hasCurrency}
+        viewMode={viewMode}
       />
     </div>
   );

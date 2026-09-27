@@ -1,7 +1,7 @@
 import React from 'react';
-import { MapPin, ArrowUpRight, Calendar, Users, Eye } from 'lucide-react';
+import { MapPin, ArrowUpRight, Calendar, Users, Eye, Trash2 } from 'lucide-react';
 
-export default function TripCard({ trip, onPreview, onLaunch }) {
+export default function TripCard({ trip, onPreview, onLaunch, isCustom = false, onDelete }) {
   const isDomestic = trip.category === 'domestic';
 
   return (
@@ -19,8 +19,30 @@ export default function TripCard({ trip, onPreview, onLaunch }) {
             }`}>
               {trip.badge || (trip.status === 'upcoming' ? 'Upcoming' : 'Archived')}
             </span>
+            {isCustom && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/30 text-indigo-300 border border-indigo-500/40">
+                Local Custom
+              </span>
+            )}
           </div>
-          <span className="text-3xl filter drop-shadow-md">{trip.flag}</span>
+          <div className="flex items-center gap-2">
+            {isCustom && onDelete && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm(`Delete local trip "${trip.title}" from your Hub?`)) {
+                    onDelete(trip.id);
+                  }
+                }}
+                className="w-7 h-7 rounded-full bg-black/40 hover:bg-red-600/80 text-slate-300 hover:text-white flex items-center justify-center transition-all"
+                title="Delete local custom trip"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+            <span className="text-3xl filter drop-shadow-md">{trip.flag}</span>
+          </div>
         </div>
 
         <h3 className="text-xl font-black text-white group-hover:text-amber-300 transition-colors">

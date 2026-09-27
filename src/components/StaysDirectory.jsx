@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   Building, MapPin, Phone, Copy, Check, Calendar,
-  ShieldCheck, PenSquare, X, Plus
+  ShieldCheck, PenSquare, X, Plus, ExternalLink
 } from "lucide-react";
 
 export default function StaysDirectory({ stays, hotels, onSaveHotels, tripId }) {
@@ -23,10 +23,12 @@ export default function StaysDirectory({ stays, hotels, onSaveHotels, tripId }) 
 
   // Normalize stays to object map and array
   const hotelsSource = hotels || stays || {};
-  const staysList = Object.keys(hotelsSource).map((k) => ({
-    key: k,
-    ...hotelsSource[k]
-  }));
+  const staysList = Array.isArray(hotelsSource)
+    ? hotelsSource.map((s, idx) => ({ key: s.id || `stay-${idx}`, ...s }))
+    : Object.keys(hotelsSource).map((k) => ({
+        key: k,
+        ...hotelsSource[k]
+      }));
 
   if (staysList.length === 0) {
     return (
@@ -221,6 +223,67 @@ export default function StaysDirectory({ stays, hotels, onSaveHotels, tripId }) 
                 )}
               </div>
             )}
+
+            {stay.bookingParams && (
+              <div className="bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 text-xs space-y-1">
+                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider block">
+                  🎯 Pre-filled Stay Query:
+                </span>
+                <p className="font-mono text-[10px] text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-950 p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 select-all">
+                  {stay.bookingParams}
+                </p>
+              </div>
+            )}
+
+            {(stay.bookingUrl || stay.bookingAltUrl || stay.bookingThirdUrl || stay.mapsUrl) && (
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                {stay.bookingUrl && (
+                  <a
+                    href={stay.bookingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md transition-all active:scale-95"
+                  >
+                    <span>{stay.bookingLabel || "Official Hotel Website"}</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+                {stay.bookingAltUrl && (
+                  <a
+                    href={stay.bookingAltUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md transition-all active:scale-95"
+                  >
+                    <span>{stay.bookingAltLabel || "Booking.com (Pre-filled)"}</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+                {stay.bookingThirdUrl && (
+                  <a
+                    href={stay.bookingThirdUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 transition-all"
+                  >
+                    <span>{stay.bookingThirdLabel || "Agoda Rates"}</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+                {stay.mapsUrl && (
+                  <a
+                    href={stay.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 transition-all"
+                    title="Navigate via Google Maps"
+                  >
+                    <MapPin className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Maps Route</span>
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -259,11 +322,11 @@ export default function StaysDirectory({ stays, hotels, onSaveHotels, tripId }) 
               </div>
 
               <div>
-                <label className="text-slate-700 dark:text-slate-300 font-bold block mb-1">Hotel Name:</label>
+                <label className="text-slate-700 dark:text-slate-300 font-bold block mb-1">Hotel / Stay Name:</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. La Siesta Classic Ma May"
+                  placeholder="e.g. Sri Durga Comfort Stay / Hotel Name"
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
                   className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 font-bold text-slate-900 dark:text-white text-xs outline-none focus:border-blue-500"
@@ -271,10 +334,10 @@ export default function StaysDirectory({ stays, hotels, onSaveHotels, tripId }) 
               </div>
 
               <div>
-                <label className="text-slate-700 dark:text-slate-300 font-bold block mb-1">Vietnamese Address (for Grab / Taxi Driver):</label>
+                <label className="text-slate-700 dark:text-slate-300 font-bold block mb-1">Local / Regional Script Address (for Driver / Auto):</label>
                 <input
                   type="text"
-                  placeholder="e.g. 94 Mã Mây, Phường Hàng Buồm, Quận Hoàn Kiếm, Hà Nội"
+                  placeholder="e.g. Regional script address, landmarks, or street directions"
                   value={form.addressVi}
                   onChange={(e) => setForm((prev) => ({ ...prev, addressVi: e.target.value, address: e.target.value }))}
                   className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-slate-900 dark:text-slate-100 text-xs outline-none focus:border-blue-500"
@@ -286,7 +349,7 @@ export default function StaysDirectory({ stays, hotels, onSaveHotels, tripId }) 
                   <label className="text-slate-700 dark:text-slate-300 font-bold block mb-1">Phone / Hotline:</label>
                   <input
                     type="text"
-                    placeholder="e.g. +84 24 3926 3641"
+                    placeholder="e.g. +91 63623 28833"
                     value={form.phone}
                     onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
                     className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 font-mono text-slate-900 dark:text-white text-xs outline-none focus:border-blue-500"

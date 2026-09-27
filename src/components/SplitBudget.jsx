@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Calculator, Users, Plus, DollarSign, Calendar, X, Tag,
   Plane, Hotel, Car, Anchor, Ticket, Utensils, Shield, ShoppingBag,
   RotateCcw, PenSquare, Trash2, CheckCircle2, Clock, Receipt,
-  Check, ArrowRight
+  Check, ArrowRight, ExternalLink, UserCheck, User, Users2, ArrowUpDown, Wallet
 } from "lucide-react";
 
 export const BUDGET_CATEGORIES = {
@@ -18,55 +18,111 @@ export const BUDGET_CATEGORIES = {
   misc: { label: "Shopping & Misc", icon: ShoppingBag, color: "purple" }
 };
 
-const QUICK_DATE_PRESETS = [
-  { label: "Dec 3 Departure", value: "2026-12-03" },
-  { label: "Dec 4 Da Nang Beach", value: "2026-12-04" },
-  { label: "Dec 5 Ba Na Hills", value: "2026-12-05" },
-  { label: "Dec 6 Marble Mtns & Hoi An", value: "2026-12-06" },
-  { label: "Dec 7 Fly Hanoi", value: "2026-12-07" },
-  { label: "Dec 8 Ninh Binh", value: "2026-12-08" },
-  { label: "Dec 9 Aqua Cruise", value: "2026-12-09" },
-  { label: "Dec 10 Return to Delhi", value: "2026-12-10" }
-];
-
-export default function SplitBudget({ budget, onSaveBudget, tripId }) {
+export default function SplitBudget({ budget, onSaveBudget, tripId, trip }) {
   if (!budget) return null;
 
+  const isVietnam = tripId ? tripId.includes("vietnam") : false;
+  const travelersList = trip?.travelersList || (isVietnam ? ["Sundeep", "Abhav", "Shikha", "Arjit", "Aanya"] : ["Traveler 1", "Traveler 2"]);
+
+  const datePresets = useMemo(() => {
+    if (trip?.itinerary && Array.isArray(trip.itinerary) && trip.itinerary.length > 0) {
+      const presets = trip.itinerary
+        .filter((d) => d.date)
+        .map((d) => ({
+          label: `${d.day || ''}: ${d.title ? d.title.split('(')[0].slice(0, 22) : (d.theme || d.date)}`,
+          value: d.date
+        }));
+      if (presets.length > 0) return presets;
+    }
+    if (trip?.startDate) {
+      return [
+        { label: `Start: ${trip.startDate}`, value: trip.startDate },
+        ...(trip.endDate ? [{ label: `End: ${trip.endDate}`, value: trip.endDate }] : [])
+      ];
+    }
+    if (isVietnam) {
+      return [
+        { label: "Dec 3 Departure", value: "2026-12-03" },
+        { label: "Dec 4 Da Nang Beach", value: "2026-12-04" },
+        { label: "Dec 5 Ba Na Hills", value: "2026-12-05" },
+        { label: "Dec 6 Marble Mtns & Hoi An", value: "2026-12-06" },
+        { label: "Dec 7 Fly Hanoi", value: "2026-12-07" },
+        { label: "Dec 8 Ninh Binh", value: "2026-12-08" },
+        { label: "Dec 9 Cruise", value: "2026-12-09" },
+        { label: "Dec 10 Return to Delhi", value: "2026-12-10" }
+      ];
+    }
+    return [];
+  }, [trip?.itinerary, trip?.startDate, trip?.endDate, isVietnam]);
+
+  const parseCost = (val) => {
+    if (typeof val === "number") return val;
+    if (!val) return 0;
+    return Number(String(val).replace(/[^0-9.]/g, "")) || 0;
+  };
+
   const defaultItems = [
-    { item: "International Flights (DEL & BLR to HAN)", details: "IndiGo 6E-676 + 6E-6517 + 6E-1631 (PNRs: OB5L6J, GI2EGR)", total: 85000, pax: 5, category: "flights", date: "2026-12-03", status: "paid" },
-    { item: "Return International Flights (HAN to DEL)", details: "VietJet VJ-971 Confirmed for all 5 Pax (PNR: 58FTFJ)", total: 67000, pax: 5, category: "flights", date: "2026-12-10", status: "paid" },
-    { item: "Domestic Flights (HAN ➔ DAD & DAD ➔ HAN)", details: "Morning connector Dec 4 + Midday connector Dec 7 (5 Pax)", total: 35000, pax: 5, category: "flights", date: "2026-12-04", status: "estimated" },
-    { item: "Da Nang Beachfront Hotel (3 Nights)", details: "TMS Hotel Da Nang Beach (Premier Oceanfront Suite)", total: 48000, pax: 5, category: "stays", date: "2026-12-04", status: "estimated" },
-    { item: "Hanoi Old Quarter Hotel (2 Nights)", details: "Peridot Grand Luxury Boutique Hotel Connecting Suites", total: 36000, pax: 5, category: "stays", date: "2026-12-07", status: "estimated" },
-    { item: "Aqua Cruise Halong Bay 2D1N (Overnight)", details: "5-Star Luxury Private Balcony Cabins + Full Board Meals", total: 58000, pax: 5, category: "cruise", date: "2026-12-09", status: "estimated" },
-    { item: "Ba Na Hills Sun World Day Trip", details: "Cable car roundtrip + Golden Bridge + Buffet lunch (5 Pax)", total: 18000, pax: 5, category: "tours", date: "2026-12-05", status: "estimated" },
-    { item: "Marble Mountains & Hoi An Day Trip", details: "Cave entry + Cam Thanh coconut basket boats + Lantern boat", total: 10000, pax: 5, category: "tours", date: "2026-12-06", status: "estimated" },
-    { item: "Ninh Binh Day Tour (Trang An & Mua Cave)", details: "Private 9-seater limo + Trang An sampan boat + guide", total: 14000, pax: 5, category: "tours", date: "2026-12-08", status: "estimated" },
-    { item: "Airport Transfers & 9-Seater Private Limousines", details: "Da Nang airport pickups + Halong expressway private transfers", total: 22000, pax: 5, category: "transport", date: "2026-12-04", status: "estimated" },
-    { item: "Pure Vegetarian & Indian Gourmet Dining", details: "7 days dining budget across Da Nang, Hoi An, Hanoi, and excursions", total: 20000, pax: 5, category: "food", date: "2026-12-04", status: "estimated" },
-    { item: "Vietnam E-Visas & Travel Insurance", details: "Official single-entry e-visas ($25/each) + Comprehensive senior travel cover", total: 13000, pax: 5, category: "visas", date: "2026-11-20", status: "paid" }
+    { item: "International Flights (DEL & BLR to HAN)", details: "IndiGo 6E-676 + 6E-6517 + 6E-1631 (PNRs: OB5L6J, GI2EGR)", total: 85000, pax: 5, category: "flights", date: "2026-12-03", status: "paid", paidBy: "Sundeep" },
+    { item: "Return International Flights (HAN to DEL)", details: "VietJet VJ-971 Confirmed for all 5 Pax (PNR: 58FTFJ)", total: 67000, pax: 5, category: "flights", date: "2026-12-10", status: "paid", paidBy: "Sundeep" },
+    { item: "Domestic Flights (HAN ➔ DAD & DAD ➔ HAN)", details: "Morning connector Dec 4 + Midday connector Dec 7 (5 Pax)", total: 35000, pax: 5, category: "flights", date: "2026-12-04", status: "estimated", paidBy: "Shared" },
+    { item: "Da Nang Beachfront Hotel (3 Nights)", details: "TMS Hotel Da Nang Beach (Premier Oceanfront Suite)", total: 48000, pax: 5, category: "stays", date: "2026-12-04", status: "estimated", paidBy: "Abhav" },
+    { item: "Hanoi Old Quarter Hotel (2 Nights)", details: "Peridot Grand Luxury Boutique Hotel Connecting Suites", total: 36000, pax: 5, category: "stays", date: "2026-12-07", status: "estimated", paidBy: "Shared" },
+    { item: "Cozy Bay Grand 2D1N Cruise (Overnight)", details: "Deluxe Private Balcony (2 Cabins) + Sung Sot & Ti Top + Hanoi Roundtrip (Klook #NRJ724054)", total: 67900, pax: 5, category: "cruise", date: "2026-12-09", status: "booked", paidBy: "Sundeep" },
+    { item: "Ba Na Hills Sun World Day Trip", details: "Cable car roundtrip + Golden Bridge + Buffet lunch (5 Pax)", total: 18000, pax: 5, category: "tours", date: "2026-12-05", status: "estimated", paidBy: "Arjit" },
+    { item: "Marble Mountains & Hoi An Day Trip", details: "Cave entry + Cam Thanh coconut basket boats + Lantern boat", total: 10000, pax: 5, category: "tours", date: "2026-12-06", status: "estimated", paidBy: "Shared" },
+    { item: "Ninh Binh Day Tour (Trang An & Mua Cave)", details: "Private 9-seater limo + Trang An sampan boat + guide", total: 14000, pax: 5, category: "tours", date: "2026-12-08", status: "estimated", paidBy: "Shared" },
+    { item: "Airport Transfers & 9-Seater Private Limousines", details: "Da Nang airport pickups + Halong expressway private transfers", total: 22000, pax: 5, category: "transport", date: "2026-12-04", status: "estimated", paidBy: "Abhav" },
+    { item: "Pure Vegetarian & Indian Gourmet Dining", details: "7 days dining budget across Da Nang, Hoi An, Hanoi, and excursions", total: 20000, pax: 5, category: "food", date: "2026-12-04", status: "estimated", paidBy: "Shared" },
+    { item: "Vietnam E-Visas & Travel Insurance", details: "Official single-entry e-visas ($25/each) + Comprehensive senior travel cover", total: 13000, pax: 5, category: "visas", date: "2026-11-20", status: "paid", paidBy: "Abhav" }
   ];
 
-  const initialItems = budget.items && budget.items.length > 0
-    ? budget.items
-    : (budget.categories && budget.categories.length > 0
-        ? budget.categories.map((c, i) => ({
-            item: c.name,
-            details: "Planned budget allocation",
-            total: Number(c.amount) || 0,
-            pax: budget.paxCount || 5,
-            category: c.key || (c.name.toLowerCase().includes("flight") ? "flights" : c.name.toLowerCase().includes("hotel") ? "stays" : "misc"),
-            date: "2026-12-04",
-            status: "estimated"
-          }))
-        : defaultItems);
+  const initialItems = (budget.breakdown && Array.isArray(budget.breakdown) && budget.breakdown.length > 0)
+    ? budget.breakdown.map((b, idx) => ({
+        item: b.item || b.name || "Expense Item",
+        details: b.details || b.note || "Planned allocation",
+        total: parseCost(b.cost || b.amount || b.total),
+        pax: budget.paxCount || 2,
+        category: (b.category || (
+          (b.item || "").toLowerCase().includes("bus") || (b.item || "").toLowerCase().includes("train") || (b.item || "").toLowerCase().includes("flight") || (b.item || "").toLowerCase().includes("transit") || (b.item || "").toLowerCase().includes("cab") ? "transport" :
+          (b.item || "").toLowerCase().includes("stay") || (b.item || "").toLowerCase().includes("resort") || (b.item || "").toLowerCase().includes("hotel") ? "stays" :
+          (b.item || "").toLowerCase().includes("food") || (b.item || "").toLowerCase().includes("dining") || (b.item || "").toLowerCase().includes("meal") || (b.item || "").toLowerCase().includes("coffee") ? "food" :
+          (b.item || "").toLowerCase().includes("entry") || (b.item || "").toLowerCase().includes("ticket") || (b.item || "").toLowerCase().includes("guide") || (b.item || "").toLowerCase().includes("sightseeing") || (b.item || "").toLowerCase().includes("cart") || (b.item || "").toLowerCase().includes("coracle") ? "tours" : "misc"
+        )),
+        date: b.date || "",
+        status: b.status || "estimated",
+        paidBy: b.paidBy || b.payer || "Shared",
+        bookingUrl: b.bookingUrl || null,
+        bookingLabel: b.bookingLabel || null,
+        bookingAltUrl: b.bookingAltUrl || null,
+        bookingAltLabel: b.bookingAltLabel || null,
+        bookingThirdUrl: b.bookingThirdUrl || null,
+        bookingThirdLabel: b.bookingThirdLabel || null,
+        bookingParams: b.bookingParams || null
+      }))
+    : (budget.items && budget.items.length > 0
+        ? budget.items.map(it => ({ ...it, paidBy: it.paidBy || it.payer || "Shared" }))
+        : (budget.categories && budget.categories.length > 0
+            ? budget.categories.map((c, i) => ({
+                item: c.name,
+                details: "Planned budget allocation",
+                total: parseCost(c.amount),
+                pax: budget.paxCount || 2,
+                category: c.key || (c.name.toLowerCase().includes("flight") ? "flights" : c.name.toLowerCase().includes("hotel") ? "stays" : "misc"),
+                date: "",
+                status: "estimated",
+                paidBy: "Shared"
+              }))
+            : []));
 
   const [items, setItems] = useState(initialItems);
   const [activeFilter, setActiveFilter] = useState("all");
-  const [expenses, setExpenses] = useState(budget.expenses || [
-    { id: "exp_1", title: "Egg Coffee at Cafe Giảng (5 cups)", vnd: 175, inr: 580, category: "Food", payer: "Self", pax: 5, date: "2026-12-04" },
-    { id: "exp_2", title: "Water Puppets Snack & Coconut Water", vnd: 120, inr: 400, category: "Food", payer: "BLR", pax: 5, date: "2026-12-04" }
-  ]);
+  const [activePayerFilter, setActivePayerFilter] = useState("all");
+  const [expenses, setExpenses] = useState(budget.expenses || []);
+
+  useEffect(() => {
+    setItems(initialItems);
+    setExpenses(budget?.expenses || []);
+  }, [tripId, budget]);
 
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
@@ -77,7 +133,8 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
     pax: 5,
     category: "flights",
     date: "",
-    status: "estimated"
+    status: "estimated",
+    paidBy: "Shared"
   });
 
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
@@ -120,11 +177,36 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
     }
   });
 
+  const payerCounts = {
+    all: items.length,
+    Shared: items.filter((it) => (it.paidBy || "Shared").toLowerCase() === "shared").length
+  };
+  travelersList.forEach((name) => {
+    payerCounts[name] = items.filter((it) => (it.paidBy || "").toLowerCase() === name.toLowerCase()).length;
+  });
+
   const filteredItems = items
     .map((item, idx) => ({ item, originalIndex: idx }))
-    .filter((entry) => (activeFilter === "all" ? true : (entry.item.category || "misc") === activeFilter));
+    .filter((entry) => {
+      const matchCat = activeFilter === "all" ? true : (entry.item.category || "misc") === activeFilter;
+      const matchPayer = activePayerFilter === "all"
+        ? true
+        : (entry.item.paidBy || "Shared").toLowerCase() === activePayerFilter.toLowerCase();
+      return matchCat && matchPayer;
+    });
 
   const filteredSubtotal = filteredItems.reduce((sum, entry) => sum + (Number(entry.item.total) || 0), 0);
+
+  // Group settlement metrics
+  const payerStats = travelersList.map((name) => {
+    const directPaid = items
+      .filter((it) => (it.paidBy || "").toLowerCase() === name.toLowerCase())
+      .reduce((sum, it) => sum + (Number(it.total) || 0), 0);
+    return { name, paid: directPaid };
+  });
+
+  const totalDirectPaid = payerStats.reduce((sum, p) => sum + p.paid, 0);
+  const fairSharePerPerson = Math.round(totalDirectPaid / Math.max(1, travelersList.length));
 
   const syncUpdates = (nextItems, nextExpenses = expenses) => {
     setItems(nextItems);
@@ -149,7 +231,8 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
       pax: 5,
       category: activeFilter !== "all" ? activeFilter : "flights",
       date: "2026-12-04",
-      status: "estimated"
+      status: "estimated",
+      paidBy: activePayerFilter !== "all" ? activePayerFilter : "Shared"
     });
     setIsItemModalOpen(true);
   };
@@ -165,7 +248,8 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
       pax: item.pax || 5,
       category: item.category || "flights",
       date: item.date || "",
-      status: item.status || "estimated"
+      status: item.status || "estimated",
+      paidBy: item.paidBy || "Shared"
     });
     setIsItemModalOpen(true);
   };
@@ -184,7 +268,8 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
       pp: Math.round(totalNum / paxNum),
       category: itemForm.category,
       date: itemForm.date,
-      status: itemForm.status
+      status: itemForm.status,
+      paidBy: itemForm.paidBy || "Shared"
     };
 
     const next = [...items];
@@ -338,48 +423,132 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
         </div>
 
         {/* Group Split Liability Cards */}
-        <div className="pt-1">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-            Group Pax Split Liability Breakdown:
-          </span>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center text-xs">
-            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <span className="text-slate-300 font-bold block text-[11px]">👥 Shared (5 Pax All)</span>
-              <span className="text-white font-mono font-black text-sm block mt-0.5">
-                ₹{sharedTotal.toLocaleString("en-IN")}
-              </span>
-              <span className="text-[10px] text-slate-400 block mt-0.5">
-                (₹{Math.round(sharedTotal / 5).toLocaleString("en-IN")} / head)
-              </span>
-            </div>
+        {isVietnam ? (
+          <div className="pt-1">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+              Group Pax Split Liability Breakdown:
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center text-xs">
+              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <span className="text-slate-300 font-bold block text-[11px]">👥 Shared (5 Pax All)</span>
+                <span className="text-white font-mono font-black text-sm block mt-0.5">
+                  ₹{sharedTotal.toLocaleString("en-IN")}
+                </span>
+                <span className="text-[10px] text-slate-400 block mt-0.5">
+                  (₹{Math.round(sharedTotal / 5).toLocaleString("en-IN")} / head)
+                </span>
+              </div>
 
-            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <span className="text-purple-400 font-bold block text-[11px]">🧑 BLR Group (3 Pax)</span>
-              <span className="text-white font-mono font-black text-sm block mt-0.5">
-                ₹{blrTotal.toLocaleString("en-IN")}
-              </span>
-              <span className="text-[10px] text-purple-300 block mt-0.5">
-                (₹{Math.round(blrTotal / 3).toLocaleString("en-IN")} / head)
-              </span>
-            </div>
+              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <span className="text-purple-400 font-bold block text-[11px]">🧑 BLR Group (3 Pax)</span>
+                <span className="text-white font-mono font-black text-sm block mt-0.5">
+                  ₹{blrTotal.toLocaleString("en-IN")}
+                </span>
+                <span className="text-[10px] text-purple-300 block mt-0.5">
+                  (₹{Math.round(blrTotal / 3).toLocaleString("en-IN")} / head)
+                </span>
+              </div>
 
-            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <span className="text-indigo-400 font-bold block text-[11px]">👨 DEL Parents (2 Pax)</span>
-              <span className="text-white font-mono font-black text-sm block mt-0.5">
-                ₹{delTotal.toLocaleString("en-IN")}
-              </span>
-              <span className="text-[10px] text-indigo-300 block mt-0.5">
-                (₹{Math.round(delTotal / 2).toLocaleString("en-IN")} / head)
+              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <span className="text-indigo-400 font-bold block text-[11px]">👨 DEL Parents (2 Pax)</span>
+                <span className="text-white font-mono font-black text-sm block mt-0.5">
+                  ₹{delTotal.toLocaleString("en-IN")}
+                </span>
+                <span className="text-[10px] text-indigo-300 block mt-0.5">
+                  (₹{Math.round(delTotal / 2).toLocaleString("en-IN")} / head)
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="pt-1">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+              Traveler Split Breakdown:
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-center text-xs">
+              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <span className="text-slate-300 font-bold block text-[11px]">👥 Combined Total ({totalPax} Travelers)</span>
+                <span className="text-white font-mono font-black text-sm block mt-0.5">
+                  ₹{grandTotal.toLocaleString("en-IN")}
+                </span>
+                <span className="text-[10px] text-slate-400 block mt-0.5">Full expedition estimate</span>
+              </div>
+
+              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <span className="text-purple-400 font-bold block text-[11px]">👤 Per-Traveler Liability</span>
+                <span className="text-purple-300 font-mono font-black text-sm block mt-0.5">
+                  ₹{perPersonTotal.toLocaleString("en-IN")} / person
+                </span>
+                <span className="text-[10px] text-purple-400/80 block mt-0.5">Even split across {totalPax} adults</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 1.3 Settlement & Who Paid What Card */}
+        <div className="pt-3 border-t border-slate-800/80">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-1.5">
+              <UserCheck className="w-3.5 h-3.5 text-blue-400" />
+              <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
+                Who Paid What & Net Settlement
               </span>
             </div>
+            <span className="text-[10px] text-slate-400 font-mono">
+              Fair share of paid expenses: ~₹{fairSharePerPerson.toLocaleString("en-IN")} / traveler
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+            {payerStats.map((p) => {
+              const diff = p.paid - fairSharePerPerson;
+              const isCredit = diff > 0;
+              const isSelected = activePayerFilter.toLowerCase() === p.name.toLowerCase();
+
+              return (
+                <div
+                  key={p.name}
+                  onClick={() => setActivePayerFilter(isSelected ? "all" : p.name)}
+                  className={"p-2.5 rounded-2xl border cursor-pointer transition-all " + (
+                    isSelected
+                      ? "bg-blue-950/80 border-blue-500 shadow-md ring-1 ring-blue-500"
+                      : "bg-slate-950/80 border-slate-800 hover:border-slate-700"
+                  )}
+                  title={`Click to filter items paid by ${p.name}`}
+                >
+                  <div className="flex items-center justify-center gap-1">
+                    <span className="text-white font-bold text-[11px] truncate">💳 {p.name}</span>
+                  </div>
+                  <span className="text-white font-mono font-black text-xs block mt-1">
+                    ₹{p.paid.toLocaleString("en-IN")}
+                  </span>
+                  <div className="mt-1">
+                    {p.paid === 0 ? (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-semibold inline-block">
+                        Owes ₹{fairSharePerPerson.toLocaleString("en-IN")}
+                      </span>
+                    ) : isCredit ? (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 font-bold border border-emerald-800/80 inline-block">
+                        +₹{diff.toLocaleString("en-IN")} gets
+                      </span>
+                    ) : (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 font-bold border border-amber-800/80 inline-block">
+                        -₹{Math.abs(diff).toLocaleString("en-IN")} owes
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* 2. Category Filter Pills & Subtotal Bar */}
+      {/* 2. Category & Payer Filter Pills & Subtotal Bar */}
       <div className="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden shadow-sm">
+        {/* Category Filter Pills */}
         <div className="p-3 border-b border-slate-100 dark:border-darkborder bg-slate-50/70 dark:bg-darkcard flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pr-1">Filter:</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pr-1">Category:</span>
           {Object.entries(BUDGET_CATEGORIES).map(([key, cat]) => {
             const Icon = cat.icon;
             const count = catCounts[key] || 0;
@@ -404,9 +573,38 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
           })}
         </div>
 
-        {activeFilter !== "all" && (
+        {/* Payer Filter Pills */}
+        <div className="px-3 py-2 border-b border-slate-100 dark:border-darkborder bg-slate-100/70 dark:bg-slate-950 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pr-1">Paid By:</span>
+          {["all", "Shared", ...travelersList].map((p) => {
+            const count = payerCounts[p] || 0;
+            const isActive = activePayerFilter.toLowerCase() === p.toLowerCase();
+            return (
+              <button
+                key={p}
+                onClick={() => setActivePayerFilter(isActive && p !== "all" ? "all" : p)}
+                className={"px-2.5 py-1 rounded-lg font-bold whitespace-nowrap transition-all flex items-center gap-1 text-[11px] " + (
+                  isActive
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-white border border-slate-200 dark:border-slate-800"
+                )}
+              >
+                <span>{p === "all" ? "All Payers" : p === "Shared" ? "👥 Shared Pool" : `💳 ${p}`}</span>
+                <span className={"px-1.5 py-0.2 rounded-full text-[9px] " + (isActive ? "bg-white/20 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500")}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {(activeFilter !== "all" || activePayerFilter !== "all") && (
           <div className="px-4 py-2 bg-purple-50 dark:bg-purple-950/40 border-b border-purple-200 dark:border-purple-900/40 text-xs text-purple-800 dark:text-purple-300 flex justify-between items-center">
-            <span className="font-semibold">Showing {BUDGET_CATEGORIES[activeFilter]?.label || activeFilter} ({filteredItems.length} items)</span>
+            <span className="font-semibold">
+              Showing {activeFilter !== "all" ? BUDGET_CATEGORIES[activeFilter]?.label : "All Categories"}
+              {activePayerFilter !== "all" ? ` • Paid by ${activePayerFilter}` : ""}
+              {" "}({filteredItems.length} items)
+            </span>
             <span className="font-mono font-bold">Subtotal: ₹{filteredSubtotal.toLocaleString("en-IN")}</span>
           </div>
         )}
@@ -419,6 +617,7 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
                 <th className="p-3">Expense Item & Notes</th>
                 <th className="p-3 text-right">Total Cost</th>
                 <th className="p-3 text-center">Split / Pax</th>
+                <th className="p-3 text-center">Paid By</th>
                 <th className="p-3 text-center">Status</th>
                 <th className="p-3 text-right">Actions</th>
               </tr>
@@ -426,8 +625,8 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
             <tbody className="divide-y divide-slate-100 dark:divide-darkborder">
               {filteredItems.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-slate-500 italic">
-                    No expense items in this category. Click "+ Add Budget Item" above to add one!
+                  <td colSpan={6} className="p-8 text-center text-slate-500 italic">
+                    No expense items match the selected category & payer filters. Click "+ Add Budget Item" above to add one!
                   </td>
                 </tr>
               ) : (
@@ -455,6 +654,48 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
                         </div>
                         <div className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">{item.item}</div>
                         {item.details && <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{item.details}</p>}
+                        {item.bookingParams && (
+                          <div className="mt-1 text-[10px] font-mono text-amber-600 dark:text-amber-400 bg-amber-50/70 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800/60 inline-block">
+                            🎯 {item.bookingParams}
+                          </div>
+                        )}
+                        {(item.bookingUrl || item.bookingAltUrl || item.bookingThirdUrl) && (
+                          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                            {item.bookingUrl && (
+                              <a
+                                href={item.bookingUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/80 dark:hover:bg-emerald-900 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-[10px] font-bold transition-all"
+                              >
+                                <span>{item.bookingLabel || "Official Portal"}</span>
+                                <ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                            )}
+                            {item.bookingAltUrl && (
+                              <a
+                                href={item.bookingAltUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-950/80 dark:hover:bg-blue-900 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800 text-[10px] font-bold transition-all"
+                              >
+                                <span>{item.bookingAltLabel || "Pre-filled Link"}</span>
+                                <ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                            )}
+                            {item.bookingThirdUrl && (
+                              <a
+                                href={item.bookingThirdUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 text-[10px] font-bold transition-all"
+                              >
+                                <span>{item.bookingThirdLabel || "Comparison Link"}</span>
+                                <ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                            )}
+                          </div>
+                        )}
                       </td>
 
                       {/* Total Cost */}
@@ -476,6 +717,18 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
                             : "bg-amber-950/80 text-amber-300 border-amber-800"
                         )}>
                           ~₹{ppCost.toLocaleString("en-IN")} / head ({itemPax}p)
+                        </span>
+                      </td>
+
+                      {/* Paid By */}
+                      <td className="p-3 text-center whitespace-nowrap align-middle">
+                        <span className={"px-2 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 mx-auto w-fit " + (
+                          (item.paidBy || "Shared").toLowerCase() === "shared"
+                            ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700"
+                            : "bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                        )}>
+                          <UserCheck className="w-2.5 h-2.5 text-blue-500" />
+                          <span>{item.paidBy || "Shared"}</span>
                         </span>
                       </td>
 
@@ -667,7 +920,7 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
                   <span className="text-[10px] text-slate-500">Quick Presets:</span>
                 </div>
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 mb-1.5 no-scrollbar">
-                  {QUICK_DATE_PRESETS.map((p) => (
+                  {datePresets.map((p) => (
                     <button
                       type="button"
                       key={p.value}
@@ -749,6 +1002,30 @@ export default function SplitBudget({ budget, onSaveBudget, tripId }) {
                 <span className="font-mono font-bold text-purple-300 text-xs sm:text-sm">
                   ₹{Math.round((parseFloat(itemForm.total) || 0) / Math.max(1, parseInt(itemForm.pax, 10) || 5)).toLocaleString("en-IN")} / person (for {itemForm.pax || 5} pax)
                 </span>
+              </div>
+
+              {/* Paid By (Payer Tag) */}
+              <div>
+                <label className="text-slate-300 font-bold block mb-1">Paid By (Payer Tag):</label>
+                <div className="flex flex-wrap gap-1.5">
+                  {["Shared", ...travelersList].map((p) => {
+                    const isSelected = (itemForm.paidBy || "Shared").toLowerCase() === p.toLowerCase();
+                    return (
+                      <button
+                        type="button"
+                        key={p}
+                        onClick={() => setItemForm((prev) => ({ ...prev, paidBy: p }))}
+                        className={"px-2.5 py-1.5 rounded-xl font-bold text-xs border transition-all " + (
+                          isSelected
+                            ? "border-blue-500 bg-blue-950 text-blue-300 font-black shadow-sm"
+                            : "border-slate-800 bg-slate-950 text-slate-400 hover:text-white"
+                        )}
+                      >
+                        {p === "Shared" ? "👥 Shared Pool" : `💳 ${p}`}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Status */}

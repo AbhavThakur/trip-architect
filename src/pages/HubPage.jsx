@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Compass, Search, Plus, Sparkles, MapPin, Calendar, Users, Navigation } from "lucide-react";
 import TripCard from "../components/TripCard";
+import CreateTripModal from "../components/CreateTripModal";
+import { isCustomTrip } from "../data/trips/registry";
 
-export default function HubPage({ trips = [], onSelectTrip, onAddTrip }) {
+export default function HubPage({ trips = [], onSelectTrip, onAddTrip, onDeleteTrip }) {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const domesticTrips = trips.filter((t) => t.category === "domestic");
   const internationalTrips = trips.filter((t) => t.category === "international");
@@ -46,6 +49,16 @@ export default function HubPage({ trips = [], onSelectTrip, onAddTrip }) {
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
               Curated master itineraries, connecting flight matrices, sleeper bus transits, dynamic split budgets, and dietary audio survival cards for all your expeditions.
             </p>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Architect New Trip</span>
+              </button>
+            </div>
           </div>
 
           {/* Quick Stats Grid */}
@@ -142,6 +155,8 @@ export default function HubPage({ trips = [], onSelectTrip, onAddTrip }) {
                 <TripCard
                   key={trip.id}
                   trip={trip}
+                  isCustom={isCustomTrip(trip.id)}
+                  onDelete={onDeleteTrip}
                   onPreview={() => onSelectTrip(trip.id)}
                 />
               ))}
@@ -170,6 +185,8 @@ export default function HubPage({ trips = [], onSelectTrip, onAddTrip }) {
                 <TripCard
                   key={trip.id}
                   trip={trip}
+                  isCustom={isCustomTrip(trip.id)}
+                  onDelete={onDeleteTrip}
                   onPreview={() => onSelectTrip(trip.id)}
                 />
               ))}
@@ -182,11 +199,24 @@ export default function HubPage({ trips = [], onSelectTrip, onAddTrip }) {
             <TripCard
               key={trip.id}
               trip={trip}
+              isCustom={isCustomTrip(trip.id)}
+              onDelete={onDeleteTrip}
               onPreview={() => onSelectTrip(trip.id)}
             />
           ))}
         </div>
       )}
+
+      {/* Interactive Trip Creation & Import Modal */}
+      <CreateTripModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSaveTrip={(newTrip, launchAfter) => {
+          if (onAddTrip) {
+            onAddTrip(newTrip, launchAfter);
+          }
+        }}
+      />
     </div>
   );
 }

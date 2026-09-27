@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Car, Volume2, Phone, X, MapPin, Navigation, Building2, Compass } from "lucide-react";
 
-export default function TaxiCardModal({ isOpen, onClose, customStop = null }) {
+export default function TaxiCardModal({ isOpen, onClose, customStop = null, currentTrip = null }) {
+  const isVietnam = currentTrip?.id?.includes("vietnam");
+  const isHampi = currentTrip?.id?.includes("hampi");
+  const isKarnataka = currentTrip?.destination?.toLowerCase().includes("karnataka") || isHampi || currentTrip?.id?.includes("chikmagalur");
+
   const [selectedCity, setSelectedCity] = useState("custom");
   const [speaking, setSpeaking] = useState(false);
 
@@ -9,23 +13,13 @@ export default function TaxiCardModal({ isOpen, onClose, customStop = null }) {
     if (customStop) {
       setSelectedCity("custom");
     } else {
-      setSelectedCity("hanoi");
+      setSelectedCity(isVietnam ? "danang" : (isHampi ? "sanapur" : "stay"));
     }
-  }, [customStop, isOpen]);
+  }, [customStop, isOpen, isVietnam]);
 
   if (!isOpen) return null;
 
-  const baseStays = {
-    hanoi: {
-      city: "Hà Nội Old Quarter",
-      name: "Khách sạn Peridot Grand Luxury Boutique",
-      nameEn: "Peridot Grand Luxury Boutique Hotel",
-      address: "33 Đường Thành, Phường Cửa Đông, Quận Hoàn Kiếm, Hà Nội",
-      landmark: "Khu Phố Cổ Hà Nội • Gần Nhà Thờ Lớn & Chợ Hàng Da",
-      phone: "+84 24 3828 0099",
-      driverNote: "Làm ơn chở tôi về khách sạn Peridot Grand, số 33 Đường Thành, Hoàn Kiếm.",
-      coords: [21.0315, 105.8458]
-    },
+  const vietnamStays = {
     danang: {
       city: "Đà Nẵng My Khe Beach",
       name: "Khách sạn TMS Hotel Da Nang Beach",
@@ -35,6 +29,16 @@ export default function TaxiCardModal({ isOpen, onClose, customStop = null }) {
       phone: "+84 236 3755 999",
       driverNote: "Làm ơn chở tôi về khách sạn TMS mặt đường biển Võ Nguyên Giáp, Đà Nẵng.",
       coords: [16.0538, 108.2464]
+    },
+    hanoi: {
+      city: "Hà Nội Old Quarter",
+      name: "Khách sạn Peridot Grand Luxury Boutique",
+      nameEn: "Peridot Grand Luxury Boutique Hotel",
+      address: "33 Đường Thành, Phường Cửa Đông, Quận Hoàn Kiếm, Hà Nội",
+      landmark: "Khu Phố Cổ Hà Nội • Gần Nhà Thờ Lớn & Chợ Hàng Da",
+      phone: "+84 24 3828 0099",
+      driverNote: "Làm ơn chở tôi về khách sạn Peridot Grand, số 33 Đường Thành, Hoàn Kiếm.",
+      coords: [21.0315, 105.8458]
     },
     hoian: {
       city: "Phố Cổ Hội An",
@@ -58,24 +62,142 @@ export default function TaxiCardModal({ isOpen, onClose, customStop = null }) {
     }
   };
 
+  const hampiStays = {
+    stay: {
+      city: "Sanapur, North Hampi",
+      name: "Sri Durga Comfort Stay",
+      nameEn: "Sri Durga Comfort Stay (Sanapur Boulders)",
+      address: "Sunrise Road, Sanapur, Gangavathi Taluk, Karnataka - 583234",
+      landmark: "ಶ್ರೀ ದುರ್ಗಾ ಕಂಫರ್ಟ್ ಸ್ಟೇ • 1.5 km to Sanapur Lake (Hosts Durga & Raj)",
+      phone: "+91 63623 28833",
+      driverNote: "ದಯವಿಟ್ಟು ನನ್ನನ್ನು ಸನಾಪುರದಲ್ಲಿರುವ ಶ್ರೀ ದುರ್ಗಾ ಕಂಫರ್ಟ್ ಸ್ಟೇ ಗೆ ಕರೆದೊಯ್ಯಿರಿ (Please take me to Sri Durga Comfort Stay, Sanapur).",
+      coords: [15.3484108, 76.4364539]
+    },
+    rental: {
+      city: "Munirabad Station",
+      name: "Ravi Bike Rental Hampi",
+      nameEn: "Ravi Bike Rental (Munirabad Railway Station)",
+      address: "Shivapur Road, near Munirabad Station, Huligi Corridor",
+      landmark: "ರವಿ ಬೈಕ್ ಬಾಡಿಗೆ • Opposite Munirabad Station (Linga Bhaiya)",
+      phone: "+91 87928 58466",
+      driverNote: "ದಯವಿಟ್ಟು ಮುನಿರಾಬಾದ್ ರೈಲ್ವೆ ನಿಲ್ದಾಣದ ಬಳಿ ಇರುವ ರವಿ ಬೈಕ್ ಬಾಡಿಗೆ ಬಳಿ ಕರೆದೊಯ್ಯಿರಿ.",
+      coords: [15.3115739, 76.3381657]
+    },
+    bus_stand: {
+      city: "Hosapete Town",
+      name: "Hosapete Central Bus Stand",
+      nameEn: "Hosapete KSRTC Central Bus Station (Platform 0)",
+      address: "Station Road, Hosapete, Vijayanagara District - 583201",
+      landmark: "ಹೊಸಪೇಟೆ ಕೇಂದ್ರ ಬಸ್ ನಿಲ್ದಾಣ • KSRTC Non AC Sleeper & Pallakki Boarding",
+      phone: "+91 8394 220333",
+      driverNote: "ದಯವಿಟ್ಟು ಹೊಸಪೇಟೆ ಕೆಎಸ್ಆರ್ಟಿಸಿ ಬಸ್ ನಿಲ್ದಾಣಕ್ಕೆ ಕರೆದೊಯ್ಯಿರಿ (Please take me to Hosapete Central Bus Stand).",
+      coords: [15.2713, 76.3888]
+    },
+    virupaksha: {
+      city: "Hampi UNESCO Zone",
+      name: "Virupaksha Temple / Bazaar",
+      nameEn: "Sri Virupaksha Temple & Hampi Bazaar",
+      address: "Main Temple Road, Hampi Bazaar, Vijayanagara - 583239",
+      landmark: "ಶ್ರೀ ವಿರೂಪಾಕ್ಷ ದೇವಸ್ಥಾನ • Main 50m Temple Gopuram",
+      phone: "+91 8394 241339",
+      driverNote: "ದಯವಿಟ್ಟು ಹಂಪಿ ವಿರೂಪಾಕ್ಷ ದೇವಸ್ಥಾನದ ಪ್ರವೇಶ ದ್ವಾರಕ್ಕೆ ಕರೆದೊಯ್ಯಿರಿ.",
+      coords: [15.3354, 76.4601]
+    }
+  };
+
+  const genericStays = {
+    stay: {
+      city: currentTrip?.destination?.split(',')[0] || "Basecamp",
+      name: currentTrip?.basecamp?.name || currentTrip?.stays?.[0]?.name || "Basecamp Hotel",
+      nameEn: currentTrip?.basecamp?.name || currentTrip?.stays?.[0]?.name || "Basecamp Stay",
+      address: currentTrip?.basecamp?.addressLocalScript || currentTrip?.basecamp?.location || currentTrip?.stays?.[0]?.address || "Basecamp address",
+      landmark: currentTrip?.basecamp?.diningNote || "Main Accommodation",
+      phone: currentTrip?.basecampContact || currentTrip?.stays?.[0]?.phone || "+91 99999 99999",
+      driverNote: `Please take me to ${currentTrip?.basecamp?.name || "our hotel"}.`,
+      coords: currentTrip?.basecamp?.coords || currentTrip?.mapCenter || null
+    }
+  };
+
+  const tripStays = {};
+  if (currentTrip?.stays) {
+    if (Array.isArray(currentTrip.stays)) {
+      currentTrip.stays.forEach((s, i) => {
+        tripStays[`stay_${i}`] = {
+          city: s.city || currentTrip?.destination?.split(',')[0] || "Stay",
+          name: s.addressVi || s.addressLocalScript || s.name,
+          nameEn: s.name,
+          address: s.address || s.location || "",
+          landmark: s.note || s.room || "Accommodation",
+          phone: s.phone || currentTrip?.basecampContact || "",
+          driverNote: isVietnam ? `Làm ơn chở tôi về khách sạn: ${s.name}.` : `Please take me to: ${s.name}.`,
+          coords: s.coords || null
+        };
+      });
+    } else if (typeof currentTrip.stays === "object") {
+      Object.entries(currentTrip.stays).forEach(([k, s]) => {
+        tripStays[k] = {
+          city: s.city || currentTrip?.destination?.split(',')[0] || "Stay",
+          name: s.addressVi || s.addressLocalScript || s.name,
+          nameEn: s.name,
+          address: s.address || s.location || "",
+          landmark: s.note || s.room || "Accommodation",
+          phone: s.phone || currentTrip?.basecampContact || "",
+          driverNote: isVietnam ? `Làm ơn chở tôi về khách sạn: ${s.name}.` : `Please take me to: ${s.name}.`,
+          coords: s.coords || null
+        };
+      });
+    }
+  }
+
+  if (currentTrip?.basecamp && Object.keys(tripStays).length === 0) {
+    tripStays.basecamp = {
+      city: currentTrip?.destination?.split(',')[0] || "Basecamp",
+      name: currentTrip.basecamp.addressLocalScript || currentTrip.basecamp.name,
+      nameEn: currentTrip.basecamp.name,
+      address: currentTrip.basecamp.location || currentTrip.basecamp.address || "",
+      landmark: currentTrip.basecamp.diningNote || "Basecamp Stay",
+      phone: currentTrip.basecampContact || "+91 112",
+      driverNote: `Please take me to ${currentTrip.basecamp.name}.`,
+      coords: currentTrip.basecamp.coords || null
+    };
+  }
+
+  const baseStays = Object.keys(tripStays).length > 0
+    ? tripStays
+    : (isVietnam ? vietnamStays : (isHampi ? hampiStays : genericStays));
+
   let current;
   if (selectedCity === "custom" && customStop) {
     const coords = customStop.coords || (customStop.lat && customStop.lng ? [customStop.lat, customStop.lng] : null);
+    const localName = customStop.addressLocalScript || customStop.localScript || customStop.kannada || customStop.vietnamese || customStop.name;
     current = {
-      city: customStop.vietnamese ? "Điểm Hành Trình" : "Điểm Đến",
-      name: customStop.vietnamese || customStop.name,
+      city: customStop.category ? customStop.category.toUpperCase() : "TARGET STOP",
+      name: localName,
       nameEn: customStop.name,
-      address: customStop.address || "Điểm tham quan tại Việt Nam",
-      landmark: customStop.shoppingGem ? `🛍️ Mua sắm: ${customStop.shoppingGem}` : (customStop.insiderTip || "Điểm dừng trong lịch trình tour"),
-      phone: customStop.phone || "+84 24 3828 0099",
-      driverNote: `Làm ơn chở tôi đến: ${customStop.vietnamese || customStop.name}.`,
+      address: customStop.address || `${customStop.name}, ${currentTrip?.destination || ""}`,
+      landmark: customStop.shoppingGem ? `🛍️ Tip: ${customStop.shoppingGem}` : (customStop.insiderTip || customStop.desc || "Expedition Stop"),
+      phone: customStop.phone || currentTrip?.emergencyContacts?.[0]?.phone || "+91 112",
+      driverNote: isVietnam
+        ? `Làm ơn chở tôi đến: ${localName}.`
+        : isKarnataka
+        ? `ದಯವಿಟ್ಟು ಇಲ್ಲಿಗೆ ಕರೆದೊಯ್ಯಿರಿ: ${customStop.name}. (Please take me to ${customStop.name}.)`
+        : `Please take me to: ${customStop.name}.`,
       coords: coords
     };
   } else {
-    current = baseStays[selectedCity] || baseStays.danang;
+    current = baseStays[selectedCity] || Object.values(baseStays)[0] || {
+      city: currentTrip?.destination || "Destination",
+      name: currentTrip?.title || "Trip Location",
+      nameEn: currentTrip?.title || "Trip Location",
+      address: currentTrip?.destination || "Basecamp",
+      landmark: "Basecamp",
+      phone: "",
+      driverNote: `Please take me to: ${currentTrip?.title || "our stay"}`,
+      coords: null
+    };
   }
 
-  const speakVietnameseAddress = () => {
+  const speakAddress = () => {
     if (!window.speechSynthesis) {
       alert("Text-to-speech is not supported on this browser.");
       return;
@@ -83,7 +205,7 @@ export default function TaxiCardModal({ isOpen, onClose, customStop = null }) {
     window.speechSynthesis.cancel();
     const textToSpeak = `${current.name}. ${current.address}`;
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.lang = "vi-VN";
+    utterance.lang = isVietnam ? "vi-VN" : "en-IN";
     utterance.rate = 0.85;
 
     utterance.onstart = () => setSpeaking(true);
@@ -108,10 +230,10 @@ export default function TaxiCardModal({ isOpen, onClose, customStop = null }) {
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white font-display">
-                Grab & Taxi Driver Address Card
+                Taxi & Auto Driver Address Card
               </h3>
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Show your screen to the Grab / Mai Linh taxi driver
+                Show your screen to the local driver or auto rickshaw
               </p>
             </div>
           </div>
@@ -128,69 +250,38 @@ export default function TaxiCardModal({ isOpen, onClose, customStop = null }) {
           {customStop && (
             <button
               onClick={() => setSelectedCity("custom")}
-              className={`flex-1 min-w-[100px] py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1 ${
+              className={`flex-1 min-w-[90px] py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1 ${
                 selectedCity === "custom"
                   ? "bg-amber-500 text-slate-950 shadow-sm"
                   : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
               <Compass className="w-3 h-3" />
-              <span className="truncate">{customStop.vietnamese ? customStop.vietnamese.split(" ")[0] : "Target Stop"}</span>
+              <span className="truncate">{customStop.name?.split(" ")[0] || "Target"}</span>
             </button>
           )}
 
-          <button
-            onClick={() => setSelectedCity("danang")}
-            className={`flex-1 min-w-[80px] py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1 ${
-              selectedCity === "danang"
-                ? "bg-amber-500 text-slate-950 shadow-sm"
-                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-            }`}
-          >
-            <Building2 className="w-3 h-3" />
-            <span>TMS Đà Nẵng</span>
-          </button>
-
-          <button
-            onClick={() => setSelectedCity("hanoi")}
-            className={`flex-1 min-w-[80px] py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1 ${
-              selectedCity === "hanoi"
-                ? "bg-amber-500 text-slate-950 shadow-sm"
-                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-            }`}
-          >
-            <Building2 className="w-3 h-3" />
-            <span>Peridot Hà Nội</span>
-          </button>
-
-          <button
-            onClick={() => setSelectedCity("hoian")}
-            className={`flex-1 min-w-[70px] py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1 ${
-              selectedCity === "hoian"
-                ? "bg-amber-500 text-slate-950 shadow-sm"
-                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-            }`}
-          >
-            <span>Hội An</span>
-          </button>
-
-          <button
-            onClick={() => setSelectedCity("halong")}
-            className={`flex-1 min-w-[70px] py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1 ${
-              selectedCity === "halong"
-                ? "bg-amber-500 text-slate-950 shadow-sm"
-                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-            }`}
-          >
-            <span>Hạ Long</span>
-          </button>
+          {Object.entries(baseStays).map(([key, stay]) => (
+            <button
+              key={key}
+              onClick={() => setSelectedCity(key)}
+              className={`flex-1 min-w-[75px] py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1 ${
+                selectedCity === key
+                  ? "bg-amber-500 text-slate-950 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+              }`}
+            >
+              <Building2 className="w-3 h-3" />
+              <span className="truncate">{stay.name.split(" ")[0]}</span>
+            </button>
+          ))}
         </div>
 
-        {/* High-Contrast Vietnamese Card for Drivers */}
+        {/* High-Contrast Card for Drivers */}
         <div className="bg-white text-slate-950 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-2xl border-4 border-amber-400 select-text">
           <div className="flex items-center justify-between border-b border-slate-200 pb-2">
             <span className="text-[10px] sm:text-xs uppercase tracking-wider font-mono font-black text-amber-700">
-              🇻🇳 {current.city} • ĐIỂM ĐẾN (DESTINATION)
+              {isVietnam ? `🇻🇳 ${current.city} • ĐIỂM ĐẾN` : `🚖 ${current.city} • DESTINATION / DROP POINT`}
             </span>
             <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
               Show Driver
@@ -223,19 +314,19 @@ export default function TaxiCardModal({ isOpen, onClose, customStop = null }) {
           </div>
 
           <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-xs font-semibold text-amber-950">
-            🗣️ Bác tài ơi: <span className="font-bold underline">"{current.driverNote}"</span>
+            {isVietnam ? "🗣️ Bác tài ơi:" : "🗣️ Driver / Auto Note:"} <span className="font-bold underline">"{current.driverNote}"</span>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-bold">
           <button
-            onClick={speakVietnameseAddress}
+            onClick={speakAddress}
             disabled={speaking}
             className="p-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer"
           >
             <Volume2 className={`w-4 h-4 ${speaking ? "animate-bounce" : ""}`} />
-            <span>{speaking ? "Speaking..." : "Pronounce (vi-VN)"}</span>
+            <span>{speaking ? "Speaking..." : (isVietnam ? "Pronounce (vi-VN)" : "Speak Aloud")}</span>
           </button>
 
           <a
@@ -249,7 +340,7 @@ export default function TaxiCardModal({ isOpen, onClose, customStop = null }) {
           </a>
 
           <a
-            href={`tel:${current.phone}`}
+            href={`tel:${current.phone?.replace(/[^0-9+]/g, '')}`}
             className="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 flex items-center justify-center gap-1.5 border border-slate-700 transition-all"
           >
             <Phone className="w-4 h-4 text-emerald-400" />

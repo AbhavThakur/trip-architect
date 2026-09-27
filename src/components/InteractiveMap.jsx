@@ -9,7 +9,11 @@ export default function InteractiveMap({
   onSelectStop,
   dayFilter = "all",
   className = "",
-  onOpenTaxi
+  onOpenTaxi,
+  mapCenter,
+  mapZoom,
+  title,
+  destination
 }) {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -26,17 +30,20 @@ export default function InteractiveMap({
     if (c.includes("food") || c.includes("dining") || c.includes("restaurant") || c.includes("cafe")) {
       return { icon: "fa-utensils", color: "pin-emerald", bg: "bg-emerald-600 border-emerald-400" };
     }
-    if (c.includes("hotel") || c.includes("stay") || c.includes("cruise") || c.includes("resort")) {
+    if (c.includes("hotel") || c.includes("stay") || c.includes("cruise") || c.includes("resort") || c.includes("basecamp")) {
       return { icon: "fa-hotel", color: "pin-blue", bg: "bg-blue-600 border-blue-400" };
     }
-    if (c.includes("attraction") || c.includes("sight") || c.includes("temple") || c.includes("pagoda")) {
-      return { icon: "fa-camera", color: "pin-amber", bg: "bg-amber-500 border-amber-300" };
+    if (c.includes("attraction") || c.includes("sight") || c.includes("temple") || c.includes("pagoda") || c.includes("culture")) {
+      return { icon: "fa-landmark", color: "pin-amber", bg: "bg-amber-500 border-amber-300" };
     }
     if (c.includes("shop") || c.includes("market")) {
       return { icon: "fa-cart-shopping", color: "pin-pink", bg: "bg-pink-600 border-pink-400" };
     }
-    if (c.includes("scenic") || c.includes("mountain") || c.includes("fall") || c.includes("peak")) {
+    if (c.includes("scenic") || c.includes("mountain") || c.includes("fall") || c.includes("peak") || c.includes("viewpoint")) {
       return { icon: "fa-mountain", color: "pin-emerald", bg: "bg-emerald-600 border-emerald-400" };
+    }
+    if (c.includes("transit") || c.includes("transport") || c.includes("station") || c.includes("bus")) {
+      return { icon: "fa-bus", color: "pin-blue", bg: "bg-indigo-600 border-indigo-400" };
     }
     return { icon: "fa-location-dot", color: "pin-purple", bg: "bg-indigo-600 border-indigo-400" };
   };
@@ -48,7 +55,7 @@ export default function InteractiveMap({
       const cat = (s.category || "").toLowerCase();
       if (categoryFilter === "food") return cat.includes("food") || cat.includes("dining") || cat.includes("cafe");
       if (categoryFilter === "hotel") return cat.includes("hotel") || cat.includes("stay") || cat.includes("basecamp");
-      if (categoryFilter === "attraction") return cat.includes("attraction") || cat.includes("sight") || cat.includes("temple") || cat.includes("pagoda") || cat.includes("scenic");
+      if (categoryFilter === "attraction") return cat.includes("attraction") || cat.includes("sight") || cat.includes("temple") || cat.includes("pagoda") || cat.includes("scenic") || cat.includes("culture");
       if (categoryFilter === "shop") return cat.includes("shop") || cat.includes("market");
       return true;
     });
@@ -57,71 +64,51 @@ export default function InteractiveMap({
   // High-reliability, 100% Free Tile Layers with ZERO API Keys required and NO watermarks
   const getTileLayer = (layerType) => {
     if (layerType === "satellite") {
-      // 100% Free Esri World Imagery (High-res satellite, zero API keys required)
       return L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        {
-          maxZoom: 19,
-          attribution: "&copy; Esri World Imagery"
-        }
+        { maxZoom: 19, attribution: "&copy; Esri World Imagery" }
       );
     }
-
     if (layerType === "osm") {
-      // 100% Free OpenStreetMap Standard Tiles (Universal open mapping, zero API keys)
       return L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-          maxZoom: 19,
-          attribution: "&copy; OpenStreetMap contributors"
-        }
+        { maxZoom: 19, attribution: "&copy; OpenStreetMap contributors" }
       );
     }
-
     if (layerType === "dark") {
-      // High-speed CDN CartoDB Dark Matter
       return L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-        {
-          subdomains: ["a", "b", "c", "d"],
-          maxZoom: 19,
-          attribution: "&copy; OpenStreetMap &copy; CARTO"
-        }
+        { subdomains: ["a", "b", "c", "d"], maxZoom: 19, attribution: "&copy; OpenStreetMap &copy; CARTO" }
       );
     }
-
-    // Default: 100% Free Esri World Street Map (Crisp roads, topography, English & VN labels, ZERO API Key)
     return L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-      {
-        maxZoom: 19,
-        attribution: "&copy; Esri World Street Map"
-      }
+      { maxZoom: 19, attribution: "&copy; Esri World Street Map" }
     );
   };
 
-  // Recenter / Fit bounds to show WHOLE Vietnam Map or active cluster
-  const fitMapBounds = (forceWholeVietnam = false) => {
+  // Recenter / Fit bounds to show current trip map or active cluster
+  const fitMapBounds = (forceAll = false) => {
     const map = mapInstanceRef.current;
     if (!map) return;
 
     map.invalidateSize();
 
-    const stopsToFit = forceWholeVietnam ? stops : filteredStops;
+    const stopsToFit = forceAll ? stops : filteredStops;
     const latLngs = stopsToFit
       .filter((s) => s.coords && Array.isArray(s.coords) && s.coords.length === 2 && !isNaN(s.coords[0]))
       .map((s) => s.coords);
 
     if (latLngs.length > 0) {
       const bounds = L.latLngBounds(latLngs);
-      // Zoom out to comfortably show whole Vietnam route without clipping
       map.fitBounds(bounds, {
-        padding: [50, 50],
-        maxZoom: forceWholeVietnam ? 7 : 13
+        padding: [45, 45],
+        maxZoom: 14
       });
+    } else if (mapCenter && Array.isArray(mapCenter) && mapCenter.length === 2) {
+      map.setView(mapCenter, mapZoom || 12);
     } else {
-      // Geographic midpoint of Vietnam spanning Hanoi to Da Nang
-      map.setView([18.2, 107.0], 5.8);
+      map.setView([15.3350, 76.4600], 12);
     }
   };
 
@@ -130,15 +117,22 @@ export default function InteractiveMap({
     if (!mapContainerRef.current) return;
     if (mapInstanceRef.current) return;
 
-    // By default, initialize view centered over the whole Vietnam territory (spanning Hanoi to Da Nang/Hoi An)
+    const firstValidStop = stops.find(
+      (s) => s.coords && Array.isArray(s.coords) && s.coords.length === 2 && !isNaN(s.coords[0])
+    );
+    const initialCenter = (mapCenter && Array.isArray(mapCenter) && mapCenter.length === 2)
+      ? mapCenter
+      : (firstValidStop ? firstValidStop.coords : [15.3350, 76.4600]);
+    const initialZoom = mapZoom || (firstValidStop ? 12 : 11);
+
     const map = L.map(mapContainerRef.current, {
       zoomControl: false,
       attributionControl: false,
       fadeAnimation: true,
       zoomAnimation: true,
-      minZoom: 4,
+      minZoom: 2,
       maxZoom: 19
-    }).setView([18.2, 107.0], 5.8);
+    }).setView(initialCenter, initialZoom);
 
     L.control.zoom({ position: "bottomright" }).addTo(map);
 
@@ -149,7 +143,6 @@ export default function InteractiveMap({
     tileLayerRef.current = layer;
     mapInstanceRef.current = map;
 
-    // Viewport size invalidation triggers
     const invalidate = () => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.invalidateSize({ debounceMoveEnd: true });
@@ -161,9 +154,8 @@ export default function InteractiveMap({
     const t2 = setTimeout(invalidate, 200);
     const t3 = setTimeout(() => {
       invalidate();
-      // On initial load, fit the bounds of the WHOLE Vietnam route
       fitMapBounds(true);
-    }, 400);
+    }, 350);
 
     // Attach ResizeObserver to container
     let resizeObserver = null;
@@ -253,7 +245,9 @@ export default function InteractiveMap({
       });
 
       // Google Maps Direct Search URL & Navigation Directions URL
-      const queryStr = encodeURIComponent(`${stop.name} ${stop.vietnamese || ""} ${stop.address || ""}`.trim());
+      const localScriptText = stop.addressLocalScript || stop.localScript || stop.kannada || stop.vietnamese || "";
+      const localBadgeIcon = stop.vietnamese && !stop.addressLocalScript && !stop.localScript ? "🇻🇳" : "📍";
+      const queryStr = encodeURIComponent(`${stop.name} ${localScriptText} ${stop.address || ""}`.trim());
       const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${queryStr}+@${stop.coords[0]},${stop.coords[1]}`;
       const googleDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${stop.coords[0]},${stop.coords[1]}`;
 
@@ -261,7 +255,7 @@ export default function InteractiveMap({
       const tooltipContent = `
         <div style="font-family:sans-serif;padding:3px 6px;text-align:left;line-height:1.3;">
           <div style="font-weight:800;font-size:11px;color:#0f172a;">${stop.name}</div>
-          ${stop.vietnamese ? `<div style="font-size:10px;color:#059669;font-weight:700;font-family:monospace;">🇻🇳 ${stop.vietnamese}</div>` : ""}
+          ${localScriptText ? `<div style="font-size:10px;color:#059669;font-weight:700;font-family:monospace;">${localBadgeIcon} ${localScriptText}</div>` : ""}
           <div style="font-size:9.5px;color:#2563eb;font-weight:700;margin-top:2px;">
             🗺️ Click for Google Maps & Directions
           </div>
@@ -281,7 +275,7 @@ export default function InteractiveMap({
             ${stop.name}
           </div>
           
-          ${stop.vietnamese ? `<div style="font-size:11px;font-weight:700;color:#34d399;font-family:monospace;margin-bottom:4px;">🇻🇳 ${stop.vietnamese}</div>` : ""}
+          ${localScriptText ? `<div style="font-size:11px;font-weight:700;color:#34d399;font-family:monospace;margin-bottom:4px;">${localBadgeIcon} ${localScriptText}</div>` : ""}
           ${stop.time ? `<div style="font-size:10.5px;color:#94a3b8;margin-bottom:5px;font-family:monospace;">⏰ ${stop.time}</div>` : ""}
           
           ${stop.shoppingGem ? `<div style="font-size:10px;font-weight:bold;color:#f472b6;background:rgba(131,24,67,0.3);border:1px solid rgba(219,39,119,0.4);padding:3px 7px;border-radius:7px;margin-bottom:6px;line-height:1.3;">🛍️ ${stop.shoppingGem}</div>` : ""}
@@ -339,15 +333,19 @@ export default function InteractiveMap({
       }).addTo(map);
     }
 
-    // By default on initial load or when showing all stops, frame the whole Vietnam route
+    // By default on initial load or when showing all stops, frame the route with proper zoom
     if (!activeStopId && latLngs.length > 0) {
       const bounds = L.latLngBounds(latLngs);
+      const latDiff = Math.abs(bounds.getNorth() - bounds.getSouth());
+      const isCrossCountry = latDiff > 3.0; // only large country-spanning trips like Vietnam need zoom 7
       map.fitBounds(bounds, {
         padding: [45, 45],
-        maxZoom: dayFilter === "all" ? 7 : 13
+        maxZoom: isCrossCountry ? 7 : (dayFilter === "all" ? 14 : 15)
       });
+    } else if (validStops.length === 0 && mapCenter && Array.isArray(mapCenter) && mapCenter.length === 2) {
+      map.setView(mapCenter, mapZoom || 12);
     }
-  }, [filteredStops, mapLayerType]);
+  }, [filteredStops, mapLayerType, mapCenter, mapZoom]);
 
   // Handle activeStopId Fly-To
   useEffect(() => {
@@ -386,7 +384,7 @@ export default function InteractiveMap({
           <div className="flex items-center gap-1.5">
             <Compass className="w-3.5 h-3.5 text-rose-600 animate-spin" style={{ animationDuration: "10s" }} />
             <span className="font-black text-[11px] text-slate-900 dark:text-white">
-              Live Vietnam Route Map
+              Live {title || (destination ? `${destination.split(',')[0]} Route Map` : "Trip Route Map")}
             </span>
             <span className="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold font-mono">
               Free • Zero API Key
@@ -394,14 +392,14 @@ export default function InteractiveMap({
           </div>
 
           <div className="flex items-center gap-1">
-            {/* Whole Vietnam Zoom Out Button */}
+            {/* Full Route Zoom Out Button */}
             <button
               onClick={() => fitMapBounds(true)}
               className="px-2 py-0.5 rounded-lg font-bold bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 text-[10px] border border-indigo-200 dark:border-indigo-800 flex items-center gap-1 active:scale-95 transition cursor-pointer"
-              title="Show the whole Vietnam country route zoomed out"
+              title="Show the full route zoomed out"
             >
               <Maximize2 className="w-3 h-3 text-indigo-500" />
-              <span>Whole Vietnam</span>
+              <span>{destination ? destination.split(',')[0] : "Full Route"}</span>
             </button>
 
             {/* Recenter Current Day Cluster */}

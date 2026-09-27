@@ -1,9 +1,26 @@
 import React, { useState } from "react";
 import { AlertTriangle, X, Phone, Share2, MapPin, Check } from "lucide-react";
 
-export default function LostSosModal({ isOpen, onClose }) {
+export default function LostSosModal({ isOpen, onClose, trip = null }) {
   if (!isOpen) return null;
   const [copied, setCopied] = useState(false);
+
+  const isVietnam = trip?.id?.includes("vietnam");
+  const isKarnataka = trip?.destination?.toLowerCase().includes("karnataka") || trip?.id?.includes("hampi") || trip?.id?.includes("chikmagalur");
+
+  const hotelName = isVietnam
+    ? (trip?.hotels?.hanoi?.name || trip?.basecamp?.name || "Peridot Grand Luxury Boutique Hotel Hanoi")
+    : (trip?.basecamp?.name || trip?.stays?.[0]?.name || `${trip?.title || "Trip"} Basecamp`);
+
+  const hotelAddress = isVietnam
+    ? (trip?.hotels?.hanoi?.addressVi || trip?.basecamp?.address || "33 Đường Thành, Cửa Đông, Hoàn Kiếm, Hà Nội")
+    : (trip?.basecamp?.addressLocalScript || trip?.stays?.[0]?.addressLocalScript || trip?.basecamp?.location || trip?.stays?.[0]?.address || trip?.destination || "Basecamp Address");
+
+  const hotelPhone = isVietnam
+    ? (trip?.hotels?.hanoi?.phone || trip?.basecamp?.phone || "+84 24 3828 0099")
+    : (trip?.stays?.[0]?.phone || trip?.basecampContact || trip?.basecamp?.phone || "+91 99999 99999");
+
+  const policePhone = isVietnam ? "113" : "112";
 
   const shareLocation = () => {
     if (navigator.geolocation) {
@@ -25,8 +42,15 @@ export default function LostSosModal({ isOpen, onClose }) {
     }
   };
 
-  const copyVietnamese = () => {
-    const text = "Tôi bị lạc, xin hãy giúp tôi liên lạc với khách sạn La Siesta Classic (94 phố Mã Mây, Hoàn Kiếm, Hà Nội - Điện thoại: +84 24 3926 3641) hoặc gia đình tôi!";
+  const copyAddress = () => {
+    let text = "";
+    if (isVietnam) {
+      text = `Tôi bị lạc, xin hãy giúp tôi liên lạc với khách sạn ${hotelName} (${hotelAddress} - Điện thoại: ${hotelPhone}) hoặc gia đình tôi!`;
+    } else if (isKarnataka) {
+      text = `ನಾನು ಪ್ರವಾಸಿ, ದಾರಿ ತಪ್ಪಿದ್ದೇನೆ. ದಯವಿಟ್ಟು ನನ್ನ ಹೋಟೆಲ್ ${hotelName} (${hotelAddress} - ದೂರವಾಣಿ: ${hotelPhone}) ಅಥವಾ ನನ್ನ ಕುಟುಂಬವನ್ನು ಸಂಪರ್ಕಿಸಲು ಸಹಾಯ ಮಾಡಿ!`;
+    } else {
+      text = `I am a traveler and I am lost. Please help me contact my hotel ${hotelName} (${hotelAddress} - Phone: ${hotelPhone}) or my family!`;
+    }
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -42,7 +66,9 @@ export default function LostSosModal({ isOpen, onClose }) {
             </div>
             <div>
               <h3 className="font-black text-sm text-white uppercase tracking-wider">Emergency SOS Beacon</h3>
-              <p className="text-[10px] text-rose-300 font-bold">Lost in Vietnam • Show Screen to Locals</p>
+              <p className="text-[10px] text-rose-300 font-bold">
+                {isVietnam ? "Lost in Vietnam • Show Screen to Locals" : `${trip?.destination?.split(',')[0] || "Expedition"} SOS • Show Screen to Locals / Driver`}
+              </p>
             </div>
           </div>
           <button onClick={onClose} className="p-1 text-slate-400 hover:text-white">
@@ -50,21 +76,35 @@ export default function LostSosModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Big Vietnamese Text Card to Show to Locals */}
+        {/* Big Local Text Card to Show to Locals */}
         <div className="bg-white text-slate-950 p-4 rounded-2xl shadow-inner space-y-2">
           <span className="text-[10px] font-black uppercase tracking-wider text-rose-600 block">
-            Xin Hãy Giúp Đỡ Tôi (Please Help Me)
+            {isVietnam ? "Xin Hãy Giúp Đỡ Tôi (Please Help Me)" : isKarnataka ? "ದಯವಿಟ್ಟು ನನಗೆ ಸಹಾಯ ಮಾಡಿ (Please Help Me)" : "PLEASE HELP ME (I AM LOST)"}
           </span>
           <p className="text-base sm:text-lg font-black leading-snug">
-            "Tôi là du khách nước ngoài và đang bị lạc. Xin vui lòng giúp tôi gọi cho khách sạn hoặc người nhà của tôi."
+            {isVietnam
+              ? '"Tôi là du khách nước ngoài và đang bị lạc. Xin vui lòng giúp tôi gọi cho khách sạn hoặc người nhà của tôi."'
+              : isKarnataka
+              ? '"ನಾನು ಪ್ರವಾಸಿ, ದಾರಿ ತಪ್ಪಿದ್ದೇನೆ. ದಯವಿಟ್ಟು ನನ್ನ ಹೋಟೆಲ್ ಅಥವಾ ಕುಟುಂಬವನ್ನು ಸಂಪರ್ಕಿಸಲು ಸಹಾಯ ಮಾಡಿ."'
+              : '"I am a visiting traveler and I am lost. Please help me call my hotel or my family."'}
           </p>
+          {(isVietnam || isKarnataka) && (
+            <p className="text-xs text-slate-600 italic">
+              "I am a visiting traveler and I am lost. Please help me call my hotel or my family."
+            </p>
+          )}
           <div className="pt-2 border-t border-slate-200 text-xs">
-            <strong className="block text-slate-900 font-bold">Khách sạn của tôi (My Hotel):</strong>
-            <p className="text-slate-700 text-xs font-semibold">
-              La Siesta Classic — 94 Mã Mây, Hoàn Kiếm, Hà Nội
+            <strong className="block text-slate-900 font-bold">
+              {isVietnam ? "Khách Sạn Của Tôi (My Basecamp Stay):" : isKarnataka ? "ನನ್ನ ಹೋಟೆಲ್ (My Basecamp Stay):" : "My Basecamp Hotel:"}
+            </strong>
+            <p className="text-slate-800 text-xs font-bold mt-0.5">
+              {hotelName}
+            </p>
+            <p className="text-slate-600 text-[11px] font-semibold mt-0.5 font-mono">
+              {hotelAddress}
             </p>
             <p className="text-slate-900 font-mono font-bold mt-1">
-              Điện thoại (Phone): +84 24 3926 3641
+              {isVietnam ? "Điện thoại" : isKarnataka ? "ದೂರವಾಣಿ" : "Phone"}: {hotelPhone}
             </p>
           </div>
         </div>
@@ -81,27 +121,27 @@ export default function LostSosModal({ isOpen, onClose }) {
 
           <div className="grid grid-cols-2 gap-2">
             <a
-              href="tel:+842439263641"
+              href={`tel:${hotelPhone.replace(/[^0-9+]/g, '')}`}
               className="py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow"
             >
               <Phone className="w-3.5 h-3.5" />
-              Call Hotel Front Desk
+              Call Hotel ({hotelPhone})
             </a>
             <a
-              href="tel:113"
+              href={`tel:${policePhone}`}
               className="py-2.5 bg-rose-700 hover:bg-rose-600 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow"
             >
               <AlertTriangle className="w-3.5 h-3.5" />
-              Call Police (113)
+              Call Police ({policePhone})
             </a>
           </div>
 
           <button
-            onClick={copyVietnamese}
+            onClick={copyAddress}
             className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-700"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <MapPin className="w-3.5 h-3.5" />}
-            {copied ? "Vietnamese Copied!" : "Copy Hotel Address in Vietnamese"}
+            {copied ? "Address Copied!" : (isVietnam ? "Copy Hotel Address in Vietnamese" : "Copy Hotel Address in Local Script")}
           </button>
         </div>
       </div>

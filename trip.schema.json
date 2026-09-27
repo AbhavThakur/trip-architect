@@ -97,6 +97,31 @@
         }
       }
     },
+    "checklist": {
+      "type": "array",
+      "description": "Interactive phased pre-departure checklist for gear, rentals, documents, and wellness",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phase": { "type": "string" },
+          "title": { "type": "string" },
+          "badge": { "type": "string" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "text"],
+              "properties": {
+                "id": { "type": "string" },
+                "text": { "type": "string" },
+                "desc": { "type": "string" },
+                "defaultChecked": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    },
     "packingList": {
       "type": "array",
       "items": {
@@ -131,11 +156,18 @@
             "type": "object",
             "properties": {
               "item": { "type": "string" },
-              "cost": { "type": "string" }
+              "cost": { "type": "string" },
+              "paidBy": { "type": "string", "description": "Traveler name who paid this expense, e.g. 'Sundeep' or 'Shared'" },
+              "status": { "type": "string", "enum": ["paid", "booked", "estimated"] }
             }
           }
         }
       }
+    },
+    "travelersList": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of traveler names for multi-pax split tracking and debt settlement"
     }
   }
 }

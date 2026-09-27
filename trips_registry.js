@@ -5,6 +5,46 @@
 
 const TRIPS_REGISTRY = [
     {
+        id: "hampi-2026",
+        title: "Hampi Boulder Trails & Vijayanagara Dynasties",
+        destination: "Hampi, Vijayanagara District, Karnataka, India",
+        flag: "🏛️",
+        status: "upcoming",
+        category: "domestic",
+        dates: "Oct 2 – 4, 2026",
+        startDate: "2026-10-02",
+        endDate: "2026-10-04",
+        daysCount: 3,
+        travelers: "2 Travelers",
+        heroGradient: "from-amber-950 via-stone-900 to-slate-950",
+        badge: "UNESCO Heritage • Gandhi Jayanti Weekend",
+        accentColor: "#f59e0b",
+        url: "trip.html?id=hampi-2026",
+        summary: "A 3-day frictionless expedition across UNESCO World Heritage monolithic ruins, Tungabhadra river walks, sunrise atop Matanga Hill, sunset from Malyavanta & Hemakuta hills, and golden-hour bouldering at Sanapur Lake & Anjanadri.",
+        basecamp: "Sri Durga Comfort Stay, Hampi (Sanapur)",
+        transport: "KSRTC Non AC Sleeper (KK22992248) + Ravi Bike Rental Scooter (Munirabad) + Return Pallakki Sleeper (KS23020219)",
+        transitMode: "KSRTC Non AC Sleeper (KK22992248) / Pallakki Sleeper (KS23020219)",
+        features: [
+            { icon: "fa-bus", label: "Majestic P15 (23:14) ➔ Hosapete (KK22992248)" },
+            { icon: "fa-motorcycle", label: "Ravi Bike Rental Munirabad (087928 58466)" },
+            { icon: "fa-hotel", label: "Sri Durga Comfort Stay, Sanapur (063623 28833)" },
+            { icon: "fa-bus", label: "Hosapete P0 (22:45) ➔ BLR Pallakki (KS23020219)" }
+        ],
+        highlights: [
+            { icon: "fa-landmark", title: "Stone Chariot & Vittala", desc: "UNESCO crown jewel, 56 musical pillars & ₹50 note" },
+            { icon: "fa-gopuram", title: "Virupaksha & Krishna Temple", desc: "7th-century active shrine, bazaar & Dashavatara Pushkarani" },
+            { icon: "fa-monument", title: "Ugra Narasimha & Monoliths", desc: "6.7m Narasimha, spring Badavilinga & giant Ganeshas" },
+            { icon: "fa-chess-rook", title: "Royal Enclosure & Underground Shiva", desc: "Queen's Bath, Lotus Mahal, Elephant Stables & King's Court" },
+            { icon: "fa-water", title: "Sanapur Lake Coracle & Bouldering", desc: "Sanapur Lake boat ride & Monkey Zone granite climbing" },
+            { icon: "fa-mountain", title: "Anjanadri & Panoramic Hills", desc: "Hanuman birthplace 4:30 PM climb, Hemakuta & Malyavanta sunsets" }
+        ],
+        quickItinerary: [
+            { day: "Day 1 (Fri Oct 2)", title: "Hosapete Arrival (06:15 AM), Munirabad Scooter Handover (Ravi Bike Rental), Sanapur Basecamp (Sri Durga Comfort Stay), Virupaksha Temple, Krishna Bazaar, River Walk, Mango Tree Lunch, Monoliths & Hemakuta Sunset, North Hampi Dinner" },
+            { day: "Day 2 (Sat Oct 3)", title: "Vijaya Vittala Stone Chariot (08:00 AM), Queen's Bath, Lotus Mahal, Elephant Stables, King's Court & Stepped Pushkarani, Underground Shiva Temple, & Malyavanta Raghunatha Hill Sunset" },
+            { day: "Day 3 (Sun Oct 4)", title: "Sanapur Lake Coracle & Boulders, Bouldering Session, Paddy Cafes, Anegundi Village, Anjanadri 4:30 PM Sunset, Munirabad Scooter Return (19:30), Hosapete Dinner & 22:45 KSRTC Pallakki Sleeper to BLR" }
+        ]
+    },
+    {
         id: "chikmagalur-2026",
         title: "Chikmagalur Coffee & Cloud Peaks",
         destination: "Chikmagalur, Karnataka, India",

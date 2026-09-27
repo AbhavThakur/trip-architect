@@ -15,7 +15,8 @@ import {
   Shield,
   HeartPulse,
   UserCheck,
-  Scale
+  Scale,
+  Ticket
 } from "lucide-react";
 
 export default function Header({
@@ -29,6 +30,7 @@ export default function Header({
   isCloudSynced,
   onOpenFx,
   onOpenTaxi,
+  onOpenBookingDesk,
   onOpenDocs, onOpenLostSos, onOpenLuggage,
   seniorMode,
   onToggleSeniorMode,
@@ -111,6 +113,18 @@ export default function Header({
             >
               <Coins className="w-3 h-3 text-amber-300" />
               <span className="hidden xs:inline">FX</span>
+            </button>
+          )}
+
+          {/* Quick Booking Desk Button */}
+          {onOpenBookingDesk && (
+            <button
+              onClick={onOpenBookingDesk}
+              className="px-2 py-1 bg-emerald-700/90 hover:bg-emerald-600 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 transition-all shadow-sm ring-1 ring-emerald-400/50"
+              title="Open Master Booking Command Desk"
+            >
+              <Ticket className="w-3 h-3 text-amber-300" />
+              <span className="hidden xs:inline">Bookings</span>
             </button>
           )}
 

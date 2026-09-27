@@ -588,7 +588,34 @@
 
         function renderChecklist() {
             const container = document.getElementById('checklist-items');
-            const list = tripData.packingList || [];
+            let list = [];
+            if (Array.isArray(tripData.checklist) && tripData.checklist.length > 0) {
+                if (tripData.checklist[0].items || tripData.checklist[0].tasks) {
+                    tripData.checklist.forEach(phase => {
+                        const phaseName = phase.phase || phase.title || "General";
+                        (phase.items || phase.tasks || []).forEach(item => {
+                            list.push({
+                                id: item.id,
+                                item: item.text || item.title || item.item,
+                                desc: item.desc || "",
+                                category: phaseName.replace(/^Phase\s*\d+:\s*/i, ""),
+                                checked: !!item.defaultChecked
+                            });
+                        });
+                    });
+                } else {
+                    list = tripData.checklist.map((c, idx) => ({
+                        id: c.id || `chk_${idx}`,
+                        item: c.text || c.title || c.item || "",
+                        desc: c.desc || "",
+                        category: c.category || "General",
+                        checked: !!(c.defaultChecked || c.checked)
+                    }));
+                }
+            } else if (Array.isArray(tripData.packingList)) {
+                list = tripData.packingList;
+            }
+
             const key = `packing_${tripData.id}`;
             const saved = JSON.parse(localStorage.getItem(key) || "{}");
 
@@ -600,8 +627,11 @@
                     <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-slate-700 transition-colors">
                         <input type="checkbox" onchange="toggleCheck('${item.id}', this.checked)" ${checked ? 'checked' : ''} class="mt-1 w-4 h-4 rounded text-brand-600 focus:ring-brand-500 bg-slate-800 border-slate-700">
                         <div class="flex-1 text-xs">
-                            <span class="font-bold text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 uppercase font-mono mr-1.5">${item.category || 'Gear'}</span>
-                            <span class="${checked ? 'line-through text-slate-500' : 'text-slate-200'} font-medium">${item.item}</span>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="font-bold text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 uppercase font-mono">${item.category || 'Gear'}</span>
+                                <span class="${checked ? 'line-through text-slate-500' : 'text-slate-200'} font-semibold">${item.item}</span>
+                            </div>
+                            ${item.desc ? `<p class="text-[11px] text-slate-400 mt-1 leading-relaxed ${checked ? 'line-through text-slate-600' : ''}">${item.desc}</p>` : ''}
                         </div>
                     </label>
                 `;
@@ -645,7 +675,10 @@
                         <div class="space-y-3 text-xs">
                             ${budget.breakdown ? budget.breakdown.map(b => `
                                 <div class="flex justify-between items-center bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                    <span class="text-slate-300">${b.item}</span>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="text-slate-300">${b.item}</span>
+                                        ${b.paidBy ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800/60">💳 ${b.paidBy}</span>` : ''}
+                                    </div>
                                     <span class="font-mono font-bold text-white">${b.cost}</span>
                                 </div>
                             `).join('') : ''}

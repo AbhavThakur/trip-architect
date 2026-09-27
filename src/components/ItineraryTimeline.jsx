@@ -113,6 +113,7 @@ const FlightBanner = ({ flight, onEdit }) => {
 export default function ItineraryTimeline({
   days = [],
   tripTitle = "Expedition",
+  trip = null,
   onUpdateStop,
   seniorMode = false,
   onOpenTaxi,
@@ -130,38 +131,61 @@ export default function ItineraryTimeline({
   const [editingStop, setEditingStop] = useState(null);
   const [globalStopIndex, setGlobalStopIndex] = useState(0);
 
+  const locationLookup = useMemo(() => {
+    const map = {};
+    if (trip?.locations && Array.isArray(trip.locations)) {
+      trip.locations.forEach((loc) => {
+        if (loc.id) map[loc.id] = loc;
+      });
+    }
+    return map;
+  }, [trip]);
+
   // Normalize days & places
   const normalizedDays = useMemo(() => {
     return days.map((day, dIdx) => {
       const rawPlaces = day.places || day.events || day.stops || [];
-      const places = rawPlaces.map((p, pIdx) => ({
-        id: p.id || `d${dIdx + 1}_s${pIdx + 1}`,
-        orderNum: pIdx + 1,
-        day: dIdx + 1,
-        time: p.time || "",
-        name: p.name || p.title || "Stop " + (pIdx + 1),
-        category: p.category || "attraction",
-        desc: p.notes || p.desc || p.description || "",
-        tip: p.insiderTip || p.tip || p.seniorTip || p.notes || "",
-        price: p.price || p.fee || "",
-        coords: p.coords || (p.lat && p.lng ? [p.lat, p.lng] : null),
-        lat: p.lat,
-        lng: p.lng,
-        address: p.address || "",
-        vietnamese: p.vietnamese || "",
-        shoppingGem: p.shoppingGem || null,
-        insiderTip: p.insiderTip || null,
-        seniorTip: p.seniorTip || null,
-        photoOp: p.photoOp || null,
-        tags: p.tags || [],
-        seniorFriendly: !!(p.seniorFriendly || p.seniorTip),
-        flightKey: p.flightKey || null,
-        hotelKey: p.hotelKey || null,
-        transitToNext: p.transitToNext || null,
-        ticketLink: p.ticketLink || null,
-        color: p.color || (p.category === "shopping" ? "pink" : p.category === "dining" ? "emerald" : p.category === "stay" ? "blue" : p.category === "flight" ? "indigo" : "amber"),
-        icon: p.icon || (p.category === "shopping" ? "fa-bag-shopping" : p.category === "dining" ? "fa-utensils" : p.category === "stay" ? "fa-hotel" : p.category === "flight" ? "fa-plane" : "fa-location-dot")
-      }));
+      const places = rawPlaces.map((p, pIdx) => {
+        const loc = locationLookup[p.locationId] || locationLookup[p.id] || null;
+        const coords = p.coords || (loc ? loc.coords : null) || (p.lat && p.lng ? [p.lat, p.lng] : null);
+        const bookingUrl = p.bookingUrl || p.ticketLink || p.url || (loc ? loc.bookingUrl : null);
+        const bookingLabel = p.bookingLabel || p.ticketLabel || (loc ? loc.bookingLabel : "Book Online ↗");
+        const bookingAltUrl = p.bookingAltUrl || (loc ? loc.bookingAltUrl : null);
+        const bookingAltLabel = p.bookingAltLabel || (loc ? loc.bookingAltLabel : null);
+
+        return {
+          id: p.id || `d${dIdx + 1}_s${pIdx + 1}`,
+          orderNum: pIdx + 1,
+          day: dIdx + 1,
+          time: p.time || "",
+          name: p.name || p.title || "Stop " + (pIdx + 1),
+          category: p.category || (loc ? loc.category : "attraction"),
+          desc: p.notes || p.desc || p.description || (loc ? loc.desc : ""),
+          tip: p.insiderTip || p.tip || p.seniorTip || p.notes || "",
+          price: p.price || p.fee || "",
+          coords,
+          lat: coords ? coords[0] : (p.lat || null),
+          lng: coords ? coords[1] : (p.lng || null),
+          bookingUrl,
+          bookingLabel,
+          bookingAltUrl,
+          bookingAltLabel,
+          address: p.address || (loc ? loc.location : ""),
+          vietnamese: p.vietnamese || "",
+          shoppingGem: p.shoppingGem || null,
+          insiderTip: p.insiderTip || p.tip || (loc ? loc.tip : null),
+          seniorTip: p.seniorTip || null,
+          photoOp: p.photoOp || null,
+          tags: p.tags || [],
+          seniorFriendly: !!(p.seniorFriendly || p.seniorTip),
+          flightKey: p.flightKey || null,
+          hotelKey: p.hotelKey || null,
+          transitToNext: p.transitToNext || null,
+          ticketLink: bookingUrl,
+          color: p.color || (loc ? loc.color : (p.category === "shopping" ? "pink" : p.category === "dining" ? "emerald" : p.category === "stay" ? "blue" : p.category === "flight" ? "indigo" : "amber")),
+          icon: p.icon || (loc ? loc.icon : (p.category === "shopping" ? "fa-bag-shopping" : p.category === "dining" ? "fa-utensils" : p.category === "stay" ? "fa-hotel" : p.category === "flight" ? "fa-plane" : "fa-location-dot"))
+        };
+      });
 
       return {
         ...day,
@@ -169,7 +193,7 @@ export default function ItineraryTimeline({
         places
       };
     });
-  }, [days]);
+  }, [days, locationLookup]);
 
   const activeDay = selectedDayIdx === "all" ? null : (normalizedDays[selectedDayIdx] || normalizedDays[0]);
 
@@ -203,7 +227,7 @@ export default function ItineraryTimeline({
 
   const shareWhatsAppPlan = (day) => {
     if (!day) return;
-    let text = `🇻🇳 *Vietnam Master Plan — Day ${day.dayNum}: ${day.title}*\n`;
+    let text = `${trip?.flag || "🧭"} *${trip?.title || tripTitle || "Trip Plan"} — Day ${day.dayNum}: ${day.title}*\n`;
     if (day.date) text += `📅 Date: ${day.date}\n`;
     if (day.weather) text += `⛅ Weather: ${day.weather}\n\n`;
 
@@ -248,10 +272,12 @@ export default function ItineraryTimeline({
     return { label: "Sightseeing", bg: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30", icon: Camera };
   };
 
-  const getRegionBadgeStyles = (code) => {
-    if (code === "north") return { bg: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30", icon: "🏔️", label: "North Vietnam" };
-    if (code === "central") return { bg: "bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30", icon: "🌊", label: "Central Vietnam" };
-    return { bg: "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-500/30", icon: "✈️", label: "North ➔ Central" };
+  const getRegionBadgeStyles = (code, dayObj) => {
+    const isVietnam = trip?.id?.includes("vietnam");
+    if (isVietnam && code === "north") return { bg: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30", icon: "🏔️", label: "North Vietnam" };
+    if (isVietnam && code === "central") return { bg: "bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30", icon: "🌊", label: "Central Vietnam" };
+    if (dayObj?.transportBadge) return { bg: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30", icon: "🚗", label: dayObj.transportBadge };
+    return { bg: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30", icon: "📍", label: `Day ${dayObj?.dayNum || "Plan"}` };
   };
 
   const handleSaveEdit = () => {
@@ -262,7 +288,7 @@ export default function ItineraryTimeline({
 
   // Render a Single Day Card in Detailed Timeline
   const renderDay = (dayObj, idx) => {
-    const region = getRegionBadgeStyles(dayObj.regionCode);
+    const region = getRegionBadgeStyles(dayObj.regionCode, dayObj);
 
     return (
       <div key={`day-${idx}`} className="bg-white dark:bg-darkcard rounded-3xl border border-slate-200 dark:border-darkborder p-4 sm:p-5 shadow-sm mb-4 space-y-4">
@@ -356,9 +382,9 @@ export default function ItineraryTimeline({
                           {stop.name}
                         </h3>
 
-                        {stop.vietnamese && (
+                        {(stop.addressLocalScript || stop.localScript || stop.kannada || stop.vietnamese) && (
                           <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold block mt-0.5">
-                            {stop.vietnamese}
+                            {stop.addressLocalScript || stop.localScript || stop.kannada || stop.vietnamese}
                           </span>
                         )}
 
@@ -475,14 +501,53 @@ export default function ItineraryTimeline({
                                 if (onOpenTaxi) onOpenTaxi(stop);
                               }}
                               className="px-2.5 py-1 rounded-lg bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/60 text-sky-700 dark:text-sky-300 font-bold text-xs flex items-center gap-1 active:scale-95"
-                              title="Show Taxi Driver Card with Vietnamese address"
+                              title="Show Taxi / Auto Driver Card with local address"
                             >
                               <Car className="w-3 h-3 text-sky-500" />
                               <span>Taxi Card</span>
                             </button>
                           )}
 
-                          {stop.ticketLink && (
+                          {stop.bookingUrl && (
+                            <a
+                              href={stop.bookingUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-xs active:scale-95 transition"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              <span>{stop.bookingLabel || "Book Online"}</span>
+                            </a>
+                          )}
+
+                          {stop.bookingAltUrl && (
+                            <a
+                              href={stop.bookingAltUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-800 font-bold text-xs flex items-center gap-1 hover:bg-blue-200 active:scale-95 transition"
+                            >
+                              <ExternalLink className="w-2.5 h-2.5" />
+                              <span>{stop.bookingAltLabel || "Pre-filled Link"}</span>
+                            </a>
+                          )}
+
+                          {stop.bookingThirdUrl && (
+                            <a
+                              href={stop.bookingThirdUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1 hover:bg-slate-300 active:scale-95 transition"
+                            >
+                              <ExternalLink className="w-2.5 h-2.5" />
+                              <span>{stop.bookingThirdLabel || "Comparison Link"}</span>
+                            </a>
+                          )}
+
+                          {stop.ticketLink && !stop.bookingUrl && (
                             <a
                               href={stop.ticketLink}
                               target="_blank"
@@ -512,17 +577,19 @@ export default function ItineraryTimeline({
 
                     {/* Right Side Action Buttons */}
                     <div className="flex items-center gap-1.5 shrink-0">
-                      {/* Audio Pronunciation Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          speakVietnamese(stop.vietnamese || stop.name);
-                        }}
-                        className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition"
-                        title="Pronounce in Vietnamese"
-                      >
-                        <Volume2 className="w-4 h-4 text-emerald-500" />
-                      </button>
+                      {/* Audio Pronunciation Button (only for Vietnamese language destinations) */}
+                      {trip?.id?.includes("vietnam") && stop.vietnamese && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            speakVietnamese(stop.vietnamese || stop.name);
+                          }}
+                          className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition"
+                          title="Pronounce in Vietnamese"
+                        >
+                          <Volume2 className="w-4 h-4 text-emerald-500" />
+                        </button>
+                      )}
 
                       {/* Map Locate Button */}
                       {stop.coords && (
@@ -691,14 +758,19 @@ export default function ItineraryTimeline({
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-sm sm:text-base font-bold font-display leading-tight">
-                Master Blueprint: North & Central Vietnam
+                {trip?.title ? `Master Blueprint: ${trip.title}` : (tripTitle || "Master Blueprint")}
               </h2>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold uppercase">
-                No South / No Cruise
-              </span>
+              {trip?.badge && (
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold uppercase">
+                  {trip.badge}
+                </span>
+              )}
             </div>
             <p className="text-[11px] text-slate-300 mt-0.5">
-              7 Days (Dec 3–10, 2026) • 5 Adults • Hanoi, Ninh Binh, Hoi An & Da Nang
+              {trip?.daysCount ? `${trip.daysCount} Days ` : `${normalizedDays.length} Days `}
+              {trip?.dates ? `(${trip.dates}) ` : ""}
+              {trip?.travelers ? `• ${trip.travelers} ` : ""}
+              {trip?.destination ? `• ${trip.destination}` : ""}
             </p>
           </div>
         </div>
@@ -735,6 +807,7 @@ export default function ItineraryTimeline({
           <AtAGlanceView
             days={normalizedDays}
             onOpenBudget={onOpenBudget}
+            trip={trip}
             onSelectDay={(dayIdx) => {
               setSelectedDayIdx(dayIdx);
               setViewMode("detailed");
@@ -757,11 +830,11 @@ export default function ItineraryTimeline({
                   : "bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100"
               )}
             >
-              All 7 Days
+              All {normalizedDays.length} Days
             </button>
 
             {normalizedDays.map((d, idx) => {
-              const region = getRegionBadgeStyles(d.regionCode);
+              const region = getRegionBadgeStyles(d.regionCode, d);
               const isSelected = selectedDayIdx === idx;
               return (
                 <button
@@ -776,7 +849,7 @@ export default function ItineraryTimeline({
                       : "bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100"
                   )}
                 >
-                  <span>D{d.dayNum} {d.title?.split(" ")[0]} {region.icon}</span>
+                  <span>D{d.dayNum} {d.title?.split(" ")[0]} {d.regionCode ? region.icon : ""}</span>
                 </button>
               );
             })}
@@ -820,6 +893,10 @@ export default function ItineraryTimeline({
                   onSelectStop={(id) => setActiveStopId(id)}
                   dayFilter={selectedDayIdx}
                   onOpenTaxi={onOpenTaxi}
+                  mapCenter={trip?.mapCenter}
+                  mapZoom={trip?.mapZoom}
+                  title={trip?.destination ? `${trip.destination.split(',')[0]} Route Map` : trip?.title}
+                  destination={trip?.destination}
                 />
               </div>
             </div>

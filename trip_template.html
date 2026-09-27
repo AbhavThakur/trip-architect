@@ -118,9 +118,47 @@
         </div>
 
         <div id="tab-content-checklist" class="tab-content">
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 max-w-2xl mx-auto">
-                <h3 class="text-base font-bold text-white mb-3">Gear Checklist</h3>
-                <p class="text-xs text-slate-300">Add packing checklist items here.</p>
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 max-w-3xl mx-auto shadow-xl">
+                <!-- Checklist Header & Progress -->
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4 flex-wrap gap-2">
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-check text-emerald-400"></i> Pre-Departure & Gear Checklist
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Rentals, documentation, weather gear, and safety essentials.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="resetTemplateChecklist()" class="px-3 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs text-slate-400 hover:text-amber-400 transition font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-rotate-left"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 mb-5">
+                    <div class="flex justify-between items-center text-xs mb-1.5">
+                        <span class="text-slate-400 font-medium">Packing Completion</span>
+                        <span id="pack-percent" class="font-mono font-bold text-emerald-400">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="pack-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Category Filter Pills -->
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-3 mb-4 text-xs" id="checklist-category-filters">
+                    <button onclick="filterChecklistCategory('all')" class="cat-pill active px-3 py-1 rounded-xl bg-blue-600 text-white font-bold shrink-0">All Items</button>
+                    <button onclick="filterChecklistCategory('Rentals')" class="cat-pill px-3 py-1 rounded-xl bg-slate-950 text-slate-400 hover:text-white border border-slate-800 font-bold shrink-0">🛵 Rentals & Commute</button>
+                    <button onclick="filterChecklistCategory('Gear')" class="cat-pill px-3 py-1 rounded-xl bg-slate-950 text-slate-400 hover:text-white border border-slate-800 font-bold shrink-0">🎒 Essential Gear</button>
+                    <button onclick="filterChecklistCategory('Documents')" class="cat-pill px-3 py-1 rounded-xl bg-slate-950 text-slate-400 hover:text-white border border-slate-800 font-bold shrink-0">🎫 Documents</button>
+                    <button onclick="filterChecklistCategory('Medical')" class="cat-pill px-3 py-1 rounded-xl bg-slate-950 text-slate-400 hover:text-white border border-slate-800 font-bold shrink-0">💊 First Aid</button>
+                    <button onclick="filterChecklistCategory('Electronics')" class="cat-pill px-3 py-1 rounded-xl bg-slate-950 text-slate-400 hover:text-white border border-slate-800 font-bold shrink-0">📸 Tech & Cash</button>
+                </div>
+
+                <!-- Checklist Items Container -->
+                <div id="template-checklist-items" class="space-y-2.5">
+                    <!-- Populated dynamically via JS -->
+                </div>
             </div>
         </div>
     </main>
@@ -135,6 +173,7 @@
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById(`tab-content-${tabId}`).classList.add('active');
             if (tabId === 'itinerary' && map) setTimeout(() => map.invalidateSize(), 200);
+            if (tabId === 'checklist') renderTemplateChecklist();
         }
 
         let map;
@@ -151,9 +190,101 @@
             }, 1000);
         }
 
+        // Standard Default Checklist with Rentals, Important Carry Items & Travel Essentials
+        const DEFAULT_TEMPLATE_CHECKLIST = [
+            { id: "t_rent_1", category: "Rentals", text: "Original Driving License (Physical Card / mParivahan)", desc: "Mandatory for autonomous scooter / car rental.", defaultChecked: true },
+            { id: "t_rent_2", category: "Rentals", text: "Pre-inspect Vehicle & 360° Walkaround Video", desc: "Check brakes, headlight, fuel level, and tire treads before taking handover.", defaultChecked: true },
+            { id: "t_rent_3", category: "Rentals", text: "Helmets for Both Rider & Pillion", desc: "Mandatory safety requirement and highway police checkpoints.", defaultChecked: true },
+            { id: "t_rent_4", category: "Rentals", text: "Locate Nearest Fuel Pumps & Fuel Cash", desc: "Identify highway and destination fuel stations; keep ₹500 cash for petrol.", defaultChecked: false },
+            { id: "t_gear_1", category: "Gear", text: "Broad-Rimmed Sun Hat / UPF Cap & UV400 Sunglasses", desc: "Protection against intense sun glare across outdoor sites.", defaultChecked: true },
+            { id: "t_gear_2", category: "Gear", text: "High SPF 50+ Broad-Spectrum Sunscreen & Lip Balm", desc: "Reapply every 2–3 hours during outdoor explorations.", defaultChecked: true },
+            { id: "t_gear_3", category: "Gear", text: "Insulated 1L Reusable Water Bottles", desc: "Essential hydration throughout daylight excursions.", defaultChecked: true },
+            { id: "t_gear_4", category: "Gear", text: "Sturdy Walking Shoes with Rubber Grip", desc: "Non-slip footwear essential for stone steps, boulders, and hill trails.", defaultChecked: true },
+            { id: "t_gear_5", category: "Gear", text: "Breathable Lightweight Cotton Clothes", desc: "Respectful attire covering shoulders and knees for heritage temples.", defaultChecked: false },
+            { id: "t_doc_1", category: "Documents", text: "Government Photo ID (Aadhaar / Passport / DL)", desc: "Required for hotel check-ins, transit, and security checks.", defaultChecked: true },
+            { id: "t_doc_2", category: "Documents", text: "Confirmed Travel Tickets (PNRs & Seat Details)", desc: "Keep offline PDF copies and printed backups of bus/train/flight tickets.", defaultChecked: true },
+            { id: "t_doc_3", category: "Documents", text: "ASI Monument Entry Passes / Pre-booked QR Tickets", desc: "Pre-book online to skip crowded ticket lines at major attractions.", defaultChecked: true },
+            { id: "t_doc_4", category: "Documents", text: "Offline Google Maps / Area Download", desc: "Download entire destination area map in case of patchy cellular connectivity.", defaultChecked: true },
+            { id: "t_med_1", category: "Medical", text: "Electrolytes & Oral Rehydration Salts (ORS / Electral)", desc: "Crucial for preventing heat exhaustion on active walking days.", defaultChecked: true },
+            { id: "t_med_2", category: "Medical", text: "Blister Band-Aids & Antiseptic Wipes", desc: "Instant relief for heel blisters or trail scrapes.", defaultChecked: true },
+            { id: "t_med_3", category: "Medical", text: "Pain Relief Spray / Balm (Volini / Moov)", desc: "Muscle relief after sunset hill climbs and long walking trails.", defaultChecked: false },
+            { id: "t_med_4", category: "Medical", text: "Mosquito Repellent (Odomos Cream / Spray)", desc: "Protection for riverside trails, dusk viewpoints, and outdoor dining.", defaultChecked: false },
+            { id: "t_elec_1", category: "Electronics", text: "High-Capacity 10,000–20,000 mAh Power Bank", desc: "Heavy GPS navigation and camera use drain phone battery quickly.", defaultChecked: true },
+            { id: "t_elec_2", category: "Electronics", text: "Microfiber Lens Cleaning Cloth", desc: "Keep camera and sunglasses free of fine dust.", defaultChecked: false },
+            { id: "t_elec_3", category: "Electronics", text: "Waterproof Phone Pouch", desc: "For river boating, coracle floats, or rainy weather.", defaultChecked: false },
+            { id: "t_elec_4", category: "Electronics", text: "Carry Cash in Small Denominations (₹10, ₹20, ₹50, ₹100)", desc: "For parking, shoe counters, auto drivers, coconut vendors, and cash-only spots.", defaultChecked: true }
+        ];
+
+        let activeCategoryFilter = "all";
+        const TEMPLATE_CHECKLIST_KEY = "trip_template_checklist_state";
+
+        function filterChecklistCategory(cat) {
+            activeCategoryFilter = cat;
+            document.querySelectorAll('#checklist-category-filters .cat-pill').forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-600', 'text-white');
+                btn.classList.add('bg-slate-950', 'text-slate-400');
+            });
+            event.target.classList.add('active', 'bg-blue-600', 'text-white');
+            event.target.classList.remove('bg-slate-950', 'text-slate-400');
+            renderTemplateChecklist();
+        }
+
+        function renderTemplateChecklist() {
+            const container = document.getElementById('template-checklist-items');
+            if (!container) return;
+            const saved = JSON.parse(localStorage.getItem(TEMPLATE_CHECKLIST_KEY) || "{}");
+
+            const itemsToShow = activeCategoryFilter === "all"
+                ? DEFAULT_TEMPLATE_CHECKLIST
+                : DEFAULT_TEMPLATE_CHECKLIST.filter(i => i.category === activeCategoryFilter);
+
+            let checkedTotal = 0;
+            DEFAULT_TEMPLATE_CHECKLIST.forEach(i => {
+                const isChecked = saved[i.id] !== undefined ? saved[i.id] : i.defaultChecked;
+                if (isChecked) checkedTotal++;
+            });
+
+            const percent = Math.round((checkedTotal / DEFAULT_TEMPLATE_CHECKLIST.length) * 100);
+            const percentEl = document.getElementById('pack-percent');
+            const progressEl = document.getElementById('pack-progress-bar');
+            if (percentEl) percentEl.textContent = `${percent}% (${checkedTotal}/${DEFAULT_TEMPLATE_CHECKLIST.length})`;
+            if (progressEl) progressEl.style.width = `${percent}%`;
+
+            container.innerHTML = itemsToShow.map(item => {
+                const checked = saved[item.id] !== undefined ? saved[item.id] : item.defaultChecked;
+                return `
+                    <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                        <input type="checkbox" onchange="toggleTemplateCheck('${item.id}', this.checked)" ${checked ? 'checked' : ''} class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-slate-800 border-slate-700">
+                        <div class="flex-1 text-xs">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="font-bold text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 uppercase font-mono">${item.category}</span>
+                                <span class="${checked ? 'line-through text-slate-500' : 'text-slate-200'} font-semibold">${item.text}</span>
+                            </div>
+                            ${item.desc ? `<p class="text-[11px] text-slate-400 mt-1 leading-relaxed ${checked ? 'line-through text-slate-600' : ''}">${item.desc}</p>` : ''}
+                        </div>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        function toggleTemplateCheck(id, checked) {
+            const saved = JSON.parse(localStorage.getItem(TEMPLATE_CHECKLIST_KEY) || "{}");
+            saved[id] = checked;
+            localStorage.setItem(TEMPLATE_CHECKLIST_KEY, JSON.stringify(saved));
+            renderTemplateChecklist();
+        }
+
+        function resetTemplateChecklist() {
+            if (confirm("Reset checklist to default?")) {
+                localStorage.removeItem(TEMPLATE_CHECKLIST_KEY);
+                renderTemplateChecklist();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             initMap();
             startClock();
+            renderTemplateChecklist();
         });
     </script>
 </body>

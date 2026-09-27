@@ -55,6 +55,72 @@
       "notes": "Settle scooty deposit by 08:30 PM, dinner on RG Road, board 10:30 PM sleeper. Coffee packages in cabin."
     }
   },
+  "quickBookings": [
+    {
+      "id": "ksrtc-blr-ckm",
+      "title": "KSRTC Airavat Club Class AC Sleeper (BLR ➔ Chikmagalur)",
+      "category": "transit",
+      "icon": "bus",
+      "date": "Fri, Sep 11, 11:00 PM (23:00 hrs) • Departs Majestic / Silk Board",
+      "operator": "KSRTC Airavat Club Class Multi-Axle",
+      "pickup": "Bengaluru (Majestic Terminal 1 / Silk Board)",
+      "drop": "Chikmagalur KSRTC Main Bus Stand (Arr. 06:30 AM / 09:30 AM)",
+      "seats": "Lower Berths 12 & 13",
+      "price": "Confirmed • PNR: KSRTC-BLR-892",
+      "primaryUrl": "https://www.ksrtc.in",
+      "primaryLabel": "Official KSRTC Portal",
+      "pnrPlaceholder": "KSRTC-BLR-892",
+      "querySummary": "Bengaluru ➔ Chikmagalur • Sep 11 23:00 • Berths 12 & 13 • Airavat Multi-Axle"
+    },
+    {
+      "id": "stay-tresca",
+      "title": "Tresca A Luxury Hotel, Chikmagalur (2 Nights) [BASECAMP]",
+      "category": "stay",
+      "icon": "hotel",
+      "date": "Check-in: Sep 12, 12:00 PM (Early bag drop 09:30 AM) • Check-out: Sep 14, 11:00 AM",
+      "operator": "Tresca Hotel Concierge (Phone: +91 8262 235555)",
+      "pickup": "RG Road, Vijayapura, Chikmagalur (850m from KSRTC Stand)",
+      "drop": "Deluxe Air-Conditioned Suite (2-3 Guests)",
+      "seats": "2–3 Travelers Confirmed",
+      "price": "Confirmed Reservation",
+      "primaryUrl": "https://www.google.com/maps/search/?api=1&query=Tresca+A+Luxury+Hotel+Chikmagalur",
+      "primaryLabel": "Google Maps (Tresca Hotel)",
+      "pnrPlaceholder": "TRS-CKM-2026",
+      "querySummary": "Tresca A Luxury Hotel • Sep 12 – 14 • RG Road Vijayapura • 850m to bus stand"
+    },
+    {
+      "id": "scooty-rental-ckm",
+      "title": "Chikmagalur 125cc Scooty Rental (Plantation & Peak Cruising)",
+      "category": "transit",
+      "icon": "motorcycle",
+      "date": "Sep 12, 10:00 AM ➔ Sep 14, 08:30 PM (Return before dinner)",
+      "operator": "Chikmagalur Bike & Scooty Rentals",
+      "pickup": "Near KSRTC Main Bus Stand, Chikmagalur",
+      "drop": "Mullayanagiri, Baba Budangiri & Z-Point Circuit",
+      "seats": "125cc Scooty with 2 ISI Helmets",
+      "price": "₹600/day + ₹1,000 Refundable Deposit",
+      "primaryUrl": "https://www.google.com/maps/search/?api=1&query=bike+rental+chikmagalur",
+      "primaryLabel": "Find Rental on Maps",
+      "pnrPlaceholder": "RENTAL-CKM-SCOOTY",
+      "querySummary": "125cc Scooty • 3 Days autonomous mountain cruising • Settle by 08:30 PM Sep 14"
+    },
+    {
+      "id": "ksrtc-ckm-blr",
+      "title": "KSRTC Airavat Return AC Sleeper (Chikmagalur ➔ BLR)",
+      "category": "transit",
+      "icon": "bus",
+      "date": "Mon, Sep 14, 10:30 PM (22:30 hrs) • Arrives BLR 05:00 AM Tue",
+      "operator": "KSRTC Airavat Multi-Axle",
+      "pickup": "Chikmagalur KSRTC Main Bus Stand",
+      "drop": "Bengaluru (Majestic / Silk Board)",
+      "seats": "Upper Berths 18 & 19",
+      "price": "Confirmed • PNR: KSRTC-RET-441",
+      "primaryUrl": "https://www.ksrtc.in",
+      "primaryLabel": "Official KSRTC Portal",
+      "pnrPlaceholder": "KSRTC-RET-441",
+      "querySummary": "Chikmagalur ➔ Bengaluru • Sep 14 22:30 • Berths 18 & 19 • 5h 30m via Hassan"
+    }
+  ],
   "features": [
     {
       "icon": "route",

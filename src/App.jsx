@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getRegisteredTrips } from "./data/trips/registry";
+import { getRegisteredTrips, saveCustomTrip, deleteCustomTrip } from "./data/trips/registry";
 import Header from "./components/Header";
 import HubPage from "./pages/HubPage";
 import TripDetailPage from "./pages/TripDetailPage";
@@ -12,6 +12,7 @@ import DocsVaultModal from "./components/DocsVaultModal";
 import CurrencyConverter from "./components/CurrencyConverter";
 import LuggageModal from "./components/LuggageModal";
 import LostSosModal from "./components/LostSosModal";
+import BookingDesk from "./components/BookingDesk";
 import { getSupabaseConfig } from "./services/supabase";
 import { X, Coins } from "lucide-react";
 
@@ -32,6 +33,7 @@ export default function App() {
   const [isFxModalOpen, setIsFxModalOpen] = useState(false);
   const [isLuggageModalOpen, setIsLuggageModalOpen] = useState(false);
   const [isLostSosModalOpen, setIsLostSosModalOpen] = useState(false);
+  const [isBookingDeskOpen, setIsBookingDeskOpen] = useState(false);
   const [isCloudSynced, setIsCloudSynced] = useState(false);
   const [seniorMode, setSeniorMode] = useState(false);
   const [theme, setTheme] = useState("light");
@@ -88,7 +90,7 @@ export default function App() {
             idLower.includes(paramLower) ||
             paramLower.includes(idLower) ||
             (paramLower.includes("vietnam") && idLower.includes("vietnam")) ||
-            (paramLower.includes("chikmagalur") && idLower.includes("chikmagalur"))
+            (paramLower.includes("hampi") && idLower.includes("hampi"))
           );
         });
         if (match) setSelectedTripId(match.id);
@@ -139,6 +141,19 @@ export default function App() {
     }
   };
 
+  const handleAddTrip = (newTrip, launchAfter = false) => {
+    const updated = saveCustomTrip(newTrip);
+    setTrips(updated);
+    if (launchAfter) {
+      navigateToTrip(newTrip.id);
+    }
+  };
+
+  const handleDeleteTrip = (tripId) => {
+    const updated = deleteCustomTrip(tripId);
+    setTrips(updated);
+  };
+
   const currentTrip = trips.find((t) => t.id === selectedTripId);
 
   return (
@@ -162,6 +177,7 @@ export default function App() {
         isCloudSynced={isCloudSynced}
         onOpenFx={() => setIsFxModalOpen(true)}
         onOpenTaxi={() => handleOpenTaxi(null)}
+        onOpenBookingDesk={() => setIsBookingDeskOpen(true)}
         onOpenDocs={() => setIsDocsModalOpen(true)}
         onOpenLostSos={() => setIsLostSosModalOpen(true)}
         onOpenLuggage={() => setIsLuggageModalOpen(true)}
@@ -188,6 +204,8 @@ export default function App() {
           <HubPage
             trips={trips}
             onSelectTrip={navigateToTrip}
+            onAddTrip={handleAddTrip}
+            onDeleteTrip={handleDeleteTrip}
           />
         )}
       </main>
@@ -211,6 +229,7 @@ export default function App() {
           setActiveTaxiStop(null);
         }}
         customStop={activeTaxiStop}
+        currentTrip={currentTrip}
       />
 
       {/* Family Travel Docs Vault Modal */}
@@ -254,12 +273,21 @@ export default function App() {
       <LostSosModal
         isOpen={isLostSosModalOpen}
         onClose={() => setIsLostSosModalOpen(false)}
+        trip={currentTrip}
       />
 
       {/* Universal Emergency SOS Modal */}
       <EmergencySosModal
         isOpen={isSosOpen}
         onClose={() => setIsSosOpen(false)}
+        trip={currentTrip}
+      />
+
+      {/* Universal Trip Booking Command Desk Modal */}
+      <BookingDesk
+        isOpen={isBookingDeskOpen}
+        onClose={() => setIsBookingDeskOpen(false)}
+        trip={currentTrip}
       />
 
       {/* PWA Install Guidance Modal */}

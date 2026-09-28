@@ -26,34 +26,69 @@ This guide walks you through setting up a **100% free, permanent Supabase databa
 
 ---
 
-### Step 2: Create the `trips` Database Table
+### Step 2: Create the Database Table & PDF Storage Bucket
 1. In your Supabase Dashboard, click on **"SQL Editor"** in the left sidebar (icon looks like `>_`).
 2. Click **"+ New query"**.
-3. Paste the following SQL code and click **"Run"** (green button on the bottom right):
+3. Paste the following complete SQL script and click **"Run"** (green button on bottom right):
 
 ```sql
--- 1. Create trips table with JSONB document storage
-create table if not exists trips (
+-- ==========================================
+-- 1. TRIPS DATABASE TABLE (Data & Itinerary Sync)
+-- ==========================================
+create table if not exists public.trips (
   id text primary key,
   data jsonb not null,
   updated_at timestamp with time zone default now()
 );
 
--- 2. Enable Row Level Security (RLS)
-alter table trips enable row level security;
+-- Enable Row Level Security (RLS)
+alter table public.trips enable row level security;
 
--- 3. Create a public read/write policy so your Travel Companion app can sync without requiring login
+-- Public read/write policy for offline-first PWA sync without login
 create policy "Public trips full access" 
-  on trips 
+  on public.trips 
   for all 
   using (true) 
   with check (true);
 
--- 4. Enable Realtime WebSockets so changes sync instantly across devices
-alter publication supabase_realtime add table trips;
+-- Enable Realtime WebSockets for live multi-device updates
+alter publication supabase_realtime add table public.trips;
+
+-- ==========================================
+-- 2. TICKETS STORAGE BUCKET (PDFs & Passes)
+-- ==========================================
+-- Create the public 'tickets' bucket
+insert into storage.buckets (id, name, public)
+values ('tickets', 'tickets', true)
+on conflict (id) do update set public = true;
+
+-- Policy: Allow anyone with the app to read uploaded ticket PDFs/images
+create policy "Public read tickets"
+  on storage.objects for select
+  using (bucket_id = 'tickets');
+
+-- Policy: Allow uploading tickets into the bucket
+create policy "Public upload tickets"
+  on storage.objects for insert
+  with check (bucket_id = 'tickets');
+
+-- Policy: Allow deleting tickets from the bucket
+create policy "Public delete tickets"
+  on storage.objects for delete
+  using (bucket_id = 'tickets');
 ```
 
-You should see `Success. No rows returned`. Your database table is ready!
+You should see `Success. No rows returned`. Your database table AND your PDF ticket storage vault are now 100% ready!
+
+---
+
+### Alternative: Create Storage Bucket via UI
+If you prefer using the Supabase web interface instead of SQL for files:
+1. Click **"Storage"** in the left sidebar.
+2. Click **"New bucket"**.
+3. Name: `tickets` (all lowercase, exact match).
+4. Turn **ON** `Public bucket` (toggle to green).
+5. Click **"Save bucket"**.
 
 ---
 

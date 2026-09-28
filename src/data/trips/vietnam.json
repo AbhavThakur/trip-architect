@@ -13,10 +13,10 @@
   "accentColor": "purple",
   "summary": "Confirmed 7-day family expedition covering Da Nang beach, Ba Na Hills, Saturday Dragon Bridge fire show, Marble Mountains, Hoi An lantern town, Hanoi Old Quarter, Ninh Binh Trang An caves, and Halong Bay Aqua Cruise.",
   "basecamp": {
-    "name": "TMS Hotel Da Nang Beach (Days 1-3) & Peridot Grand Hanoi (Days 4-5) & Aqua Cruise (Day 6)",
-    "address": "292 Vo Nguyen Giap, Da Nang / 33 Duong Thanh, Old Quarter, Hanoi",
-    "phone": "+84 236 3755 999",
-    "checkIn": "Dec 4, 2026 (Da Nang) / Dec 7, 2026 (Hanoi) / Dec 9, 2026 (Aqua Cruise)"
+    "name": "Bluesun Hotel Da Nang (Days 1-3) & La Casa Hotel Hanoi (Days 4-5) & Amanda Cruise (Day 6)",
+    "address": "230 Vo Nguyen Giap, Da Nang / 28 Thi Sach, Hanoi / Tuan Chau Marina, Halong",
+    "phone": "+84 236 3960 000 / +91 9953022691 (Sujata - DreamSetGo)",
+    "checkIn": "Dec 4, 2026 (Da Nang) / Dec 7, 2026 (Hanoi) / Dec 9, 2026 (Amanda Cruise)"
   },
   "currency": {
     "code": "VND",
@@ -47,6 +47,19 @@
     ]
   },
   "tickets": [
+    {
+      "id": "ticket_dsg_voucher",
+      "name": "DreamSetGo_Vietnam_Tour_Voucher_7D6N.pdf",
+      "title": "DreamSetGo Vietnam Exclusive Tour Voucher (7D6N)",
+      "category": "activity",
+      "bookingRef": "DSG-VN-7D6N",
+      "passenger": "5 Adults (Sundeep, Shikha, Arjit, Aanya, Abhav)",
+      "notes": "DreamSetGo HNI Experiences • Consultant: Sujata Mukherjee (+91 9953022691)",
+      "size": 520000,
+      "uploadedAt": "2026-09-28T20:30:00Z",
+      "source": "dreamsetgo",
+      "url": "https://www.dreamsetgo.com"
+    },
     {
       "id": "ticket_cruise_1",
       "name": "Cozy_Bay_Grand_Cruise_Voucher_NRJ724054.pdf",
@@ -185,76 +198,76 @@
     "danang": {
       "key": "danang",
       "id": "stay-danang",
-      "name": "TMS Hotel Da Nang Beach",
+      "name": "Bluesun Hotel Da Nang (4★ Premium Category)",
       "city": "Da Nang (My Khe Beachfront)",
       "dates": "4 Dec – 7 Dec 2026 (3 Nights)",
-      "room": "Premier Ocean Front Suite / Connecting Family Rooms",
-      "address": "292 Vo Nguyen Giap, My An, Ngu Hanh Son, Da Nang",
-      "addressVi": "292 Võ Nguyên Giáp, Phường Mỹ An, Quận Ngũ Hành Sơn, Đà Nẵng",
-      "phone": "+84 236 3755 999",
-      "pnr": "TMS-BK-78921",
-      "voucher": "VOUCHER-TMS-2026",
-      "speakText": "Làm ơn chở tôi về khách sạn TMS mặt biển Võ Nguyên Giáp, Đà Nẵng",
-      "status": "Reserved",
+      "room": "Deluxe Room (Twin / Triple Sharing)",
+      "address": "230 Vo Nguyen Giap, Phuoc My, Son Tra, Da Nang",
+      "addressVi": "230 Võ Nguyên Giáp, Phước Mỹ, Sơn Trà, Đà Nẵng",
+      "phone": "+84 236 3960 000",
+      "pnr": "BLUESUN-DSG-2026",
+      "voucher": "DSG-VN-7D6N",
+      "speakText": "Làm ơn chở tôi về khách sạn Bluesun, số 230 Võ Nguyên Giáp, Đà Nẵng",
+      "status": "Quoted (4★ Premium)",
       "coords": [
-        16.0538,
-        108.2464
+        16.0688,
+        108.2468
       ],
       "amenities": [
-        "Beachfront",
-        "Rooftop Infinity Pool",
-        "Breakfast Included",
-        "Elevator & Senior Friendly"
+        "My Khe Beachfront",
+        "Rooftop Pool & Bar",
+        "Daily Breakfast Included",
+        "Deluxe Room Category"
       ]
     },
     "hanoi": {
       "key": "hanoi",
       "id": "stay-hanoi",
-      "name": "Peridot Grand Luxury Boutique Hotel",
-      "city": "Hanoi Old Quarter",
+      "name": "La Casa Hotel Hanoi (4★ Premium Category)",
+      "city": "Hanoi Old Quarter / French Quarter",
       "dates": "7 Dec – 9 Dec 2026 (2 Nights)",
-      "room": "Grand Deluxe Connecting Suite",
-      "address": "33 Duong Thanh, Cua Dong, Hoan Kiem, Hanoi",
-      "addressVi": "33 Đường Thành, Phường Cửa Đông, Quận Hoàn Kiếm, Hà Nội",
-      "phone": "+84 24 3828 0099",
-      "pnr": "PRD-HAN-55410",
-      "voucher": "VOUCHER-PERIDOT-2026",
-      "speakText": "Làm ơn chở tôi về khách sạn Peridot Grand, số 33 Đường Thành, Hoàn Kiếm, Hà Nội",
-      "status": "Reserved",
+      "room": "Deluxe Room (Twin / Triple Sharing)",
+      "address": "28 Thi Sach, Pham Dinh Ho, Hai Ba Trung, Hanoi",
+      "addressVi": "28 Thi Sách, Phạm Đình Hổ, Hai Bà Trưng, Hà Nội",
+      "phone": "+84 24 3333 5656",
+      "pnr": "LACASA-DSG-2026",
+      "voucher": "DSG-VN-7D6N",
+      "speakText": "Làm ơn chở tôi về khách sạn La Casa, số 28 Thi Sách, Hai Bà Trưng, Hà Nội",
+      "status": "Quoted (4★ Premium)",
       "coords": [
-        21.0315,
-        105.8458
+        21.0182,
+        105.8540
       ],
       "amenities": [
-        "Old Quarter Center",
-        "Infinity Rooftop Pool",
-        "Luxury Spa",
-        "Walkable to St. Joseph"
+        "French Quarter Location",
+        "Rooftop Swimming Pool",
+        "Daily Breakfast Included",
+        "Deluxe Room Category"
       ]
     },
     "halong": {
       "key": "halong",
       "id": "stay-cruise",
-      "name": "Aqua Cruise Halong Bay (Luxury 5-Star)",
-      "city": "Halong Bay / Lan Ha Bay",
+      "name": "Amanda Cruise Halong Bay (4★ Luxury Cruise)",
+      "city": "Ha Long Bay (UNESCO World Heritage Site)",
       "dates": "9 Dec – 10 Dec 2026 (1 Night Overnight Cruise)",
-      "room": "Executive Balcony Ocean Suites (All Meals Included)",
-      "address": "Tuan Chau International Marina, Halong City",
+      "room": "Deluxe Cabin (Ocean View) with Full Board Meals",
+      "address": "Tuan Chau International Marina, Halong City, Quang Ninh",
       "addressVi": "Cảng Tàu Khách Quốc Tế Tuần Châu, TP. Hạ Long, Quảng Ninh",
-      "phone": "+84 987 654 321",
-      "pnr": "AQ-CRUISE-9921",
-      "voucher": "VOUCHER-AQUA-2026",
-      "speakText": "Làm ơn chở tôi đến Cảng Tàu Khách Quốc Tế Tuần Châu đi tàu Aqua Cruise Hạ Long",
-      "status": "Reserved",
+      "phone": "+84 969 505 999",
+      "pnr": "AMANDA-DSG-2026",
+      "voucher": "DSG-VN-7D6N",
+      "speakText": "Làm ơn chở tôi đến Cảng Tàu Khách Quốc Tế Tuần Châu đi tàu Amanda Cruise Hạ Long",
+      "status": "Quoted (4★ Luxury Cruise)",
       "coords": [
         20.9312,
-        107.0125
+        106.9984
       ],
       "amenities": [
-        "Private Ocean Balcony",
-        "All Gourmet Meals",
-        "Kayaking & Bamboo Boat",
-        "Sunset Party"
+        "Deluxe Ocean View Cabin",
+        "Full Board (Lunch, Dinner, Breakfast, Brunch)",
+        "Sunset Party & Tai Chi Deck",
+        "Kayaking & Swimming Included"
       ]
     }
   },
@@ -511,14 +524,24 @@
         "status": "estimated"
       },
       {
-        "id": "b-4",
-        "item": "Da Nang Beachfront Hotel (3 Nights)",
-        "details": "TMS Hotel Da Nang Beach (Premier Oceanfront Suite)",
-        "total": 48000,
+        "id": "b-dsg-package",
+        "item": "DreamSetGo 7D6N Package (Land + Taxes + E-Visa)",
+        "details": "₹66,143/pax (Land $590 @ ROE 97 = ₹57,230 + 7% Taxes ₹4,063 + E-Visa ₹4,850)",
+        "total": 330715,
         "pax": 5,
         "category": "stays",
         "date": "2026-12-04",
-        "status": "estimated"
+        "status": "booked"
+      },
+      {
+        "id": "b-4",
+        "item": "Da Nang Hotel (Bluesun Hotel 4★)",
+        "details": "Bluesun Hotel Deluxe Room (Included in DreamSetGo Tour Package)",
+        "total": 0,
+        "pax": 5,
+        "category": "stays",
+        "date": "2026-12-04",
+        "status": "paid"
       },
       {
         "id": "b-5",
@@ -2078,6 +2101,7 @@
     }
   ],
   "emergency": {
+    "tourOperator": "DreamSetGo HNI Experiences (Sujata Mukherjee: +91 9953022691 / sujata.mukherjee@dreamsetgo.com)",
     "embassy": "Embassy of India, Hanoi: 58-60 Tran Phu, Ba Dinh (+84 24 3824 4989 / 24/7 Hotline: +84 90 408 5302)",
     "consulate": "Consulate General of India, Da Nang liaison support",
     "police": "113",

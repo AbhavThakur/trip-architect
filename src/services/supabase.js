@@ -121,8 +121,21 @@ export async function fetchTripFromCloud(tripId, fallbackData) {
           return { data: fallbackData, source: "cloud_resynced" };
         }
 
-        localStorage.setItem(cacheKey, JSON.stringify(cloudTrip));
-        return { data: cloudTrip, source: "cloud", updatedAt: data.updated_at };
+        const mergedTickets = Array.isArray(cloudTrip.tickets)
+          ? [
+              ...(fallbackData?.tickets || []).filter((ft) => !cloudTrip.tickets.some((ct) => ct.id === ft.id)),
+              ...cloudTrip.tickets
+            ]
+          : fallbackData?.tickets || [];
+
+        const syncedTrip = {
+          ...fallbackData,
+          ...cloudTrip,
+          tickets: mergedTickets
+        };
+
+        localStorage.setItem(cacheKey, JSON.stringify(syncedTrip));
+        return { data: syncedTrip, source: "cloud", updatedAt: data.updated_at };
       }
     } catch (e) {
       console.warn("Cloud fetch failed, falling back to local cache:", e);
@@ -146,7 +159,21 @@ export async function fetchTripFromCloud(tripId, fallbackData) {
       );
 
       if (isDatesMatch && isDaysMatch && hasBudget && isItineraryLenMatch && isChecklistValid) {
-        return { data: { ...fallbackData, ...parsed }, source: "cache" };
+        const mergedTickets = Array.isArray(parsed.tickets)
+          ? [
+              ...(fallbackData?.tickets || []).filter((ft) => !parsed.tickets.some((pt) => pt.id === ft.id)),
+              ...parsed.tickets
+            ]
+          : fallbackData?.tickets || [];
+
+        return { 
+          data: { 
+            ...fallbackData, 
+            ...parsed,
+            tickets: mergedTickets
+          }, 
+          source: "cache" 
+        };
       } else {
         // Cache is stale compared to fresh blueprint; update localStorage with new blueprint
         localStorage.setItem(cacheKey, JSON.stringify(fallbackData));

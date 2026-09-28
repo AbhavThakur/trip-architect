@@ -40,9 +40,15 @@ export default function AtAGlanceView({ days = [], onSelectDay, onOpenBudget, tr
           const dayWeekday = dateParts[0]?.trim() || `Day ${dayNum}`;
           const dayMonthDate = dateParts[1]?.trim() || "";
 
+          const dayStops = (day.places && day.places.length > 0)
+            ? day.places
+            : (day.events && day.events.length > 0)
+            ? day.events
+            : [];
+
           const highlights = day.atAGlanceHighlights && day.atAGlanceHighlights.length > 0
             ? day.atAGlanceHighlights
-            : (day.places || day.events || []).slice(0, 3).map(p => p.name || p.title);
+            : dayStops.slice(0, 4).map(p => p.name || p.title);
 
           const stayInfo = day.hotelName
             ? `🏨 Stay: ${day.hotelName}`
@@ -88,29 +94,69 @@ export default function AtAGlanceView({ days = [], onSelectDay, onOpenBudget, tr
                   )}
                 </div>
 
-                {/* Key Highlights Box */}
-                <div className="mt-3 bg-slate-50 dark:bg-slate-900/60 p-3 rounded-2xl border border-slate-200/60 dark:border-darkborder">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1.5">
-                    ⚡ Key Highlights
-                  </span>
-                  <ul className="text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                    {highlights.map((h, hIdx) => {
-                      if (typeof h === "string" && h.includes("<strong>")) {
+                {/* Full Day Chronological Itinerary (Compact, All Together) */}
+                <div className="mt-3 bg-slate-50 dark:bg-slate-900/60 p-3 rounded-2xl border border-slate-200/60 dark:border-darkborder space-y-2">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-slate-200/50 dark:border-slate-800">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                      <span>📋 Full Day Itinerary</span>
+                      <span className="text-slate-400 font-normal">({dayStops.length || highlights.length} stops)</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      All Together
+                    </span>
+                  </div>
+
+                  {dayStops.length > 0 ? (
+                    <div className="space-y-1.5 pt-0.5 max-h-72 overflow-y-auto no-scrollbar">
+                      {dayStops.map((stop, sIdx) => {
+                        const name = stop.name || stop.title || `Stop ${sIdx + 1}`;
+                        const time = stop.time || "";
+                        const cat = (stop.category || "").toLowerCase();
+
+                        const catEmoji = cat.includes("flight") || cat.includes("transit") ? "✈️" :
+                                         cat.includes("hotel") || cat.includes("stay") ? "🏨" :
+                                         cat.includes("food") || cat.includes("dining") || cat.includes("cafe") ? "🍜" :
+                                         cat.includes("shop") || cat.includes("market") ? "🛍️" :
+                                         cat.includes("cruise") || cat.includes("boat") ? "⛵" :
+                                         cat.includes("mountain") || cat.includes("hill") || cat.includes("peak") ? "⛰️" :
+                                         cat.includes("temple") || cat.includes("culture") ? "🛕" : "📍";
+
                         return (
-                          <li key={hIdx} className="flex items-start gap-1.5 leading-snug">
-                            <span className="text-indigo-500 font-bold shrink-0">•</span>
-                            <span dangerouslySetInnerHTML={{ __html: h }} />
-                          </li>
+                          <div key={sIdx} className="flex items-start gap-2 text-xs leading-snug">
+                            {time ? (
+                              <span className="px-1.5 py-0.5 rounded font-mono font-bold text-[10px] bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">
+                                {time}
+                              </span>
+                            ) : (
+                              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0 mt-1.5"></span>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1 truncate">
+                                <span className="text-xs shrink-0">{catEmoji}</span>
+                                <span className="font-bold text-slate-800 dark:text-slate-200 truncate">
+                                  {name}
+                                </span>
+                              </div>
+                              {stop.desc && (
+                                <p className="text-[10.5px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">
+                                  {stop.desc}
+                                </p>
+                              )}
+                            </div>
+                          </div>
                         );
-                      }
-                      return (
+                      })}
+                    </div>
+                  ) : (
+                    <ul className="text-xs text-slate-700 dark:text-slate-300 space-y-1">
+                      {highlights.map((h, hIdx) => (
                         <li key={hIdx} className="flex items-start gap-1.5 leading-snug">
                           <span className="text-indigo-500 font-bold shrink-0">•</span>
                           <span>{h}</span>
                         </li>
-                      );
-                    })}
-                  </ul>
+                      ))}
+                    </ul>
+                  )}
                 </div>
 
                 {/* Stay, Veg Meals, and Senior Mobility Badges */}

@@ -520,7 +520,9 @@ export default function InteractiveMap({
       {tilesLoading && (
         <div className="absolute inset-0 z-[399] flex flex-col items-center justify-center bg-slate-900/75 backdrop-blur-xs text-white pointer-events-none transition-opacity duration-300">
           <Compass className="w-8 h-8 text-amber-400 animate-spin mb-2" />
-          <span className="text-xs font-bold text-slate-200">Loading Vietnam Route Map...</span>
+          <span className="text-xs font-bold text-slate-200">
+            {destination ? `Loading ${destination.split(',')[0]} Route Map...` : (title || "Loading Route Map...")}
+          </span>
           <span className="text-[10px] text-slate-400 font-mono mt-0.5">High-speed global CDN (Zero API Key)</span>
         </div>
       )}
@@ -529,7 +531,7 @@ export default function InteractiveMap({
       <div
         ref={mapContainerRef}
         id="map"
-        className="w-full h-[520px] lg:h-[calc(100vh-140px)] min-h-[420px] bg-slate-900"
+        className="w-full h-[62vh] sm:h-[520px] lg:h-[calc(100vh-140px)] min-h-[360px] bg-slate-900"
       />
     </div>
   );

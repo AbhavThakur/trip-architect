@@ -12,6 +12,7 @@ import {
   List,
   Check,
   X,
+  Search,
   Sun,
   CloudSun,
   Coffee,
@@ -130,6 +131,15 @@ export default function ItineraryTimeline({
   const [viewMode, setViewMode] = useState("glance"); // "glance" | "detailed"
   const [editingStop, setEditingStop] = useState(null);
   const [globalStopIndex, setGlobalStopIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [copiedId, setCopiedId] = useState(null);
+
+  const handleCopyText = (text, id) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   const locationLookup = useMemo(() => {
     const map = {};
@@ -219,11 +229,22 @@ export default function ItineraryTimeline({
 
   // Stops to plot on map
   const mapStops = useMemo(() => {
-    if (selectedDayIdx === "all") {
-      return normalizedDays.flatMap((d) => d.places);
+    let stops = selectedDayIdx === "all" ? normalizedDays.flatMap((d) => d.places) : activeDay?.places || [];
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      stops = stops.filter((s) => (
+        s.name?.toLowerCase().includes(q) ||
+        s.vietnamese?.toLowerCase().includes(q) ||
+        s.localScript?.toLowerCase().includes(q) ||
+        s.addressLocalScript?.toLowerCase().includes(q) ||
+        s.kannada?.toLowerCase().includes(q) ||
+        s.desc?.toLowerCase().includes(q) ||
+        s.category?.toLowerCase().includes(q) ||
+        s.address?.toLowerCase().includes(q)
+      ));
     }
-    return activeDay?.places || [];
-  }, [normalizedDays, selectedDayIdx, activeDay]);
+    return stops;
+  }, [normalizedDays, selectedDayIdx, activeDay, searchQuery]);
 
   const shareWhatsAppPlan = (day) => {
     if (!day) return;
@@ -286,24 +307,76 @@ export default function ItineraryTimeline({
     setEditingStop(null);
   };
 
+  // Static Color & Theme Mapper (Fixes Tailwind dynamic class compilation issues)
+  const getStopTheme = (color = "indigo", category = "") => {
+    const c = (color || "").toLowerCase();
+    const cat = (category || "").toLowerCase();
+    if (c.includes("emerald") || cat.includes("dining") || cat.includes("food") || cat.includes("nature")) {
+      return {
+        iconBg: "bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60",
+        accent: "text-emerald-600 dark:text-emerald-400"
+      };
+    }
+    if (c.includes("blue") || cat.includes("stay") || cat.includes("hotel")) {
+      return {
+        iconBg: "bg-blue-50 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800/60",
+        accent: "text-blue-600 dark:text-blue-400"
+      };
+    }
+    if (c.includes("pink") || cat.includes("shop") || cat.includes("market")) {
+      return {
+        iconBg: "bg-pink-50 dark:bg-pink-950/70 text-pink-600 dark:text-pink-400 border border-pink-200/80 dark:border-pink-800/60",
+        accent: "text-pink-600 dark:text-pink-400"
+      };
+    }
+    if (c.includes("cyan") || cat.includes("water") || cat.includes("lake") || cat.includes("cruise")) {
+      return {
+        iconBg: "bg-cyan-50 dark:bg-cyan-950/70 text-cyan-600 dark:text-cyan-400 border border-cyan-200/80 dark:border-cyan-800/60",
+        accent: "text-cyan-600 dark:text-cyan-400"
+      };
+    }
+    if (c.includes("purple") || cat.includes("culture") || cat.includes("temple")) {
+      return {
+        iconBg: "bg-purple-50 dark:bg-purple-950/70 text-purple-600 dark:text-purple-400 border border-purple-200/80 dark:border-purple-800/60",
+        accent: "text-purple-600 dark:text-purple-400"
+      };
+    }
+    if (c.includes("rose")) {
+      return {
+        iconBg: "bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60",
+        accent: "text-rose-600 dark:text-rose-400"
+      };
+    }
+    if (c.includes("amber") || cat.includes("view") || cat.includes("mountain") || cat.includes("peak")) {
+      return {
+        iconBg: "bg-amber-50 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800/60",
+        accent: "text-amber-600 dark:text-amber-400"
+      };
+    }
+    return {
+      iconBg: "bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 border border-indigo-200/80 dark:border-indigo-800/60",
+      accent: "text-indigo-600 dark:text-indigo-400"
+    };
+  };
+
   // Render a Single Day Card in Detailed Timeline
   const renderDay = (dayObj, idx) => {
     const region = getRegionBadgeStyles(dayObj.regionCode, dayObj);
 
     return (
-      <div key={`day-${idx}`} className="bg-white dark:bg-darkcard rounded-3xl border border-slate-200 dark:border-darkborder p-4 sm:p-5 shadow-sm mb-4 space-y-4">
+      <div key={`day-${idx}`} className="bg-white dark:bg-darkcard rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-darkborder p-3.5 sm:p-5 shadow-sm mb-4 space-y-3 sm:space-y-4">
         {/* Day Header */}
         <div className="mb-2">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-slate-900 dark:bg-brand-600 text-white font-extrabold text-xs uppercase tracking-wider">
+              <span className="px-2.5 py-1 rounded-xl bg-slate-900 dark:bg-brand-600 text-white font-black text-xs uppercase tracking-wider shadow-xs">
                 DAY {dayObj.dayNum}
               </span>
-              <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 font-mono">
+              <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 font-mono">
                 {dayObj.date}
               </span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-black uppercase flex items-center gap-1 ${region.bg}`}>
                 {region.icon} {region.label}
               </span>
@@ -314,7 +387,7 @@ export default function ItineraryTimeline({
               )}
             </div>
           </div>
-          <h2 className="text-base sm:text-xl font-bold font-display text-slate-900 dark:text-white leading-tight mt-1">
+          <h2 className="text-base sm:text-xl font-black font-display text-slate-900 dark:text-white leading-tight mt-1">
             {dayObj.title}
           </h2>
           {dayObj.subtitle && (
@@ -328,7 +401,7 @@ export default function ItineraryTimeline({
             <div className="mt-2.5 flex items-center gap-2">
               <button
                 onClick={onOpenHotelCard || onOpenTaxi}
-                className="px-3 py-1 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded-full font-bold text-xs border border-blue-200 dark:border-blue-800 flex items-center gap-1.5 shadow-sm active:scale-95 transition"
+                className="px-3 py-1 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded-full font-bold text-xs border border-blue-200 dark:border-blue-800 flex items-center gap-1.5 shadow-xs active:scale-95 transition"
               >
                 <Hotel className="w-3.5 h-3.5 text-blue-500" />
                 <span>{dayObj.hotelName}</span>
@@ -339,259 +412,82 @@ export default function ItineraryTimeline({
 
         {/* Places List */}
         <div className="space-y-0">
-          {dayObj.places.map((stop, sIdx) => {
-            const catMeta = getCategoryBadge(stop.category);
-            const CatIcon = catMeta.icon;
-            const isActive = activeStopId === stop.id;
+          {(() => {
+            const isSearching = !!searchQuery.trim();
+            const q = searchQuery.toLowerCase();
+            const placesToRender = isSearching
+              ? dayObj.places.filter((s) => (
+                  s.name?.toLowerCase().includes(q) ||
+                  s.vietnamese?.toLowerCase().includes(q) ||
+                  s.localScript?.toLowerCase().includes(q) ||
+                  s.addressLocalScript?.toLowerCase().includes(q) ||
+                  s.kannada?.toLowerCase().includes(q) ||
+                  s.desc?.toLowerCase().includes(q) ||
+                  s.category?.toLowerCase().includes(q) ||
+                  s.address?.toLowerCase().includes(q)
+                ))
+              : dayObj.places;
 
-            return (
-              <React.Fragment key={stop.id}>
-                {/* Place Card */}
-                <div
-                  onClick={() => {
-                    setActiveStopId(stop.id);
-                    if (mobileView === "list" && window.innerWidth < 1024) {
-                      // Optional: pulse on map
-                    }
-                  }}
-                  className={"bg-white dark:bg-darkcard rounded-2xl border p-4 shadow-sm relative cursor-pointer active:scale-[0.99] transition-all " + (
+            if (isSearching && placesToRender.length === 0) {
+              if (selectedDayIdx === "all") return null;
+              return (
+                <div className="p-4 text-center text-xs text-slate-400 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
+                  <span>No stops on Day {dayObj.dayNum} matching <strong>"{searchQuery}"</strong></span>
+                </div>
+              );
+            }
+
+            return placesToRender.map((stop, sIdx) => {
+              const catMeta = getCategoryBadge(stop.category);
+              const CatIcon = catMeta.icon;
+              const isActive = activeStopId === stop.id;
+              const theme = getStopTheme(stop.color, stop.category);
+
+              return (
+                <React.Fragment key={stop.id}>
+                  {/* Place Card: Mobile-Optimized with Full-Width Title and Independent Action Bar */}
+                  <div
+                    onClick={() => {
+                      setActiveStopId(stop.id);
+                    }}
+                  className={"bg-white dark:bg-darkcard rounded-2xl sm:rounded-3xl border p-3.5 sm:p-4 shadow-xs relative cursor-pointer active:scale-[0.99] transition-all " + (
                     isActive
                       ? "border-amber-500 ring-2 ring-amber-400/50 dark:ring-amber-500/40 shadow-md"
-                      : "border-slate-200 dark:border-darkborder hover:border-slate-300 dark:hover:border-slate-700"
+                      : "border-slate-200/90 dark:border-darkborder hover:border-slate-300 dark:hover:border-slate-700"
                   )}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3.5 flex-1 min-w-0">
-                      {/* Icon */}
-                      <div className={`w-10 h-10 rounded-2xl bg-${stop.color}-50 dark:bg-${stop.color}-950/60 text-${stop.color}-600 flex items-center justify-center text-lg shrink-0 mt-0.5 shadow-sm`}>
-                        <i className={`fa-solid ${stop.icon}`}></i>
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-mono text-xs font-bold text-slate-500 dark:text-slate-400">
-                            {stop.time}
-                          </span>
-                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border flex items-center gap-1 ${catMeta.bg}`}>
-                            <CatIcon className="w-3 h-3" />
-                            <span>{catMeta.label}</span>
-                          </span>
-                        </div>
-
-                        <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white mt-1 leading-snug">
-                          {stop.name}
-                        </h3>
-
-                        {(stop.addressLocalScript || stop.localScript || stop.kannada || stop.vietnamese) && (
-                          <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold block mt-0.5">
-                            {stop.addressLocalScript || stop.localScript || stop.kannada || stop.vietnamese}
-                          </span>
-                        )}
-
-                        {stop.address && (
-                          <span className="text-[10px] text-slate-400 dark:text-slate-500 block truncate mt-0.5 flex items-center gap-1">
-                            <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
-                            <span>{stop.address}</span>
-                          </span>
-                        )}
-
-                        {stop.desc && (
-                          <p className="text-xs text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
-                            {stop.desc}
-                          </p>
-                        )}
-
-                        {/* Must-Buy Gem & Bargaining Box */}
-                        {stop.shoppingGem && (
-                          <div className="mt-2.5 p-3 rounded-2xl bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950/40 dark:to-purple-950/30 border border-pink-200/80 dark:border-pink-800/60 text-xs shadow-2xs">
-                            <div className="flex items-center gap-1.5 font-bold text-pink-700 dark:text-pink-300 text-[11px]">
-                              <ShoppingBag className="w-3.5 h-3.5 text-pink-500" />
-                              <span>Must-Buy Gem & Bargaining Guidance</span>
-                            </div>
-                            <p className="text-slate-700 dark:text-slate-200 text-xs mt-1 leading-relaxed font-medium">
-                              {stop.shoppingGem}
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Insider Pro Tip Box */}
-                        {stop.insiderTip && (
-                          <div className="mt-2 p-2.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/50 text-xs">
-                            <div className="flex items-center gap-1.5 font-bold text-emerald-800 dark:text-emerald-300 text-[11px]">
-                              <Lightbulb className="w-3.5 h-3.5 text-emerald-500" />
-                              <span>Insider Pro Tip</span>
-                            </div>
-                            <p className="text-slate-700 dark:text-slate-300 text-[11px] mt-0.5 leading-relaxed">
-                              {stop.insiderTip}
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Senior Mobility & Comfort Advisory */}
-                        {(stop.seniorTip || (seniorMode && stop.seniorFriendly)) && (
-                          <div className="mt-2 p-2.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/50 text-xs">
-                            <div className="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-300 text-[11px]">
-                              <UserCheck className="w-3.5 h-3.5 text-amber-500" />
-                              <span>Senior Mobility Advisory</span>
-                            </div>
-                            <p className="text-slate-700 dark:text-slate-300 text-[11px] mt-0.5 leading-relaxed">
-                              {stop.seniorTip || "Level terrain, wheelchair accessible or elevator available."}
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Photo Op Badge */}
-                        {stop.photoOp && (
-                          <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-sky-700 dark:text-sky-300 font-semibold bg-sky-50 dark:bg-sky-950/40 px-2.5 py-1 rounded-xl border border-sky-200/80 dark:border-sky-800/60 w-fit">
-                            <Camera className="w-3.5 h-3.5 text-sky-500" />
-                            <span>Photo Op: {stop.photoOp}</span>
-                          </div>
-                        )}
-
-                        {/* Inline Connecting Flight Banners */}
-                        {stop.flightKey && (
-                          <div className="mt-2.5 space-y-2">
-                            {(stop.flightKey === "del_han" || stop.flightKey === "han_del") ? (
-                              flights
-                                .filter((f) =>
-                                  stop.flightKey === "del_han"
-                                    ? f.key === "del_han" || f.key === "blr_han"
-                                    : f.key === "han_del" || f.key === "han_blr"
-                                )
-                                .map((f) => (
-                                  <FlightBanner key={f.key || f.sector} flight={f} />
-                                ))
-                            ) : (
-                              <FlightBanner flight={flights.find((f) => f.key === stop.flightKey)} />
-                            )}
-                          </div>
-                        )}
-
-                        {/* Deep Action Buttons, Tags & Senior Comfort */}
-                        <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-                          {stop.hotelKey && hotels[stop.hotelKey] && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                const h = hotels[stop.hotelKey];
-                                if (onOpenTaxi) {
-                                  onOpenTaxi({
-                                    name: h.name,
-                                    vietnamese: h.name,
-                                    address: h.addressVi || h.address,
-                                    city: h.city,
-                                    phone: h.phone,
-                                    coords: h.coords
-                                  });
-                                } else if (onOpenHotelCard) {
-                                  onOpenHotelCard();
-                                }
-                              }}
-                              className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 font-bold text-xs flex items-center gap-1 active:scale-95 hover:bg-blue-100 dark:hover:bg-blue-900 transition"
-                            >
-                              <Hotel className="w-3 h-3 text-blue-500" />
-                              <span>Stay Card [{hotels[stop.hotelKey].pnr || "CONFIRMED"}]</span>
-                            </button>
-                          )}
-
-                          {stop.address && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (onOpenTaxi) onOpenTaxi(stop);
-                              }}
-                              className="px-2.5 py-1 rounded-lg bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/60 text-sky-700 dark:text-sky-300 font-bold text-xs flex items-center gap-1 active:scale-95"
-                              title="Show Taxi / Auto Driver Card with local address"
-                            >
-                              <Car className="w-3 h-3 text-sky-500" />
-                              <span>Taxi Card</span>
-                            </button>
-                          )}
-
-                          {stop.bookingUrl && (
-                            <a
-                              href={stop.bookingUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-xs active:scale-95 transition"
-                            >
-                              <ExternalLink className="w-3 h-3" />
-                              <span>{stop.bookingLabel || "Book Online"}</span>
-                            </a>
-                          )}
-
-                          {stop.bookingAltUrl && (
-                            <a
-                              href={stop.bookingAltUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-800 font-bold text-xs flex items-center gap-1 hover:bg-blue-200 active:scale-95 transition"
-                            >
-                              <ExternalLink className="w-2.5 h-2.5" />
-                              <span>{stop.bookingAltLabel || "Pre-filled Link"}</span>
-                            </a>
-                          )}
-
-                          {stop.bookingThirdUrl && (
-                            <a
-                              href={stop.bookingThirdUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1 hover:bg-slate-300 active:scale-95 transition"
-                            >
-                              <ExternalLink className="w-2.5 h-2.5" />
-                              <span>{stop.bookingThirdLabel || "Comparison Link"}</span>
-                            </a>
-                          )}
-
-                          {stop.ticketLink && !stop.bookingUrl && (
-                            <a
-                              href={stop.ticketLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 font-bold text-xs flex items-center gap-1 active:scale-95"
-                            >
-                              <Ticket className="w-3 h-3" />
-                              <span>Tickets</span>
-                            </a>
-                          )}
-
-                          {stop.tags && stop.tags.map((t, tIdx) => (
-                            <span key={tIdx} className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold text-[11px]">
-                              {t}
-                            </span>
-                          ))}
-
-                          {seniorMode && stop.seniorFriendly && (
-                            <span className="bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 font-bold px-2 py-0.5 rounded text-[10px] flex items-center gap-1 border border-amber-300 dark:border-amber-800">
-                              <UserCheck className="w-3 h-3" /> Senior Comfort
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                  {/* Top Meta Bar: Time, Category Pill, Price + Right Action Icons */}
+                  <div className="flex items-center justify-between gap-2 pb-2 mb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
+                      <span className="font-mono text-[11px] sm:text-xs font-black text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                        {stop.time}
+                      </span>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border flex items-center gap-1 ${catMeta.bg}`}>
+                        <CatIcon className="w-3 h-3" />
+                        <span>{catMeta.label}</span>
+                      </span>
+                      {stop.price && (
+                        <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-200/50 dark:border-emerald-800/50">
+                          {stop.price}
+                        </span>
+                      )}
                     </div>
 
-                    {/* Right Side Action Buttons */}
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      {/* Audio Pronunciation Button (only for Vietnamese language destinations) */}
+                    {/* Quick Micro-Actions: Audio, Locate Map, Google Maps */}
+                    <div className="flex items-center gap-1 shrink-0">
                       {trip?.id?.includes("vietnam") && stop.vietnamese && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             speakVietnamese(stop.vietnamese || stop.name);
                           }}
-                          className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition"
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-200 dark:border-emerald-800/60 active:scale-95 transition"
                           title="Pronounce in Vietnamese"
                         >
-                          <Volume2 className="w-4 h-4 text-emerald-500" />
+                          <Volume2 className="w-3.5 h-3.5" />
                         </button>
                       )}
 
-                      {/* Map Locate Button */}
                       {stop.coords && (
                         <button
                           onClick={(e) => {
@@ -599,62 +495,284 @@ export default function ItineraryTimeline({
                             setActiveStopId(stop.id);
                             if (mobileView === "list" && window.innerWidth < 1024) {
                               setMobileView("map");
-                              setTimeout(() => window.dispatchEvent(new Event("resize")), 80);
+                              setTimeout(() => window.dispatchEvent(new Event("resize")), 100);
                             }
                           }}
-                          className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition"
-                          title="Locate and zoom on Map"
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-200 dark:border-indigo-800/60 active:scale-95 transition"
+                          title="Locate on Map"
                         >
-                          <Compass className="w-4 h-4 text-blue-500" />
+                          <Compass className="w-3.5 h-3.5" />
                         </button>
                       )}
 
-                      {/* Google Maps External */}
                       {stop.coords && (
                         <a
                           href={`https://www.google.com/maps/search/?api=1&query=${stop.coords[0]},${stop.coords[1]}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition"
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center border border-slate-200 dark:border-slate-700 active:scale-95 transition"
                           title="Open Google Maps app"
                         >
-                          <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                          <ExternalLink className="w-3 h-3 text-slate-500" />
                         </a>
                       )}
                     </div>
                   </div>
+
+                  {/* Main Content Area: Category Icon + Full Width Title & Details */}
+                  <div className="flex items-start gap-3">
+                    {/* Icon */}
+                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl ${theme.iconBg} flex items-center justify-center text-base shrink-0 mt-0.5 shadow-xs`}>
+                      <i className={`fa-solid ${stop.icon}`}></i>
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-snug break-words">
+                        {stop.name}
+                      </h3>
+
+                      {(stop.addressLocalScript || stop.localScript || stop.kannada || stop.vietnamese) && (
+                        <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                          <span className="text-[11px] sm:text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold break-words">
+                            {stop.addressLocalScript || stop.localScript || stop.kannada || stop.vietnamese}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCopyText(stop.addressLocalScript || stop.localScript || stop.kannada || stop.vietnamese, `local-${stop.id}`);
+                            }}
+                            className="p-1 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900 border border-emerald-200/60 dark:border-emerald-800/60 cursor-pointer active:scale-95 transition"
+                            title="Copy local name for Grab/Taxi"
+                          >
+                            {copiedId === `local-${stop.id}` ? <Check className="w-2.5 h-2.5 text-emerald-500" /> : <Copy className="w-2.5 h-2.5" />}
+                          </button>
+                        </div>
+                      )}
+
+                      {stop.address && (
+                        <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block mt-1 flex items-start gap-1 break-words leading-tight">
+                          <MapPin className="w-3 h-3 text-slate-400 shrink-0 mt-0.5" />
+                          <span>{stop.address}</span>
+                        </span>
+                      )}
+
+                      {stop.desc && (
+                        <p className="text-xs text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed break-words">
+                          {stop.desc}
+                        </p>
+                      )}
+
+                      {/* Must-Buy Gem & Bargaining Box */}
+                      {stop.shoppingGem && (
+                        <div className="mt-2.5 p-3 rounded-2xl bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950/40 dark:to-purple-950/30 border border-pink-200/80 dark:border-pink-800/60 text-xs shadow-2xs">
+                          <div className="flex items-center gap-1.5 font-bold text-pink-700 dark:text-pink-300 text-[11px]">
+                            <ShoppingBag className="w-3.5 h-3.5 text-pink-500 shrink-0" />
+                            <span>Must-Buy Gem & Bargaining Guidance</span>
+                          </div>
+                          <p className="text-slate-700 dark:text-slate-200 text-xs mt-1 leading-relaxed font-medium">
+                            {stop.shoppingGem}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Insider Pro Tip Box */}
+                      {stop.insiderTip && (
+                        <div className="mt-2 p-2.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/50 text-xs">
+                          <div className="flex items-center gap-1.5 font-bold text-emerald-800 dark:text-emerald-300 text-[11px]">
+                            <Lightbulb className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                            <span>Insider Pro Tip</span>
+                          </div>
+                          <p className="text-slate-700 dark:text-slate-300 text-[11px] mt-0.5 leading-relaxed">
+                            {stop.insiderTip}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Senior Mobility & Comfort Advisory */}
+                      {(stop.seniorTip || (seniorMode && stop.seniorFriendly)) && (
+                        <div className="mt-2 p-2.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/50 text-xs">
+                          <div className="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-300 text-[11px]">
+                            <UserCheck className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                            <span>Senior Mobility Advisory</span>
+                          </div>
+                          <p className="text-slate-700 dark:text-slate-300 text-[11px] mt-0.5 leading-relaxed">
+                            {stop.seniorTip || "Level terrain, wheelchair accessible or elevator available."}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Photo Op Badge */}
+                      {stop.photoOp && (
+                        <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-sky-700 dark:text-sky-300 font-semibold bg-sky-50 dark:bg-sky-950/40 px-2.5 py-1 rounded-xl border border-sky-200/80 dark:border-sky-800/60 w-fit">
+                          <Camera className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                          <span>Photo Op: {stop.photoOp}</span>
+                        </div>
+                      )}
+
+                      {/* Inline Connecting Flight Banners */}
+                      {stop.flightKey && (
+                        <div className="mt-2.5 space-y-2">
+                          {(stop.flightKey === "del_han" || stop.flightKey === "han_del") ? (
+                            flights
+                              .filter((f) =>
+                                stop.flightKey === "del_han"
+                                  ? f.key === "del_han" || f.key === "blr_han"
+                                  : f.key === "han_del" || f.key === "han_blr"
+                              )
+                              .map((f) => (
+                                <FlightBanner key={f.key || f.sector} flight={f} />
+                              ))
+                          ) : (
+                            <FlightBanner flight={flights.find((f) => f.key === stop.flightKey)} />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Deep Action Buttons, Tags & Senior Comfort */}
+                  <div className="flex flex-wrap items-center gap-1.5 pt-2.5 mt-3 border-t border-slate-100 dark:border-slate-800/80">
+                    {stop.hotelKey && hotels[stop.hotelKey] && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const h = hotels[stop.hotelKey];
+                          if (onOpenTaxi) {
+                            onOpenTaxi({
+                              name: h.name,
+                              vietnamese: h.name,
+                              address: h.addressVi || h.address,
+                              city: h.city,
+                              phone: h.phone,
+                              coords: h.coords
+                            });
+                          } else if (onOpenHotelCard) {
+                            onOpenHotelCard();
+                          }
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 font-bold text-xs flex items-center gap-1 active:scale-95 hover:bg-blue-100 dark:hover:bg-blue-900 transition"
+                      >
+                        <Hotel className="w-3 h-3 text-blue-500" />
+                        <span>Stay Card [{hotels[stop.hotelKey].pnr || "CONFIRMED"}]</span>
+                      </button>
+                    )}
+
+                    {stop.address && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (onOpenTaxi) onOpenTaxi(stop);
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/60 text-sky-700 dark:text-sky-300 font-bold text-xs flex items-center gap-1 active:scale-95"
+                        title="Show Taxi / Auto Driver Card with local address"
+                      >
+                        <Car className="w-3 h-3 text-sky-500" />
+                        <span>Taxi Card</span>
+                      </button>
+                    )}
+
+                    {stop.bookingUrl && (
+                      <a
+                        href={stop.bookingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-xs active:scale-95 transition"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>{stop.bookingLabel || "Book Online"}</span>
+                      </a>
+                    )}
+
+                    {stop.bookingAltUrl && (
+                      <a
+                        href={stop.bookingAltUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-800 font-bold text-xs flex items-center gap-1 hover:bg-blue-200 active:scale-95 transition"
+                      >
+                        <ExternalLink className="w-2.5 h-2.5" />
+                        <span>{stop.bookingAltLabel || "Pre-filled Link"}</span>
+                      </a>
+                    )}
+
+                    {stop.bookingThirdUrl && (
+                      <a
+                        href={stop.bookingThirdUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1 hover:bg-slate-300 active:scale-95 transition"
+                      >
+                        <ExternalLink className="w-2.5 h-2.5" />
+                        <span>{stop.bookingThirdLabel || "Comparison Link"}</span>
+                      </a>
+                    )}
+
+                    {stop.ticketLink && !stop.bookingUrl && (
+                      <a
+                        href={stop.ticketLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 font-bold text-xs flex items-center gap-1 active:scale-95"
+                      >
+                        <Ticket className="w-3 h-3" />
+                        <span>Tickets</span>
+                      </a>
+                    )}
+
+                    {stop.tags && stop.tags.map((t, tIdx) => (
+                      <span key={tIdx} className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold text-[11px]">
+                        {t}
+                      </span>
+                    ))}
+
+                    {seniorMode && stop.seniorFriendly && (
+                      <span className="bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 font-bold px-2 py-0.5 rounded text-[10px] flex items-center gap-1 border border-amber-300 dark:border-amber-800">
+                        <UserCheck className="w-3 h-3" /> Senior Comfort
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Time Gap Connector */}
+                {/* Mobile-Friendly Transit Rail Connector */}
                 {stop.transitToNext && sIdx < dayObj.places.length - 1 && (
-                  <div className="py-2.5 px-3 flex items-center gap-3 relative">
-                    <div className="w-10 flex justify-center shrink-0">
-                      <div className="h-8 border-l-2 border-dashed border-slate-300 dark:border-slate-700"></div>
+                  <div className="py-2.5 px-2 flex items-center gap-2.5 relative">
+                    <div className="w-9 sm:w-10 flex justify-center shrink-0">
+                      <div className="h-7 border-l-2 border-dashed border-indigo-300 dark:border-indigo-700/60"></div>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-slate-500 font-medium bg-slate-50 dark:bg-slate-900/60 px-3 py-1 rounded-full border border-slate-200/80 dark:border-darkborder shadow-2xs">
-                      <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px]">
+                    <div className="inline-flex items-center gap-2 text-xs font-medium bg-slate-100/90 dark:bg-slate-900/90 px-3 py-1.5 rounded-full border border-slate-200/90 dark:border-darkborder shadow-2xs max-w-full">
+                      <div className="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px] shrink-0">
                         <i className={`fa-solid ${stop.transitToNext.icon || "fa-car-side"}`}></i>
                       </div>
-                      <span className="font-bold text-slate-700 dark:text-slate-300">
+                      <span className="font-bold text-slate-900 dark:text-white shrink-0">
                         {stop.transitToNext.time}
                       </span>
-                      <span>•</span>
-                      <span>{stop.transitToNext.desc}</span>
+                      <span className="text-slate-400">•</span>
+                      <span className="text-slate-600 dark:text-slate-300 truncate">
+                        {stop.transitToNext.desc}
+                      </span>
                       {stop.transitToNext.dist && (
-                        <span className="text-slate-400 font-normal">({stop.transitToNext.dist})</span>
+                        <span className="text-slate-400 font-normal shrink-0">
+                          ({stop.transitToNext.dist})
+                        </span>
                       )}
                     </div>
                   </div>
                 )}
               </React.Fragment>
             );
-          })}
+          });
+        })()}
         </div>
 
         {/* Dedicated Day Shopping & Must-Buy Gems Box */}
         {dayObj.shoppingGems && dayObj.shoppingGems.length > 0 && (
-          <div className="mt-4 bg-gradient-to-r from-pink-50/80 via-purple-50/50 to-pink-50/80 dark:from-pink-950/20 dark:via-purple-950/20 dark:to-pink-950/20 rounded-2xl p-3.5 border border-pink-200/80 dark:border-pink-900/50">
+          <div className="mt-4 bg-gradient-to-r from-pink-50/80 via-purple-50/50 to-pink-50/80 dark:from-pink-950/20 dark:via-purple-950/20 dark:to-pink-950/20 rounded-2xl p-3 sm:p-3.5 border border-pink-200/80 dark:border-pink-900/50">
             <div className="flex items-center justify-between pb-2 border-b border-pink-200/50 dark:border-pink-900/50 mb-2.5">
               <span className="font-bold text-xs text-pink-900 dark:text-pink-300 flex items-center gap-1.5">
                 <ShoppingBag className="w-3.5 h-3.5 text-pink-600" />
@@ -686,8 +804,8 @@ export default function ItineraryTimeline({
     <div className="space-y-4">
       {/* ⚡ LIVE "UP NEXT" HERO CARD CAROUSEL */}
       {upNextStop && (
-        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-950 text-white rounded-3xl p-4 border border-slate-700/80 shadow-md">
-          <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-700/60">
+        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-950 text-white rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-slate-700/80 shadow-md">
+          <div className="flex items-center justify-between gap-2 pb-2 border-b border-slate-700/60">
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => cycleNextStop(-1)}
@@ -698,7 +816,7 @@ export default function ItineraryTimeline({
               </button>
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
-                Scheduled Stop <span className="font-mono text-white">({globalStopIndex + 1}/{allStops.length})</span>
+                Scheduled <span className="font-mono text-white">({globalStopIndex + 1}/{allStops.length})</span>
               </span>
               <button
                 onClick={() => cycleNextStop(1)}
@@ -710,93 +828,95 @@ export default function ItineraryTimeline({
             </div>
             <button
               onClick={() => shareWhatsAppPlan(normalizedDays.find((d) => d.dayNum === upNextStop.dayNum))}
-              className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 active:scale-95 shadow transition"
+              className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 active:scale-95 shadow-xs transition"
             >
               <Share2 className="w-3 h-3" />
-              <span>Share Day Plan</span>
+              <span className="hidden sm:inline">Share Day Plan</span>
+              <span className="sm:hidden">Share</span>
             </button>
           </div>
 
           <div className="mt-2.5 flex items-start justify-between gap-3">
-            <div>
+            <div className="min-w-0 flex-1">
               <span className="text-xs font-mono font-bold text-amber-400">
                 {upNextStop.time || "Scheduled"} (Day {upNextStop.dayNum})
               </span>
-              <h3 className="text-base sm:text-lg font-bold text-white leading-tight mt-0.5">
+              <h3 className="text-sm sm:text-lg font-bold text-white leading-tight mt-0.5 truncate">
                 {upNextStop.name}
               </h3>
-              <p className="text-xs text-slate-300 mt-1 line-clamp-2">
+              <p className="text-xs text-slate-300 mt-1 line-clamp-2 leading-relaxed">
                 {upNextStop.desc}
               </p>
             </div>
             <div className="flex flex-col gap-1.5 shrink-0">
               <button
                 onClick={onOpenTaxi || onOpenHotelCard}
-                className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1 shadow active:scale-95 transition"
+                className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1 shadow-xs active:scale-95 transition"
               >
                 <Car className="w-3.5 h-3.5 text-amber-300" />
                 <span>Taxi</span>
               </button>
-              <button
-                onClick={() => speakVietnamese(upNextStop.name)}
-                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95 transition"
-              >
-                <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Audio</span>
-              </button>
+              {trip?.id?.includes("vietnam") && (
+                <button
+                  onClick={() => speakVietnamese(upNextStop.name)}
+                  className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95 transition"
+                >
+                  <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Audio</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
       )}
 
       {/* ⚡ VIEW MODE SWITCHER: AT A GLANCE vs DETAILED HOURLY */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-3.5 sm:p-4 border border-indigo-800/60 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-indigo-800/60 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <div className="w-8 h-8 rounded-xl bg-indigo-600/40 border border-indigo-400/40 text-indigo-300 flex items-center justify-center font-bold text-sm shrink-0">
             <Compass className="w-4 h-4" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold font-display leading-tight">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-sm sm:text-base font-black font-display leading-tight truncate">
                 {trip?.title ? `Master Blueprint: ${trip.title}` : (tripTitle || "Master Blueprint")}
               </h2>
               {trip?.badge && (
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold uppercase">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold uppercase shrink-0">
                   {trip.badge}
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-slate-300 mt-0.5">
+            <p className="text-[11px] text-slate-300 mt-0.5 truncate">
               {trip?.daysCount ? `${trip.daysCount} Days ` : `${normalizedDays.length} Days `}
               {trip?.dates ? `(${trip.dates}) ` : ""}
               {trip?.travelers ? `• ${trip.travelers} ` : ""}
-              {trip?.destination ? `• ${trip.destination}` : ""}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center bg-slate-950/80 p-1 rounded-2xl border border-slate-800 shrink-0 w-full sm:w-auto justify-center">
+        <div className="grid grid-cols-2 bg-slate-950/80 p-1 rounded-xl sm:rounded-2xl border border-slate-800 shrink-0 w-full sm:w-auto">
           <button
             onClick={() => setViewMode("glance")}
-            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 " + (
+            className={"px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer " + (
               viewMode === "glance"
-                ? "bg-indigo-600 text-white shadow-md font-bold"
+                ? "bg-indigo-600 text-white shadow-sm font-bold"
                 : "text-slate-400 hover:text-white"
             )}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>⚡ At A Glance</span>
+            <span>⚡ Glance</span>
           </button>
           <button
             onClick={() => setViewMode("detailed")}
-            className={"px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 " + (
+            className={"px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer " + (
               viewMode === "detailed"
-                ? "bg-indigo-600 text-white shadow-md font-bold"
+                ? "bg-indigo-600 text-white shadow-sm font-bold"
                 : "text-slate-400 hover:text-white"
             )}
           >
             <List className="w-3.5 h-3.5" />
-            <span>📋 Detailed Hourly</span>
+            <span>📋 Timeline</span>
           </button>
         </div>
       </div>
@@ -817,20 +937,53 @@ export default function ItineraryTimeline({
         </div>
       ) : (
         <div id="detailed-timeline-view-wrapper" className="space-y-3.5">
+          {/* Quick Search & Filter Bar for Phone Mode */}
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search stops, cafes, viewpoints, temples, transit..."
+              className="w-full bg-white dark:bg-darkcard border border-slate-200 dark:border-darkborder rounded-xl pl-8 pr-8 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-xs"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2.5 top-2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-md cursor-pointer"
+                title="Clear stop search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {searchQuery.trim() && (
+            <div className="flex items-center justify-between text-xs px-2 text-slate-500 dark:text-slate-400">
+              <span>Filtering stops matching: <strong className="text-amber-500 dark:text-amber-400 font-bold">"{searchQuery}"</strong></span>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="text-[11px] text-brand-600 dark:text-brand-400 font-bold hover:underline cursor-pointer"
+              >
+                Clear Filter
+              </button>
+            </div>
+          )}
+
           {/* Day Selector Pills Bar */}
-          <div className="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-2 shadow-sm flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <div className="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-1.5 sm:p-2 shadow-xs flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth">
             <button
               onClick={() => {
                 setSelectedDayIdx("all");
                 setActiveStopId(null);
               }}
-              className={"px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 shadow-sm transition-all " + (
+              className={"px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 shadow-xs transition-all cursor-pointer " + (
                 selectedDayIdx === "all"
-                  ? "bg-slate-900 text-white dark:bg-brand-600"
-                  : "bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100"
+                  ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
               )}
             >
-              All {normalizedDays.length} Days
+              All ({normalizedDays.length})
             </button>
 
             {normalizedDays.map((d, idx) => {
@@ -843,34 +996,48 @@ export default function ItineraryTimeline({
                     setSelectedDayIdx(idx);
                     setActiveStopId(null);
                   }}
-                  className={"px-2.5 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all flex items-center gap-1 " + (
+                  className={"px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer " + (
                     isSelected
                       ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
-                      : "bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100"
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
                   )}
                 >
-                  <span>D{d.dayNum} {d.title?.split(" ")[0]} {d.regionCode ? region.icon : ""}</span>
+                  <span>Day {d.dayNum}</span>
+                  <span className="opacity-80 font-normal text-[11px] truncate max-w-[90px]">{d.title?.split(" ")[0]}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Mobile Map / Timeline View Toggle */}
-          <div className="lg:hidden flex items-center justify-between bg-white dark:bg-darkcard p-2 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm text-xs">
-            <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-              <Compass className="w-4 h-4 text-rose-600" />
-              <span>{mobileView === "map" ? "Interactive Route Map" : "Detailed Timeline List"}</span>
-            </span>
-            <button
-              onClick={() => {
-                setMobileView(mobileView === "list" ? "map" : "list");
-                setTimeout(() => window.dispatchEvent(new Event("resize")), 80);
-              }}
-              className="px-3 py-1 bg-slate-900 dark:bg-brand-600 text-white font-bold rounded-xl shadow flex items-center gap-1.5 active:scale-95"
-            >
-              {mobileView === "list" ? <MapIcon className="w-3.5 h-3.5" /> : <List className="w-3.5 h-3.5" />}
-              <span>{mobileView === "list" ? "Show Map" : "Show Timeline"}</span>
-            </button>
+          {/* Sticky Mobile Segmented View Switcher: List vs Map */}
+          <div className="lg:hidden sticky top-[54px] z-30 bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800 shadow-md">
+            <div className="grid grid-cols-2 gap-1 text-xs font-bold">
+              <button
+                onClick={() => setMobileView("list")}
+                className={`py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  mobileView === "list"
+                    ? "bg-brand-600 text-white shadow-sm font-bold"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <List className="w-3.5 h-3.5" />
+                <span>Timeline List</span>
+              </button>
+              <button
+                onClick={() => {
+                  setMobileView("map");
+                  setTimeout(() => window.dispatchEvent(new Event("resize")), 100);
+                }}
+                className={`py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  mobileView === "map"
+                    ? "bg-indigo-600 text-white shadow-sm font-bold"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <MapIcon className="w-3.5 h-3.5" />
+                <span>Interactive Map</span>
+              </button>
+            </div>
           </div>
 
           {/* 2-Column Split: Timeline Cards (Left 7 Cols) & Sticky Leaflet Map (Right 5 Cols) */}

@@ -3,205 +3,74 @@ import {
   Ticket, Bus, Hotel, Car, CheckCircle2, Clock, ExternalLink,
   Copy, Check, Calendar, MapPin, Sparkles, Navigation, AlertCircle,
   FileText, ShieldCheck, Download, ArrowRight, Share2, Info,
-  Upload, Trash2, Eye, Loader2, FileCheck, Plane
+  Upload, Trash2, Eye, Loader2, FileCheck, Plane, X, Plus,
+  Maximize2, ZoomIn, ZoomOut
 } from "lucide-react";
 import { uploadTicketPdf, deleteTicketPdf } from "../services/supabase";
-
-// Dynamic builder that derives booking items strictly from the given trip
-export function getQuickBookingsForTrip(trip) {
-  if (!trip) return [];
-
-  // 1. Explicit quickBookings in trip JSON take priority
-  if (Array.isArray(trip.quickBookings) && trip.quickBookings.length > 0) {
-    return trip.quickBookings;
-  }
-
-  const generated = [];
-
-  // 2. Synthesize from trip.flights
-  if (Array.isArray(trip.flights) && trip.flights.length > 0) {
-    trip.flights.forEach((f, idx) => {
-      generated.push({
-        id: f.id || `flight-${f.key || idx}`,
-        title: f.sector || (f.flightNumber ? `${f.airline || "Flight"} (${f.flightNumber}): ${f.from} ➔ ${f.to}` : `Flight ${idx + 1}`),
-        category: "transit",
-        icon: "plane",
-        date: f.dept ? `${f.dept} (Arr: ${f.arr || "TBD"})` : (f.date ? `${f.date} • ${f.departure || "TBD"}` : "Scheduled Flight"),
-        operator: f.airline || "Airline Carrier",
-        pickup: f.from ? `${f.from}` : "Departure Airport",
-        drop: f.to ? `${f.to}` : "Arrival Airport",
-        seats: f.seats || (trip.travelers ? `${trip.travelers} Confirmed` : "Confirmed Seats"),
-        price: f.price || (f.pnr ? `Confirmed • PNR: ${f.pnr}` : "Confirmed Flight"),
-        primaryUrl: f.bookingUrl || (f.airline?.toLowerCase().includes("indigo") ? "https://www.goindigo.in" : f.airline?.toLowerCase().includes("vietjet") ? "https://www.vietjetair.com" : "https://www.google.com/travel/flights"),
-        primaryLabel: f.airline ? `Official ${f.airline} Portal` : "Flight Booking Portal",
-        pnrPlaceholder: f.pnr || "CONFIRMED-PNR",
-        querySummary: `${f.from || "Origin"} ➔ ${f.to || "Destination"} • PNR: ${f.pnr || "Confirmed"}`
-      });
-    });
-  }
-
-  // 3. Synthesize from trip.stays or trip.hotels
-  const staysList = Array.isArray(trip.stays)
-    ? trip.stays
-    : (trip.hotels && typeof trip.hotels === "object" ? Object.values(trip.hotels) : []);
-
-  if (staysList.length > 0) {
-    staysList.forEach((s, idx) => {
-      generated.push({
-        id: s.id || `stay-${s.key || idx}`,
-        title: `${s.name || "Basecamp Stay"} [${s.city || "Hotel"}]`,
-        category: "stay",
-        icon: "hotel",
-        date: s.dates ? `Dates: ${s.dates}` : (s.checkIn ? `Check-in: ${s.checkIn}` : "Confirmed Dates"),
-        operator: s.phone ? `${s.name} (Phone: ${s.phone})` : (s.name || "Hotel Concierge"),
-        pickup: s.address || s.location || trip.destination || "Basecamp Address",
-        drop: s.room || "Reserved Accommodation",
-        seats: s.room || `${trip.travelers || "Family"} Confirmed`,
-        price: s.price || (s.pnr ? `Confirmed • PNR: ${s.pnr}` : "Confirmed Reservation"),
-        primaryUrl: s.bookingUrl || s.primaryUrl || (s.coords ? `https://www.google.com/maps/search/?api=1&query=${s.coords[0]},${s.coords[1]}` : "https://www.google.com/maps"),
-        primaryLabel: s.bookingLabel || `${s.name || "Hotel"} on Maps`,
-        altUrl: s.bookingAltUrl || s.altUrl || null,
-        altLabel: s.altLabel || null,
-        pnrPlaceholder: s.pnr || (s.phone ? `PHONE: ${s.phone}` : "CONFIRMED-STAY"),
-        querySummary: `${s.name || "Stay"} • ${s.dates || s.checkIn || ""} • ${s.city || ""}`
-      });
-    });
-  } else if (trip.basecamp && trip.basecamp.name) {
-    generated.push({
-      id: "basecamp-stay",
-      title: `${trip.basecamp.name} [BASECAMP]`,
-      category: "stay",
-      icon: "hotel",
-      date: `Check-in: ${trip.basecamp.checkIn || trip.dates || "Scheduled"}`,
-      operator: trip.basecamp.phone ? `${trip.basecamp.name} (Phone: ${trip.basecamp.phone})` : trip.basecamp.name,
-      pickup: trip.basecamp.address || trip.basecamp.location || trip.destination || "Hotel",
-      drop: "Basecamp Accommodation",
-      seats: trip.travelers || "Confirmed Guests",
-      price: "Confirmed Stay",
-      primaryUrl: trip.basecamp.bookingUrl || "https://www.google.com/maps",
-      primaryLabel: "Basecamp Map & Booking",
-      pnrPlaceholder: trip.basecamp.phone ? `PHONE: ${trip.basecamp.phone}` : "BASECAMP-CONFIRMED",
-      querySummary: `${trip.basecamp.name} • ${trip.basecamp.checkIn || trip.dates || ""}`
-    });
-  }
-
-  // 4. Synthesize from trip.transit
-  if (trip.transit) {
-    if (trip.transit.outbound) {
-      const out = trip.transit.outbound;
-      generated.push({
-        id: "transit-outbound",
-        title: out.title || "Outbound Transit Journey",
-        category: "transit",
-        icon: out.mode === "flight" ? "plane" : out.mode === "car" ? "car" : "bus",
-        date: out.date ? `${out.date} • ${out.deptTime || ""}` : "Outbound Schedule",
-        operator: out.operator || "Transit Operator",
-        pickup: out.from || "Departure Station",
-        drop: out.to || "Destination Station",
-        seats: out.seats || trip.travelers || "Confirmed Seats",
-        price: out.pnr ? `Confirmed • PNR: ${out.pnr}` : "Confirmed Journey",
-        primaryUrl: out.primaryUrl || (out.operator?.includes("KSRTC") ? "https://www.ksrtc.in" : "https://www.redbus.in"),
-        primaryLabel: out.operator ? `Official ${out.operator} Portal` : "Transit Booking Portal",
-        pnrPlaceholder: out.pnr || "CONFIRMED-PNR",
-        querySummary: `${out.from} ➔ ${out.to} • ${out.date || ""} • ${out.seats || ""}`
-      });
-    }
-    if (trip.transit.returnTrip) {
-      const ret = trip.transit.returnTrip;
-      generated.push({
-        id: "transit-return",
-        title: ret.title || "Return Transit Journey",
-        category: "transit",
-        icon: ret.mode === "flight" ? "plane" : ret.mode === "car" ? "car" : "bus",
-        date: ret.date ? `${ret.date} • ${ret.deptTime || ""}` : "Return Schedule",
-        operator: ret.operator || "Transit Operator",
-        pickup: ret.from || "Departure Station",
-        drop: ret.to || "Destination Station",
-        seats: ret.seats || trip.travelers || "Confirmed Seats",
-        price: ret.pnr ? `Confirmed • PNR: ${ret.pnr}` : "Confirmed Journey",
-        primaryUrl: ret.primaryUrl || (ret.operator?.includes("KSRTC") ? "https://www.ksrtc.in" : "https://www.redbus.in"),
-        primaryLabel: ret.operator ? `Official ${ret.operator} Portal` : "Transit Booking Portal",
-        pnrPlaceholder: ret.pnr || "CONFIRMED-PNR",
-        querySummary: `${ret.from} ➔ ${ret.to} • ${ret.date || ""} • ${ret.seats || ""}`
-      });
-    }
-  }
-
-  // 5. Synthesize from trip.limoTransfers
-  if (Array.isArray(trip.limoTransfers) && trip.limoTransfers.length > 0) {
-    const mainLimo = trip.limoTransfers[0];
-    generated.push({
-      id: "limo-fleet",
-      title: "Private 9-Seater DCar Limousine Fleet (All 9 Legs)",
-      category: "transit",
-      icon: "car",
-      date: `${trip.dates || "Expedition"} • Dedicated Chauffeur`,
-      operator: mainLimo.operator || "Asia Transport Vietnam (+84 902 035 595)",
-      pickup: "Da Nang, Hoi An, Hanoi Old Quarter, Ninh Binh & Halong Bay",
-      drop: "Door-to-door Private Transfer",
-      seats: "9 VIP Leather Massage Captain Chairs (5 Pax + Luggage)",
-      price: "Confirmed Private Limousine",
-      primaryUrl: "https://asiatransport.net",
-      primaryLabel: "Asia Transport VIP Portal",
-      pnrPlaceholder: "DCAR-VN-VIP",
-      querySummary: "9-Seater DCar VIP Fleet • All intercity and airport transfers"
-    });
-  }
-
-  return generated;
-}
 
 export default function BookingDesk({ trip, isOpen = false, onClose = null, asTab = false, onSaveTrip = null }) {
   const [copiedKey, setCopiedKey] = useState(null);
   const [toastMessage, setToastMessage] = useState("");
-  const [bookingsState, setBookingsState] = useState({});
   const [uploading, setUploading] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  // New pass form state
+  const [newPass, setNewPass] = useState({
+    title: "",
+    category: "flight",
+    bookingRef: "",
+    passenger: "",
+    notes: "",
+    url: ""
+  });
 
   // Isolate trip identity strictly
   const tripId = trip?.id || "unspecified-trip";
-  const storageKey = `travel_architect_bookings_${tripId}`;
+  const storageKey = `travel_architect_tickets_${tripId}`;
 
-  // Tickets state strictly initialized from active trip
-  const [tickets, setTickets] = useState(trip?.tickets || []);
-
-  // Quick bookings derived solely from the active trip
-  const defaultBookings = getQuickBookingsForTrip(trip);
-
-  // Sync state whenever the active trip changes (no cross-contamination!)
-  useEffect(() => {
+  // Helper to merge local saved tickets with any official blueprint tickets
+  const getMergedTickets = () => {
     try {
       const saved = localStorage.getItem(storageKey);
       if (saved) {
-        setBookingsState(JSON.parse(saved));
-      } else {
-        setBookingsState({});
-      }
-    } catch (e) {
-      console.warn("Could not load bookings state", e);
-      setBookingsState({});
-    }
-
-    setTickets(trip?.tickets || []);
-  }, [storageKey, trip]);
-
-  // Save state
-  const updateBooking = (id, field, value) => {
-    setBookingsState((prev) => {
-      const next = {
-        ...prev,
-        [id]: {
-          ...(prev[id] || {}),
-          [field]: value
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const existingIds = new Set(parsed.map((t) => t.id));
+          const missingBlueprintTickets = (trip?.tickets || []).filter((t) => !existingIds.has(t.id));
+          return [...missingBlueprintTickets, ...parsed];
         }
-      };
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(next));
-      } catch (e) {}
-      return next;
-    });
+      }
+    } catch (e) {}
+    return trip?.tickets || [];
+  };
+
+  // Tickets state strictly initialized from active trip & local storage
+  const [tickets, setTickets] = useState(getMergedTickets);
+
+  // Sync state whenever the active trip changes (no cross-contamination!)
+  useEffect(() => {
+    setTickets(getMergedTickets());
+  }, [storageKey, trip?.id, trip?.tickets]);
+
+  // Persist tickets helper
+  const persistTickets = (updatedTickets) => {
+    setTickets(updatedTickets);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(updatedTickets));
+    } catch (e) {
+      console.warn("Could not save tickets to localStorage", e);
+    }
+    if (onSaveTrip && trip) {
+      onSaveTrip({
+        ...trip,
+        tickets: updatedTickets
+      });
+    }
   };
 
   const copyToClipboard = (text, key, label) => {
+    if (!text) return;
     navigator.clipboard.writeText(text);
     setCopiedKey(key);
     setToastMessage(`Copied ${label} to clipboard!`);
@@ -209,52 +78,6 @@ export default function BookingDesk({ trip, isOpen = false, onClose = null, asTa
       setCopiedKey(null);
       setToastMessage("");
     }, 2500);
-  };
-
-  // Export full calendar schedule as .ics file
-  const exportCalendarIcs = () => {
-    if (defaultBookings.length === 0) {
-      setToastMessage("No booking events to export for this trip.");
-      setTimeout(() => setToastMessage(""), 2500);
-      return;
-    }
-
-    const calendarEvents = defaultBookings.map((b, idx) => {
-      const stateObj = bookingsState[b.id] || {};
-      const uid = `${b.id || idx}-${tripId}@travelarchitect`;
-      return [
-        "BEGIN:VEVENT",
-        `UID:${uid}`,
-        "DTSTAMP:20261001T000000Z",
-        `SUMMARY:${b.title}`,
-        `DESCRIPTION:${b.querySummary || b.title} - Confirmation: ${stateObj.pnr || b.pnrPlaceholder || "Confirmed"}`,
-        `LOCATION:${b.drop || b.pickup || trip?.destination || "Destination"}`,
-        "STATUS:CONFIRMED",
-        "END:VEVENT"
-      ].join("\r\n");
-    });
-
-    const icsContent = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      `PRODID:-//Travel Architect//${tripId}//EN`,
-      "CALSCALE:GREGORIAN",
-      "METHOD:PUBLISH",
-      `X-WR-CALNAME:${trip?.title || "Expedition"} Schedule`,
-      ...calendarEvents,
-      "END:VCALENDAR"
-    ].join("\r\n");
-
-    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
-    const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.setAttribute("download", `${tripId}_Schedule.ics`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setToastMessage("Calendar (.ics) downloaded! Ready to import into Google / Apple Calendar.");
-    setTimeout(() => setToastMessage(""), 3500);
   };
 
   const handleFileUpload = async (e) => {
@@ -271,18 +94,34 @@ export default function BookingDesk({ trip, isOpen = false, onClose = null, asTa
 
     try {
       const uploadedDoc = await uploadTicketPdf(tripId, file);
-      const nextTickets = [uploadedDoc, ...tickets];
-      setTickets(nextTickets);
-
-      if (onSaveTrip) {
-        onSaveTrip({
-          ...trip,
-          tickets: nextTickets
-        });
+      
+      // Auto-categorize based on filename
+      let category = "general";
+      const lower = file.name.toLowerCase();
+      if (lower.includes("flight") || lower.includes("air") || lower.includes("indigo") || lower.includes("vietjet") || lower.includes("boarding")) {
+        category = "flight";
+      } else if (lower.includes("hotel") || lower.includes("stay") || lower.includes("resort") || lower.includes("booking")) {
+        category = "stay";
+      } else if (lower.includes("train") || lower.includes("bus") || lower.includes("ksrtc") || lower.includes("irctc")) {
+        category = "train";
+      } else if (lower.includes("visa") || lower.includes("evisa") || lower.includes("passport")) {
+        category = "visa";
+      } else if (lower.includes("cruise") || lower.includes("tour") || lower.includes("pass")) {
+        category = "activity";
       }
 
-      setToastMessage(`Uploaded ${file.name} successfully!`);
-      setTimeout(() => setToastMessage(""), 4000);
+      const newTicketItem = {
+        ...uploadedDoc,
+        title: file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
+        category,
+        fileType: file.type || (file.name.endsWith(".pdf") ? "application/pdf" : "image")
+      };
+
+      const nextTickets = [newTicketItem, ...tickets];
+      persistTickets(nextTickets);
+
+      setToastMessage(`Saved ${file.name} to your Passes!`);
+      setTimeout(() => setToastMessage(""), 3500);
     } catch (err) {
       console.error("Upload failed:", err);
       alert("Upload failed: " + err.message);
@@ -300,111 +139,133 @@ export default function BookingDesk({ trip, isOpen = false, onClose = null, asTa
         await deleteTicketPdf(ticket.path);
       }
       const nextTickets = tickets.filter((t) => t.id !== ticket.id);
-      setTickets(nextTickets);
-      if (onSaveTrip) {
-        onSaveTrip({
-          ...trip,
-          tickets: nextTickets
-        });
+      persistTickets(nextTickets);
+      
+      if (previewDoc?.id === ticket.id) {
+        setPreviewDoc(null);
       }
+
       setToastMessage("Ticket removed.");
-      setTimeout(() => setToastMessage(""), 3000);
+      setTimeout(() => setToastMessage(""), 2500);
     } catch (err) {
       console.error("Delete failed:", err);
     }
   };
 
-  // Master copy of all passenger details
-  const copyMasterPassengerDetails = () => {
-    const lines = [
-      "📋 EXPEDITION BOOKING & PASSENGER DOSSIER",
-      "=========================================",
-      `Destination: ${trip?.title || trip?.destination || "Expedition"}`,
-      `Dates: ${trip?.dates || "2026"}`,
-      `Travelers: ${trip?.travelersList?.map((t) => t.name).join(", ") || trip?.travelers || "Confirmed Travelers"}`,
-      `Origin: ${trip?.origin || (trip?.category === "international" ? "Delhi (DEL) / Bengaluru (BLR)" : "Bengaluru")}`,
-      "",
-      "CONFIRMED & ACTIONABLE RESERVATIONS:"
-    ];
-
-    if (defaultBookings.length === 0) {
-      lines.push("No active reservations configured for this trip yet.");
-    } else {
-      defaultBookings.forEach((b, idx) => {
-        const stateObj = bookingsState[b.id] || {};
-        lines.push(`${idx + 1}. ${b.title}:`);
-        lines.push(`   • Details: ${b.date || "Scheduled"}`);
-        lines.push(`   • Provider: ${b.operator || b.pickup || ""}`);
-        lines.push(`   • Seats / Spec: ${b.seats || ""}`);
-        lines.push(`   • PNR / Confirmation: ${stateObj.pnr || b.pnrPlaceholder || "Confirmed"}`);
-        lines.push(`   • Status: ${stateObj.isBooked ? "BOOKED / CONFIRMED" : "ACTIONABLE"}`);
-        lines.push("");
-      });
+  const handleAddManualPass = (e) => {
+    e.preventDefault();
+    if (!newPass.title.trim()) {
+      alert("Please enter a pass title.");
+      return;
     }
 
-    const text = lines.join("\n");
-    copyToClipboard(text, "master-dossier", "Complete Passenger & Booking Dossier");
+    const manualItem = {
+      id: "pass_" + Date.now(),
+      title: newPass.title.trim(),
+      category: newPass.category || "flight",
+      bookingRef: newPass.bookingRef.trim(),
+      passenger: newPass.passenger.trim(),
+      notes: newPass.notes.trim(),
+      url: newPass.url.trim() || null,
+      fileType: newPass.url.trim().endsWith(".pdf") ? "application/pdf" : "custom",
+      uploadedAt: new Date().toISOString(),
+      source: "manual"
+    };
+
+    const nextTickets = [manualItem, ...tickets];
+    persistTickets(nextTickets);
+    setShowAddModal(false);
+    setNewPass({
+      title: "",
+      category: "flight",
+      bookingRef: "",
+      passenger: "",
+      notes: "",
+      url: ""
+    });
+
+    setToastMessage(`Added "${manualItem.title}" to Passes!`);
+    setTimeout(() => setToastMessage(""), 3000);
   };
 
-  const bookedCount = defaultBookings.filter((b) => bookingsState[b.id]?.isBooked).length;
-  const progressPercent = defaultBookings.length > 0 ? Math.round((bookedCount / defaultBookings.length) * 100) : 0;
+  const getCategoryBadge = (category) => {
+    switch (category) {
+      case "flight":
+        return { label: "Flight Ticket", bg: "bg-blue-500/15 text-blue-400 border-blue-500/30", icon: Plane };
+      case "stay":
+        return { label: "Hotel / Stay", bg: "bg-amber-500/15 text-amber-400 border-amber-500/30", icon: Hotel };
+      case "train":
+        return { label: "Train / Transit", bg: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30", icon: Bus };
+      case "visa":
+        return { label: "Visa / ID Pass", bg: "bg-purple-500/15 text-purple-400 border-purple-500/30", icon: ShieldCheck };
+      case "activity":
+        return { label: "Activity / Cruise", bg: "bg-rose-500/15 text-rose-400 border-rose-500/30", icon: Ticket };
+      default:
+        return { label: "E-Pass", bg: "bg-slate-500/15 text-slate-300 border-slate-500/30", icon: FileText };
+    }
+  };
+
+  const isPdf = (doc) => {
+    if (!doc?.url) return false;
+    if (doc.fileType === "application/pdf" || doc.fileType === "pdf") return true;
+    if (typeof doc.url === "string" && (doc.url.startsWith("data:application/pdf") || doc.url.toLowerCase().includes(".pdf"))) return true;
+    return false;
+  };
+
+  const isImage = (doc) => {
+    if (!doc?.url) return false;
+    if (doc.fileType && doc.fileType.startsWith("image/")) return true;
+    if (typeof doc.url === "string" && (doc.url.startsWith("data:image/") || /\.(jpeg|jpg|gif|png|webp|svg)($|\?)/i.test(doc.url))) return true;
+    return false;
+  };
 
   const content = (
-    <div className="space-y-5">
-      {/* Top Banner & Progress Bar */}
-      <div className="bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-900 border border-emerald-800/60 rounded-3xl p-4 sm:p-5 text-white shadow-xl relative overflow-hidden">
-        <div className="absolute -right-8 -bottom-8 w-44 h-44 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-emerald-800/50">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold uppercase tracking-wider border border-emerald-500/30">
-                Actionable Booking Command Desk
-              </span>
-              <span className="text-xs text-emerald-400 font-mono font-bold">
-                {bookedCount}/{defaultBookings.length} Confirmed
-              </span>
+    <div className="space-y-4">
+      {/* Vault Header Bar */}
+      <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-4 sm:p-5 shadow-xl relative overflow-hidden">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30 shrink-0">
+              <Ticket className="w-5 h-5" />
             </div>
-            <h2 className="text-lg sm:text-xl font-black text-white mt-1">
-              {trip?.destination ? `${trip.destination.split(',')[0]} Expedition Direct Booking Hub` : `${trip?.title || "Expedition"} Booking Hub`}
-            </h2>
-            <p className="text-xs text-slate-300 mt-0.5">
-              Verified direct booking links, confirmed PNRs, and reservation command cards.
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-black text-white">
+                  Passes & E-Ticket Vault
+                </h2>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  {tickets.length} Saved
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Drop your boarding pass PDFs, hotel vouchers, and e-visas here for instant 1-tap offline preview.
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            {/* Direct PDF / Image Upload */}
+            <label className={"flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition active:scale-95 " + (uploading ? "opacity-50 pointer-events-none" : "")}>
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+              <span>{uploading ? "Uploading..." : "Upload Ticket (PDF / Image)"}</span>
+              <input
+                type="file"
+                accept="application/pdf,image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+            </label>
+
+            {/* Add Manual Pass */}
             <button
-              onClick={copyMasterPassengerDetails}
-              className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 transition"
-              title="Copy all passenger names, dates, and route details"
+              onClick={() => setShowAddModal(true)}
+              className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition"
+              title="Add Pass by PNR or Confirmation Code"
             >
-              {copiedKey === "master-dossier" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>Copy Passenger Dossier</span>
+              <Plus className="w-4 h-4 text-emerald-400" />
+              <span className="hidden xs:inline">Add PNR Pass</span>
             </button>
-
-            <button
-              onClick={exportCalendarIcs}
-              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 transition"
-              title="Download .ics schedule for Google / Apple Calendar"
-            >
-              <Calendar className="w-3.5 h-3.5" />
-              <span>Export .ICS Calendar</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mt-3 pt-1">
-          <div className="flex justify-between items-center text-xs mb-1.5 font-bold">
-            <span className="text-slate-300 text-[11px]">Booking Readiness Status</span>
-            <span className="text-emerald-400 font-mono">{progressPercent}% Ready</span>
-          </div>
-          <div className="w-full bg-slate-900/80 rounded-full h-2.5 border border-emerald-900/80 overflow-hidden">
-            <div
-              className="bg-gradient-to-r from-emerald-500 to-teal-400 h-2.5 rounded-full transition-all duration-500 shadow-sm"
-              style={{ width: `${progressPercent}%` }}
-            ></div>
           </div>
         </div>
       </div>
@@ -417,30 +278,20 @@ export default function BookingDesk({ trip, isOpen = false, onClose = null, asTa
         </div>
       )}
 
-      {/* 📁 E-Tickets & PDF Document Vault Section */}
-      <div className="bg-slate-900/90 dark:bg-darkcard border border-slate-700/80 rounded-3xl p-4 sm:p-5 shadow-xl space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center border border-blue-500/30">
-              <FileText className="w-4.5 h-4.5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm sm:text-base font-black text-white">E-Tickets & PDF Document Vault</h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                  {tickets.length} Documents
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400 mt-0.5">
-                Upload & store flight boarding passes, cruise vouchers & e-visas with Supabase cloud backup & offline access.
-              </p>
-            </div>
+      {/* Passes Grid */}
+      {tickets.length === 0 ? (
+        <div className="bg-slate-900/60 dark:bg-darkcard border border-dashed border-slate-800 rounded-3xl p-8 sm:p-12 text-center space-y-3">
+          <div className="w-14 h-14 rounded-3xl bg-slate-800/80 border border-slate-700/80 flex items-center justify-center mx-auto text-slate-400">
+            <FileText className="w-7 h-7 text-emerald-400" />
           </div>
-
-          <div>
-            <label className={"px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md cursor-pointer transition active:scale-95 " + (uploading ? "opacity-50 pointer-events-none" : "")}>
-              <Upload className="w-3.5 h-3.5" />
-              <span>{uploading ? "Uploading..." : "Upload PDF Ticket"}</span>
+          <h3 className="text-base font-bold text-white">Your Ticket & Pass Vault is Empty</h3>
+          <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+            Attach your flight boarding passes, hotel confirmations, train tickets, or e-visa documents. All files are securely saved on your device for instant offline preview at airport check-in desks.
+          </p>
+          <div className="pt-2">
+            <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold cursor-pointer transition shadow-lg active:scale-95">
+              <Upload className="w-4 h-4" />
+              <span>Upload Your First PDF or Image Pass</span>
               <input
                 type="file"
                 accept="application/pdf,image/*"
@@ -450,253 +301,409 @@ export default function BookingDesk({ trip, isOpen = false, onClose = null, asTa
             </label>
           </div>
         </div>
-
-        {/* Tickets Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {tickets.length === 0 ? (
-            <div className="col-span-full p-6 text-center text-slate-500 italic text-xs bg-slate-950/60 rounded-2xl border border-dashed border-slate-800">
-              No tickets uploaded yet. Tap "Upload PDF Ticket" above to attach your boarding passes or booking vouchers!
-            </div>
-          ) : (
-            tickets.map((t) => (
-              <div key={t.id} className="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-3 hover:border-slate-700 transition group">
-                <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-blue-950 text-blue-300 border border-blue-800/80">
-                      {t.category || "E-Ticket"}
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-500">
-                      {t.size ? `${Math.round(t.size / 1024)} KB` : "Document"}
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-white mt-1.5 line-clamp-1" title={t.title || t.name}>
-                    {t.title || t.name}
-                  </h4>
-                  {t.bookingRef && (
-                    <span className="text-[10px] font-mono text-emerald-400 block mt-0.5">
-                      PNR / Ref: <span className="font-bold">{t.bookingRef}</span>
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-1.5 pt-2 border-t border-slate-800/80">
-                  <a
-                    href={t.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 py-1 px-2 rounded-lg bg-blue-950/80 hover:bg-blue-900 text-blue-300 text-[11px] font-bold border border-blue-800 flex items-center justify-center gap-1 transition"
-                  >
-                    <Eye className="w-3 h-3" />
-                    <span>View</span>
-                  </a>
-                  <a
-                    href={t.url}
-                    download={t.name || "ticket.pdf"}
-                    className="py-1 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-bold border border-slate-700 flex items-center justify-center gap-1 transition"
-                    title="Download to device"
-                  >
-                    <Download className="w-3 h-3" />
-                  </a>
-                  <button
-                    onClick={() => handleDeleteTicket(t)}
-                    className="p-1 text-slate-500 hover:text-red-400 rounded-lg hover:bg-red-950/50 transition cursor-pointer"
-                    title="Delete ticket"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* List of Actionable Booking Cards */}
-      {defaultBookings.length === 0 ? (
-        <div className="bg-slate-900/60 border border-dashed border-slate-800 rounded-3xl p-8 text-center text-slate-400 space-y-2">
-          <Ticket className="w-8 h-8 text-slate-600 mx-auto" />
-          <h4 className="text-sm font-bold text-white">No Actionable Bookings Configured Yet</h4>
-          <p className="text-xs text-slate-400 max-w-md mx-auto">
-            This trip does not have direct booking cards configured. You can upload flight passes, cruise vouchers, or hotel confirmations to your E-Tickets vault above.
-          </p>
-        </div>
       ) : (
-        <div className="space-y-4">
-          {defaultBookings.map((item, idx) => {
-            const isBooked = bookingsState[item.id]?.isBooked || false;
-            const savedPnr = bookingsState[item.id]?.pnr || "";
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          {tickets.map((t) => {
+            const badge = getCategoryBadge(t.category);
+            const BadgeIcon = badge.icon;
+            const hasPreview = !!t.url;
 
             return (
               <div
-                key={item.id}
-                className={`p-4 sm:p-5 rounded-3xl border transition-all shadow-sm ${
-                  isBooked
-                    ? "bg-emerald-950/20 dark:bg-emerald-950/20 border-emerald-500/40"
-                    : "bg-white dark:bg-darkcard border-slate-200 dark:border-darkborder hover:border-slate-300 dark:hover:border-slate-700"
-                }`}
+                key={t.id}
+                className="bg-white dark:bg-slate-950 p-4 rounded-3xl border border-slate-200 dark:border-slate-800/80 flex flex-col justify-between space-y-3.5 hover:border-emerald-500/40 transition shadow-sm hover:shadow-md group"
               >
-                {/* Header row */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <div className="flex items-start sm:items-center gap-3">
-                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
-                      item.category === "stay"
-                        ? "bg-blue-500/15 text-blue-500 dark:text-blue-400"
-                        : item.category === "tours"
-                        ? "bg-amber-500/15 text-amber-500 dark:text-amber-400"
-                        : "bg-emerald-500/15 text-emerald-500 dark:text-emerald-400"
-                    }`}>
-                      {item.icon === "hotel" ? <Hotel className="w-5 h-5" /> : item.icon === "ticket" ? <Ticket className="w-5 h-5" /> : item.icon === "car" ? <Car className="w-5 h-5" /> : item.icon === "plane" ? <Plane className="w-5 h-5" /> : <Bus className="w-5 h-5" />}
+                {/* Header: Category Badge & Size/Date */}
+                <div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className={`px-2 py-0.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider border flex items-center gap-1 ${badge.bg}`}>
+                      <BadgeIcon className="w-3 h-3" />
+                      <span>{badge.label}</span>
+                    </span>
+
+                    <span className="text-[10px] font-mono text-slate-400">
+                      {t.size ? `${Math.round(t.size / 1024)} KB` : "Offline Pass"}
+                    </span>
+                  </div>
+
+                  {/* Pass Title */}
+                  <h4 className="text-sm font-black text-slate-900 dark:text-white mt-2.5 line-clamp-2 leading-snug">
+                    {t.title || t.name}
+                  </h4>
+
+                  {/* Passenger / Traveler Name */}
+                  {t.passenger && (
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+                      <span>Traveler:</span>
+                      <strong className="text-slate-800 dark:text-slate-200">{t.passenger}</strong>
                     </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-mono">
-                        Step {idx + 1} • {item.operator}
-                      </span>
-                      {isBooked ? (
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold flex items-center gap-1">
-                          <CheckCircle2 className="w-3 h-3" /> Booked & Confirmed
+                  )}
+
+                  {/* PNR / Booking Ref Highlight Box */}
+                  {t.bookingRef && (
+                    <div className="mt-2.5 p-2 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
+                      <div>
+                        <span className="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">
+                          PNR / Booking Reference
                         </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> Booking Pending
+                        <span className="text-xs font-mono font-extrabold text-emerald-600 dark:text-emerald-400 tracking-wider">
+                          {t.bookingRef}
                         </span>
-                      )}
+                      </div>
+                      <button
+                        onClick={() => copyToClipboard(t.bookingRef, `pnr-${t.id}`, "PNR")}
+                        className="p-1.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition"
+                        title="Copy PNR to clipboard"
+                      >
+                        {copiedKey === `pnr-${t.id}` ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      </button>
                     </div>
-                    <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white mt-0.5">
-                      {item.title}
-                    </h3>
-                  </div>
-                </div>
+                  )}
 
-                <div className="text-left sm:text-right">
-                  <span className="text-xs font-mono font-bold text-slate-900 dark:text-white block">
-                    {item.price}
-                  </span>
-                  <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 block">
-                    {item.date}
-                  </span>
-                </div>
-              </div>
-
-              {/* Exact Pre-filled Parameters Badge */}
-              <div className="mt-3 bg-slate-50 dark:bg-slate-900/60 p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-xs space-y-2">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                    <span className="font-bold text-[11px]">Pre-filled Search Parameters:</span>
-                  </div>
-                  <button
-                    onClick={() => copyToClipboard(item.querySummary, `query-${item.id}`, "Search Parameters")}
-                    className="text-[10px] font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center gap-1 p-1"
-                    title="Copy search query string"
-                  >
-                    {copiedKey === `query-${item.id}` ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                    <span>Copy Query</span>
-                  </button>
-                </div>
-                <div className="bg-white dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 font-mono text-[11px] text-slate-800 dark:text-slate-200 select-all">
-                  {item.querySummary}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] pt-1">
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Pickup / Station:</span>
-                    <strong className="text-slate-800 dark:text-slate-200">{item.pickup}</strong>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Seats / Accommodation:</span>
-                    <strong className="text-slate-800 dark:text-slate-200">{item.seats}</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons: Primary Official + Instant Pre-filled + Alternative */}
-              <div className="mt-3 flex flex-wrap items-center gap-2 pt-1">
-                {item.primaryUrl && (
-                  <a
-                    href={item.primaryUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md transition-all active:scale-95"
-                  >
-                    <span>{item.primaryLabel}</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
-
-                {item.altUrl && (
-                  <a
-                    href={item.altUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md transition-all active:scale-95"
-                  >
-                    <span>{item.altLabel}</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
-
-                {item.thirdUrl && (
-                  <a
-                    href={item.thirdUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 transition-all"
-                  >
-                    <span>{item.thirdLabel}</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
-              </div>
-
-              {/* Booking Confirmation / PNR Tracker */}
-              <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={isBooked}
-                    onChange={(e) => updateBooking(item.id, "isBooked", e.target.checked)}
-                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
-                  />
-                  <span className={`font-bold text-[11px] ${isBooked ? "text-emerald-500" : "text-slate-600 dark:text-slate-400"}`}>
-                    Mark as Booked
-                  </span>
-                </label>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-slate-400 font-mono">PNR / Voucher:</span>
-                  <input
-                    type="text"
-                    value={savedPnr}
-                    placeholder={item.pnrPlaceholder || "e.g. KT-7821"}
-                    onChange={(e) => updateBooking(item.id, "pnr", e.target.value)}
-                    className="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1 text-xs font-mono text-slate-800 dark:text-slate-200 w-36 sm:w-44 focus:outline-hidden focus:border-emerald-500"
-                  />
-                  {savedPnr && (
-                    <button
-                      onClick={() => copyToClipboard(savedPnr, `pnr-${item.id}`, "PNR")}
-                      className="p-1 text-slate-400 hover:text-white"
-                      title="Copy PNR"
-                    >
-                      {copiedKey === `pnr-${item.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
+                  {/* Optional Notes */}
+                  {t.notes && (
+                    <p className="text-[11px] text-slate-400 mt-2 line-clamp-2 italic bg-slate-50 dark:bg-slate-900/50 p-2 rounded-lg border border-slate-100 dark:border-slate-900">
+                      {t.notes}
+                    </p>
                   )}
                 </div>
+
+                {/* Footer Action Buttons: Preview, Download, Delete */}
+                <div className="flex items-center gap-2 pt-2.5 border-t border-slate-100 dark:border-slate-800/80">
+                  {hasPreview ? (
+                    <button
+                      onClick={() => setPreviewDoc(t)}
+                      className="flex-1 py-1.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Preview Pass</span>
+                    </button>
+                  ) : (
+                    <span className="flex-1 py-1.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-400 text-xs font-medium text-center">
+                      No File Attached
+                    </span>
+                  )}
+
+                  {t.url && (
+                    <a
+                      href={t.url}
+                      download={t.name || `${t.title || "ticket"}.pdf`}
+                      className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 flex items-center justify-center transition"
+                      title="Download document to device"
+                    >
+                      <Download className="w-4 h-4" />
+                    </a>
+                  )}
+
+                  <button
+                    onClick={() => handleDeleteTicket(t)}
+                    className="p-1.5 text-slate-400 hover:text-red-500 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer"
+                    title="Delete ticket"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* 👁️ IN-APP TICKET & PDF PREVIEW MODAL */}
+      {previewDoc && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-slate-900 text-white rounded-3xl max-w-4xl w-full h-[90vh] sm:h-[86vh] flex flex-col shadow-2xl border border-slate-700/80 overflow-hidden">
+            {/* Modal Header Bar */}
+            <div className="px-4 py-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xs sm:text-sm font-bold text-white truncate">
+                    {previewDoc.title || previewDoc.name}
+                  </h3>
+                  <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                    <span className="uppercase font-mono text-emerald-400 font-bold">
+                      {previewDoc.category || "Pass"}
+                    </span>
+                    {previewDoc.bookingRef && (
+                      <span>• Ref: <strong className="font-mono text-white">{previewDoc.bookingRef}</strong></span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Toolbar Controls */}
+              <div className="flex items-center gap-1.5 shrink-0">
+                {previewDoc.bookingRef && (
+                  <button
+                    onClick={() => copyToClipboard(previewDoc.bookingRef, "preview-pnr", "PNR")}
+                    className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-1 transition"
+                    title="Copy PNR code"
+                  >
+                    {copiedKey === "preview-pnr" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span className="hidden sm:inline">Copy PNR</span>
+                  </button>
+                )}
+
+                {previewDoc.url && (
+                  <a
+                    href={previewDoc.url}
+                    download={previewDoc.name || `${previewDoc.title || "ticket"}.pdf`}
+                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center transition"
+                    title="Download file"
+                  >
+                    <Download className="w-4 h-4" />
+                  </a>
+                )}
+
+                {previewDoc.url && (
+                  <a
+                    href={previewDoc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center transition"
+                    title="Open in new window / print"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
+
+                <button
+                  onClick={() => setPreviewDoc(null)}
+                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-red-900/60 text-slate-300 hover:text-white border border-slate-700 transition ml-1"
+                  title="Close preview"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
             </div>
-          );
-        })}
-      </div>
-    )}
-  </div>
-);
 
-  // If rendered as a standalone tab view
+            {/* Modal Body: Direct In-App Viewer */}
+            <div className="flex-1 bg-slate-950 p-2 sm:p-4 overflow-auto flex flex-col items-center justify-center relative">
+              {isPdf(previewDoc) ? (
+                <div className="w-full h-full flex flex-col rounded-2xl overflow-hidden border border-slate-800 bg-slate-900">
+                  {/* PDF Navigation Bar */}
+                  <div className="px-3 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-xs shrink-0">
+                    <span className="text-[11px] text-slate-400 font-mono truncate">
+                      📄 Document Viewer • {previewDoc.name || previewDoc.title}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={previewDoc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] flex items-center gap-1 shadow-sm transition"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>Open in New Tab</span>
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Embedded PDF Viewer with Object and Iframe Fallbacks */}
+                  <div className="flex-1 w-full h-full relative bg-slate-950">
+                    <object
+                      data={previewDoc.url}
+                      type="application/pdf"
+                      className="w-full h-full border-0 bg-white"
+                    >
+                      <iframe
+                        src={previewDoc.url}
+                        title={previewDoc.title || "PDF Ticket Preview"}
+                        className="w-full h-full border-0 bg-white"
+                      >
+                        <div className="p-8 text-center space-y-4">
+                          <p className="text-sm text-slate-300">
+                            Previewing this PDF file directly inside the browser.
+                          </p>
+                          <a
+                            href={previewDoc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md"
+                          >
+                            Open PDF Document
+                          </a>
+                        </div>
+                      </iframe>
+                    </object>
+                  </div>
+                </div>
+              ) : isImage(previewDoc) ? (
+                <div className="w-full h-full flex flex-col items-center justify-center p-2">
+                  <img
+                    src={previewDoc.url}
+                    alt={previewDoc.title || "Ticket Preview"}
+                    className="max-h-[75vh] max-w-full object-contain rounded-2xl shadow-2xl border border-slate-800"
+                  />
+                  <div className="mt-2 text-[11px] text-slate-400 font-mono">
+                    Tap & hold to save image or use download button above
+                  </div>
+                </div>
+              ) : (
+                /* Fallback Clean Pass Viewer when no direct file */
+                <div className="max-w-md w-full bg-slate-900 border border-slate-800 p-6 rounded-3xl text-center space-y-4 shadow-xl">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30">
+                    <Ticket className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-black text-white">{previewDoc.title}</h4>
+                    <p className="text-xs text-slate-400 mt-1 uppercase font-mono tracking-wider">
+                      {previewDoc.category} Pass
+                    </p>
+                  </div>
+
+                  {previewDoc.bookingRef && (
+                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-widest">
+                        Booking Reference / PNR
+                      </span>
+                      <strong className="text-xl font-mono text-emerald-400 tracking-wider block mt-1">
+                        {previewDoc.bookingRef}
+                      </strong>
+                    </div>
+                  )}
+
+                  {previewDoc.passenger && (
+                    <div className="text-xs text-slate-300">
+                      Traveler: <strong>{previewDoc.passenger}</strong>
+                    </div>
+                  )}
+
+                  {previewDoc.notes && (
+                    <p className="text-xs text-slate-400 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+                      {previewDoc.notes}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ➕ ADD MANUAL PASS MODAL */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <Ticket className="w-5 h-5 text-emerald-500" />
+                <h3 className="text-base font-black text-slate-900 dark:text-white">
+                  Add New Pass / E-Ticket
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddManualPass} className="space-y-3.5 text-xs">
+              <div>
+                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  Pass Title / Route *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. IndiGo 6E-676 (DEL to HAN)"
+                  value={newPass.title}
+                  onChange={(e) => setNewPass({ ...newPass, title: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-emerald-500 font-bold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Category
+                  </label>
+                  <select
+                    value={newPass.category}
+                    onChange={(e) => setNewPass({ ...newPass, category: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-emerald-500 font-medium"
+                  >
+                    <option value="flight">Flight ✈️</option>
+                    <option value="stay">Hotel / Stay 🏨</option>
+                    <option value="train">Train / Transit 🚆</option>
+                    <option value="visa">Visa / ID 🛂</option>
+                    <option value="activity">Activity / Tour 🎟️</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    PNR / Confirmation Code
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. OB5L6J"
+                    value={newPass.bookingRef}
+                    onChange={(e) => setNewPass({ ...newPass, bookingRef: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:outline-hidden focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  Traveler Name / Seat
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Sundeep & Family • Seat 12A-12C"
+                  value={newPass.passenger}
+                  onChange={(e) => setNewPass({ ...newPass, passenger: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  Notes / Counter Instructions
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Terminal 3, counter opens 3h prior"
+                  value={newPass.notes}
+                  onChange={(e) => setNewPass({ ...newPass, notes: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-emerald-500"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-md active:scale-95 transition"
+                >
+                  Save Pass
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  // Standalone tab view
   if (asTab) {
     return <div className="max-w-5xl mx-auto py-2">{content}</div>;
   }
 
-  // If rendered as a modal
+  // Modal view
   if (!isOpen) return null;
 
   return (
@@ -706,7 +713,7 @@ export default function BookingDesk({ trip, isOpen = false, onClose = null, asTa
           <div className="flex items-center gap-2">
             <Ticket className="w-5 h-5 text-emerald-500" />
             <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
-              Trip Booking Desk
+              Trip Passes & Tickets
             </h2>
           </div>
           {onClose && (

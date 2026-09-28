@@ -21,11 +21,13 @@ import {
 
 export default function Header({
   currentTrip,
+  activeView = "hub",
   onBack,
   onOpenSos,
   onLock,
   onInstallPrompt,
   canInstall,
+  isStandalone = false,
   onOpenSyncModal,
   isCloudSynced,
   onOpenFx,
@@ -40,6 +42,7 @@ export default function Header({
   const [localTime, setLocalTime] = React.useState("");
   const [istTime, setIstTime] = React.useState("");
   const [countdown, setCountdown] = React.useState("");
+  const [mobileCountdown, setMobileCountdown] = React.useState("");
 
   React.useEffect(() => {
     function updateClocks() {
@@ -52,22 +55,47 @@ export default function Header({
         setLocalTime(now.toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" }));
       }
 
-      // Calculate countdown to Dec 3, 2026 (or trip startDate)
+      if (activeView === "passport") {
+        setCountdown("Level 4 Explorer • 6,000 XP");
+        setMobileCountdown("Vol. 2026");
+        return;
+      }
+
+      if (!currentTrip) {
+        setCountdown("3 Active Expeditions");
+        setMobileCountdown("3 Trips");
+        return;
+      }
+
+      if (currentTrip.status === "past") {
+        setCountdown("✓ Completed Expedition");
+        setMobileCountdown("✓ Completed");
+        return;
+      }
+
+      // Calculate countdown to trip startDate
       const targetDate = new Date(currentTrip?.startDate || "2026-12-03T23:00:00");
       const diffMs = targetDate - now;
       if (diffMs > 0) {
         const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
         const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
-        setCountdown(`⏳ Departs in ${days}d ${hours}h • ${currentTrip?.travelers || "5 Adults"}`);
+        
+        // Compact for mobile screens to prevent clustering and line wraps
+        setMobileCountdown(`⏳ In ${days}d ${hours}h`);
+        
+        // Clean summary for larger screens (e.g. "2 Travelers" instead of entire parenthesis list)
+        const paxSummary = currentTrip.travelers ? currentTrip.travelers.split("(")[0].trim() : "Travelers";
+        setCountdown(`⏳ Departs in ${days}d ${hours}h • ${paxSummary}`);
       } else {
         setCountdown(`✈️ Expedition Underway • ${currentTrip?.dates || ""}`);
+        setMobileCountdown("✈️ Underway");
       }
     }
 
     updateClocks();
     const interval = setInterval(updateClocks, 1000);
     return () => clearInterval(interval);
-  }, [currentTrip]);
+  }, [currentTrip, activeView]);
 
   return (
     <header className="bg-slate-950/95 dark:bg-slate-950/95 text-white sticky top-0 z-40 border-b border-slate-800 backdrop-blur-md transition-colors">
@@ -75,7 +103,7 @@ export default function Header({
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-2 text-xs">
         {/* Left: Branding & Clocks */}
         <div className="flex items-center gap-2 shrink-0">
-          {currentTrip && (
+          {(currentTrip || activeView === "passport") && (
             <button
               onClick={onBack}
               className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all flex items-center gap-1.5 text-xs font-bold shadow-sm"
@@ -104,84 +132,84 @@ export default function Header({
 
         {/* Right: Instant Action Pills */}
         <div className="flex items-center gap-1 sm:gap-1.5">
-          {/* FX Converter */}
+          {/* Install App on Phone CTA */}
+          {onInstallPrompt && !isStandalone && (
+            <button
+              onClick={onInstallPrompt}
+              className="px-2.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 transition-all shadow-sm ring-1 ring-emerald-400/60"
+              title="Install Travel Architect App to Phone"
+            >
+              <Download className="w-3 h-3 text-emerald-200" />
+              <span>Install App</span>
+            </button>
+          )}
+
+          {/* FX Converter (Desktop / Tablet) */}
           {onOpenFx && (
             <button
               onClick={onOpenFx}
-              className="px-2 py-1 bg-emerald-700/80 hover:bg-emerald-600 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 transition-all shadow-sm"
+              className="hidden sm:flex px-2 py-1 bg-emerald-700/80 hover:bg-emerald-600 text-white font-bold rounded-lg items-center gap-1 text-[11px] active:scale-95 transition-all shadow-sm"
               title="Live Currency FX Calculator"
             >
               <Coins className="w-3 h-3 text-amber-300" />
-              <span className="hidden xs:inline">FX</span>
+              <span>FX</span>
             </button>
           )}
 
-          {/* Quick Booking Desk Button */}
-          {onOpenBookingDesk && (
-            <button
-              onClick={onOpenBookingDesk}
-              className="px-2 py-1 bg-emerald-700/90 hover:bg-emerald-600 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 transition-all shadow-sm ring-1 ring-emerald-400/50"
-              title="Open Master Booking Command Desk"
-            >
-              <Ticket className="w-3 h-3 text-amber-300" />
-              <span className="hidden xs:inline">Bookings</span>
-            </button>
-          )}
-
-          {/* Taxi Driver Address Card */}
+          {/* Taxi Driver Address Card (Desktop / Tablet) */}
           {onOpenTaxi && (
             <button
               onClick={onOpenTaxi}
-              className="px-2 py-1 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 transition-all shadow-sm"
-              title="Show Taxi Driver Address in Vietnamese"
+              className="hidden sm:flex px-2 py-1 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg items-center gap-1 text-[11px] active:scale-95 transition-all shadow-sm"
+              title="Show Taxi Driver Address in Local Language"
             >
               <Car className="w-3 h-3 text-amber-300" />
-              <span className="hidden sm:inline">Taxi</span>
+              <span>Taxi</span>
             </button>
           )}
 
-          {/* Senior Pace Toggle */}
+          {/* Senior Pace Toggle (Desktop) */}
           {onToggleSeniorMode && (
             <button
               onClick={onToggleSeniorMode}
-              className={"px-2 py-1 rounded-lg border text-[11px] font-bold flex items-center gap-1 transition-all " + (
+              className={"hidden md:flex px-2 py-1 rounded-lg border text-[11px] font-bold items-center gap-1 transition-all " + (
                 seniorMode
                   ? "bg-amber-500 text-slate-950 border-amber-400 shadow-md font-extrabold"
                   : "bg-slate-900 text-slate-300 border-slate-800"
               )}
-              title="Toggle Senior Pace Comfort Mode (for Senior Parents)"
+              title="Toggle Senior Pace Comfort Mode"
             >
               <UserCheck className="w-3 h-3" />
-              <span className="hidden md:inline">{seniorMode ? "Senior Pace ON" : "Senior Comfort"}</span>
+              <span>{seniorMode ? "Senior Pace ON" : "Senior Comfort"}</span>
             </button>
           )}
 
-          {/* Emergency SOS */}
+          {/* Emergency SOS (Always Visible for Safety) */}
           <button
             onClick={onOpenSos}
-            className="px-2 py-1 bg-rose-950/70 hover:bg-rose-900:bg-rose-200 text-rose-300 border border-rose-500/40 rounded-lg text-[11px] font-extrabold flex items-center gap-1 shadow-sm transition-all active:scale-95"
+            className="px-2 py-1 bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-500/50 rounded-lg text-[11px] font-black flex items-center gap-1 shadow-sm transition-all active:scale-95"
             title="Emergency Medical ICE SOS"
           >
             <AlertCircle className="w-3 h-3 text-rose-400" />
             <span>SOS</span>
           </button>
 
-          {/* Docs Vault */}
+          {/* Docs Vault (Desktop) */}
           {onOpenDocs && (
             <button
               onClick={onOpenDocs}
-              className="px-2 py-1 bg-indigo-950/70 hover:bg-indigo-900:bg-indigo-200 text-indigo-300 border border-indigo-500/40 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all"
+              className="hidden md:flex px-2 py-1 bg-indigo-950/70 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 rounded-lg text-[11px] font-bold items-center gap-1 transition-all"
               title="Passports & E-Visas Vault"
             >
               <Shield className="w-3 h-3 text-indigo-400" />
-              <span className="hidden md:inline">Docs</span>
+              <span>Docs</span>
             </button>
           )}
 
-          {/* Supabase Cloud Sync */}
+          {/* Supabase Cloud Sync (Desktop) */}
           <button
             onClick={onOpenSyncModal}
-            className={"px-2 py-1 rounded-lg border text-[11px] font-bold flex items-center gap-1 transition-all " + (
+            className={"hidden md:flex px-2 py-1 rounded-lg border text-[11px] font-bold items-center gap-1 transition-all " + (
               isCloudSynced
                 ? "bg-emerald-950/60 text-emerald-300 border-emerald-500/40"
                 : "bg-slate-900 text-slate-400 border-slate-800"
@@ -189,31 +217,8 @@ export default function Header({
             title={isCloudSynced ? "Supabase Cloud Sync Active" : "Local Mode (Click to connect Cloud)"}
           >
             {isCloudSynced ? <Cloud className="w-3 h-3 text-emerald-400" /> : <CloudOff className="w-3 h-3 text-amber-400" />}
-            <span className="hidden sm:inline">{isCloudSynced ? "Synced" : "Cloud"}</span>
+            <span>{isCloudSynced ? "Synced" : "Cloud"}</span>
           </button>
-
-          {/* Lost SOS Beacon */}
-          {onOpenLostSos && (
-            <button
-              onClick={onOpenLostSos}
-              className="w-7 h-7 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg flex items-center justify-center text-xs active:scale-95 transition-all shadow-sm"
-              title="Lost SOS Beacon (Show to locals & Share GPS)"
-            >
-              <Compass className="w-3.5 h-3.5" />
-            </button>
-          )}
-
-          {/* Luggage Weight Calculator */}
-          {onOpenLuggage && (
-            <button
-              onClick={onOpenLuggage}
-              className="px-2 py-1 bg-purple-950/70 hover:bg-purple-900 text-purple-300 border border-purple-500/40 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all shadow-sm"
-              title="Souvenir & Baggage Weight Estimator (25kg allowance)"
-            >
-              <Scale className="w-3 h-3 text-purple-400" />
-              <span className="hidden lg:inline">Luggage</span>
-            </button>
-          )}
 
           {/* Lock Vault */}
           <button
@@ -235,19 +240,28 @@ export default function Header({
         </div>
       </div>
 
-      {/* Subheader Banner with Countdown */}
-      <div className="bg-slate-900/90 px-3.5 py-1.5 border-t border-slate-800/80 flex items-center justify-between text-xs transition-colors">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-red-600 to-amber-600 flex items-center justify-center text-white text-xs shadow">
-            <Compass className="w-3.5 h-3.5" />
+      {/* Subheader Banner with Title & Countdown */}
+      <div className="bg-slate-900/95 px-3 sm:px-4 py-1.5 sm:py-2 border-t border-slate-800/80 flex items-center justify-between gap-2.5 text-xs transition-colors">
+        {/* Left: Trip Title with Icon */}
+        <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
+          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-gradient-to-br from-red-600 to-amber-600 flex items-center justify-center text-white shrink-0 shadow">
+            <Compass className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
           </div>
-          <span className="font-bold text-white text-xs truncate">
-            {currentTrip ? currentTrip.title : "Travel Architect Master Hub"}
+          <span className="font-bold text-white text-xs sm:text-sm truncate">
+            {activeView === "passport"
+              ? "Lifetime Travel Journey Book & Memoir"
+              : currentTrip
+              ? currentTrip.title
+              : "Travel Architect Master Hub"}
           </span>
         </div>
 
-        <div className="text-[11px] font-mono text-amber-400 font-bold flex items-center gap-1.5">
-          <span>{countdown}</span>
+        {/* Right: Clean, un-squished Countdown Badge */}
+        <div className="shrink-0 flex items-center">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono text-[10px] sm:text-xs font-bold whitespace-nowrap shadow-sm">
+            <span className="sm:hidden">{mobileCountdown}</span>
+            <span className="hidden sm:inline">{countdown}</span>
+          </span>
         </div>
       </div>
     </header>

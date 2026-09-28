@@ -12,16 +12,24 @@ export default function SupabaseSyncModal({ isOpen, onClose, allTrips = [], onSy
   const [seeding, setSeeding] = useState(false);
   const [seedMessage, setSeedMessage] = useState("");
 
-  const sqlSnippet = `-- Create trips table for Travel Architect
-create table if not exists trips (
+  const sqlSnippet = `-- 1. Create trips table for data sync
+create table if not exists public.trips (
   id text primary key,
   data jsonb not null,
   updated_at timestamp with time zone default now()
 );
+alter table public.trips enable row level security;
+create policy "Public trips full access" on public.trips for all using (true) with check (true);
+alter publication supabase_realtime add table public.trips;
 
--- Enable Row Level Security and allow read/write
-alter table trips enable row level security;
-create policy "Public trips full access" on trips for all using (true) with check (true);
+-- 2. Create tickets storage bucket for PDF & image uploads
+insert into storage.buckets (id, name, public)
+values ('tickets', 'tickets', true)
+on conflict (id) do update set public = true;
+
+create policy "Public read tickets" on storage.objects for select using (bucket_id = 'tickets');
+create policy "Public upload tickets" on storage.objects for insert with check (bucket_id = 'tickets');
+create policy "Public delete tickets" on storage.objects for delete using (bucket_id = 'tickets');
 `;
 
   useEffect(() => {

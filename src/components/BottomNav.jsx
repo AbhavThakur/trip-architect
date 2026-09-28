@@ -15,54 +15,54 @@ export default function BottomNav({
 }) {
   if (viewMode === "simple") {
     return (
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[40] bg-white/95 dark:bg-darkcard/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-darkborder px-3 py-1.5 shadow-2xl safe-area-bottom">
-        <div className="grid grid-cols-4 max-w-md mx-auto text-center">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[40] bg-white/95 dark:bg-darkcard/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-darkborder px-2 pt-1.5 shadow-2xl safe-area-bottom">
+        <div className="grid grid-cols-4 max-w-md mx-auto text-center gap-1">
           <button
             onClick={() => onTabChange("itinerary")}
-            className={"flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition-all " + (
+            className={"flex flex-col items-center justify-center gap-1 py-1.5 px-2 rounded-xl transition-all cursor-pointer min-h-[44px] " + (
               activeTab === "itinerary"
-                ? "text-brand-600 dark:text-brand-400 font-bold scale-105"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-900"
+                ? "bg-brand-500/10 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 font-black"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             )}
           >
             <Calendar className="w-4 h-4" />
-            <span className="text-[10px]">Timeline</span>
+            <span className="text-[10.5px]">Timeline</span>
           </button>
 
           <button
             onClick={() => onTabChange("bookings")}
-            className={"flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition-all " + (
+            className={"flex flex-col items-center justify-center gap-1 py-1.5 px-2 rounded-xl transition-all cursor-pointer min-h-[44px] " + (
               activeTab === "bookings"
-                ? "text-emerald-600 dark:text-emerald-400 font-bold scale-105"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-900"
+                ? "bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             )}
           >
             <Ticket className="w-4 h-4" />
-            <span className="text-[10px]">Passes</span>
+            <span className="text-[10.5px]">Passes</span>
           </button>
 
           <button
             onClick={() => onTabChange("budget")}
-            className={"flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition-all " + (
+            className={"flex flex-col items-center justify-center gap-1 py-1.5 px-2 rounded-xl transition-all cursor-pointer min-h-[44px] " + (
               activeTab === "budget"
-                ? "text-purple-600 dark:text-purple-400 font-bold scale-105"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-900"
+                ? "bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 font-black"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             )}
           >
             <Calculator className="w-4 h-4" />
-            <span className="text-[10px]">Budget</span>
+            <span className="text-[10.5px]">Budget</span>
           </button>
 
           <button
             onClick={() => onTabChange("guide")}
-            className={"flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition-all " + (
+            className={"flex flex-col items-center justify-center gap-1 py-1.5 px-2 rounded-xl transition-all cursor-pointer min-h-[44px] " + (
               activeTab === "guide"
-                ? "text-indigo-600 dark:text-indigo-400 font-bold scale-105"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-900"
+                ? "bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-black"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             )}
           >
             <Compass className="w-4 h-4" />
-            <span className="text-[10px]">Guide</span>
+            <span className="text-[10.5px]">Guide</span>
           </button>
         </div>
       </nav>

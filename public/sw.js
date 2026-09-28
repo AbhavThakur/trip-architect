@@ -3,6 +3,7 @@ const CACHE_NAME = "travel-architect-pwa-v2.0";
 const PRECACHE_ASSETS = [
   "/",
   "/index.html",
+  "/react_app.html",
   "/manifest.json",
   "/favicon.ico",
   "/icons/icon-192.png",

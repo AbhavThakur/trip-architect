@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Cloud, CloudOff, CheckCircle2, AlertCircle, Copy, Check, Database, RefreshCw, X, ShieldCheck } from "lucide-react";
-import { getSupabaseConfig, setSupabaseConfig, testSupabaseConnection, pushAllTripsToCloud } from "../services/supabase";
+import {
+  Cloud, CloudOff, CheckCircle2, AlertCircle, Copy, Check,
+  Database, RefreshCw, X, ShieldCheck, Download, Upload,
+  ArrowDownCircle, ArrowUpCircle, FileJson, Sparkles
+} from "lucide-react";
+import {
+  getSupabaseConfig,
+  setSupabaseConfig,
+  testSupabaseConnection,
+  pushAllTripsToCloud,
+  pullAllTripsFromCloud,
+  exportAllTripsBackup,
+  importTripsBackup
+} from "../services/supabase";
 
 export default function SupabaseSyncModal({ isOpen, onClose, allTrips = [], onSyncSuccess }) {
   const [url, setUrl] = useState("");
@@ -11,6 +23,10 @@ export default function SupabaseSyncModal({ isOpen, onClose, allTrips = [], onSy
   const [copiedSql, setCopiedSql] = useState(false);
   const [seeding, setSeeding] = useState(false);
   const [seedMessage, setSeedMessage] = useState("");
+  const [pulling, setPulling] = useState(false);
+  const [pullMessage, setPullMessage] = useState("");
+  const [backupMessage, setBackupMessage] = useState("");
+  const fileInputRef = React.useRef(null);
 
   const sqlSnippet = `-- 1. Create trips table for data sync
 create table if not exists public.trips (
@@ -77,6 +93,55 @@ create policy "Public delete tickets" on storage.objects for delete using (bucke
     setTimeout(() => setCopiedSql(false), 2000);
   };
 
+  const handlePull = async () => {
+    setPulling(true);
+    setPullMessage("");
+    try {
+      setSupabaseConfig(url, key, true);
+      const res = await pullAllTripsFromCloud();
+      setPullMessage("Successfully pulled " + res.count + " trips from Supabase!");
+      if (onSyncSuccess) onSyncSuccess();
+    } catch (e) {
+      setPullMessage("Pull failed: " + e.message);
+    }
+    setPulling(false);
+  };
+
+  const handleExportBackup = () => {
+    try {
+      exportAllTripsBackup(allTrips);
+      setBackupMessage("Backup file downloaded successfully!");
+      setTimeout(() => setBackupMessage(""), 3000);
+    } catch (e) {
+      setBackupMessage("Export failed: " + e.message);
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const res = await importTripsBackup(file);
+      setBackupMessage("Successfully restored " + res.count + " trips from backup!");
+      if (onSyncSuccess) onSyncSuccess();
+      setTimeout(() => setBackupMessage(""), 4000);
+    } catch (err) {
+      setBackupMessage("Import failed: " + err.message);
+    }
+    e.target.value = "";
+  };
+
+  const handleFillEnv = () => {
+    const envUrl = import.meta.env.VITE_SUPABASE_URL;
+    const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    if (envUrl && envKey) {
+      setUrl(envUrl);
+      setKey(envKey);
+    }
+  };
+
+  const hasEnvCredentials = !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+
   const handleSeed = async () => {
     if (!allTrips || allTrips.length === 0) return;
     setSeeding(true);
@@ -116,6 +181,18 @@ create policy "Public delete tickets" on storage.objects for delete using (bucke
         {/* Input Fields */}
         <div className="space-y-3.5 text-xs">
           <div>
+                      {hasEnvCredentials && (!url || !key) && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleFillEnv}
+                className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <Sparkles className="w-3 h-3 text-amber-400" />
+                <span>Pre-fill from Project Environment</span>
+              </button>
+            </div>
+          )}
             <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Supabase Project URL</label>
             <input
               type="text"
@@ -177,28 +254,84 @@ create policy "Public delete tickets" on storage.objects for delete using (bucke
           </div>
         </div>
 
-        {/* Database Seed Section */}
+        {/* Two-Way Cloud Synchronization */}
         {enabled && (
-          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-300 flex items-center gap-1.5">
-                <Database className="w-3.5 h-3.5 text-indigo-400" />
-                Upload Local Trips to Supabase
-              </span>
+          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2.5">
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-300 flex items-center gap-1.5">
+              <Database className="w-3.5 h-3.5 text-indigo-500" />
+              Two-Way Cloud Synchronization
+            </span>
+            <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={handleSeed}
                 disabled={seeding}
-                className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1"
+                className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+                title="Push local itineraries to Supabase cloud"
               >
-                <Cloud className="w-3 h-3" />
-                <span>{seeding ? "Uploading..." : "Push (" + allTrips.length + " Trips)"}</span>
+                <ArrowUpCircle className="w-3.5 h-3.5" />
+                <span>{seeding ? "Uploading..." : `Push (${allTrips.length} Trips)`}</span>
+              </button>
+
+              <button
+                onClick={handlePull}
+                disabled={pulling}
+                className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+                title="Pull latest itineraries from Supabase cloud"
+              >
+                <ArrowDownCircle className="w-3.5 h-3.5" />
+                <span>{pulling ? "Pulling..." : "Pull from Cloud"}</span>
               </button>
             </div>
             {seedMessage && (
-              <p className="text-[11px] text-emerald-400 font-mono mt-1">{seedMessage}</p>
+              <p className="text-[11px] text-indigo-600 dark:text-indigo-400 font-mono">{seedMessage}</p>
+            )}
+            {pullMessage && (
+              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono">{pullMessage}</p>
             )}
           </div>
         )}
+
+        {/* Local Offline JSON Backup & Restore */}
+        <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-300 flex items-center gap-1.5">
+              <FileJson className="w-3.5 h-3.5 text-amber-500" />
+              Offline JSON Backup & Restore
+            </span>
+            <span className="text-[10px] text-slate-400 font-mono">No Server Needed</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={handleExportBackup}
+              className="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+              title="Download snapshot JSON of all trips to device"
+            >
+              <Download className="w-3.5 h-3.5 text-amber-500" />
+              <span>Download Backup</span>
+            </button>
+
+            <button
+              onClick={() => fileInputRef.current && fileInputRef.current.click()}
+              className="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+              title="Restore snapshot JSON from file"
+            >
+              <Upload className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Restore from File</span>
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept=".json"
+              className="hidden"
+            />
+          </div>
+
+          {backupMessage && (
+            <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono">{backupMessage}</p>
+          )}
+        </div>
 
         {/* SQL Migration Accordion */}
         <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-850 space-y-2 text-xs">

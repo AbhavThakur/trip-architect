@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getRegisteredTrips, saveCustomTrip, deleteCustomTrip } from "./data/trips/registry";
 import Header from "./components/Header";
+import WhatsAppShareModal from "./components/WhatsAppShareModal";
 import HubPage from "./pages/HubPage";
 import TripDetailPage from "./pages/TripDetailPage";
 import PinLockModal from "./components/PinLockModal";
@@ -23,6 +24,7 @@ export default function App() {
   const [activeView, setActiveView] = useState("hub"); // "hub" | "trip" | "passport"
   const [isSosOpen, setIsSosOpen] = useState(false);
   const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [isTaxiModalOpen, setIsTaxiModalOpen] = useState(false);
   const [activeTaxiStop, setActiveTaxiStop] = useState(null);
@@ -259,6 +261,7 @@ export default function App() {
         activeView={activeView}
         onBack={navigateBack}
         onOpenSos={() => setIsSosOpen(true)}
+        onOpenShareModal={() => setIsShareModalOpen(true)}
         onLock={() => {
           sessionStorage.removeItem("travel_architect_unlocked");
           window.location.reload();

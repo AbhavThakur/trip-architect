@@ -215,7 +215,26 @@ export default function TaxiCardModal({ isOpen, onClose, customStop = null, curr
     window.speechSynthesis.speak(utterance);
   };
 
-  const navUrl = current.coords
+  const shareTaxiWhatsApp = () => {
+    let text = `🚕 *TAXI DESTINATION: ${current.name}*\n\n`;
+    if (current.nameEn && current.nameEn !== current.name) {
+      text += `📍 *English Name:* ${current.nameEn}\n\n`;
+    }
+    text += `🏢 *Address:* ${current.address}\n\n`;
+    if (current.driverNote) {
+      text += `🗣️ *Driver Note:* "${current.driverNote}"\n\n`;
+    }
+    const mapsLink = current.coords
+      ? `https://maps.google.com/?q=${current.coords[0]},${current.coords[1]}`
+      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(current.name + " " + current.address)}`;
+    text += `🗺️ *Google Maps Pin:* ${mapsLink}\n\n`;
+    if (current.phone) {
+      text += `📞 *Desk Phone:* ${current.phone}\n\n`;
+    }
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+    const navUrl = current.coords
     ? `https://www.google.com/maps/dir/?api=1&destination=${current.coords[0]},${current.coords[1]}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(current.name + " " + current.address)}`;
 

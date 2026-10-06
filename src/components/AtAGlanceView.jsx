@@ -1,7 +1,13 @@
 import React from "react";
+import {
+  formatDayForWhatsApp,
+  formatFullTripForWhatsApp,
+  openWhatsAppShare
+} from "../utils/whatsappShare";
+
 import { ArrowRight, Calculator, Hotel, Utensils, UserCheck, Car, Compass } from "lucide-react";
 
-export default function AtAGlanceView({ days = [], onSelectDay, onOpenBudget, trip }) {
+export default function AtAGlanceView({ days = [], onSelectDay, onOpenBudget, onOpenShareModal, trip }) {
   const isVietnam = trip?.id?.includes("vietnam");
 
   const getRegionBadgeStyles = (code, day, dayNum) => {
@@ -31,6 +37,36 @@ export default function AtAGlanceView({ days = [], onSelectDay, onOpenBudget, tr
 
   return (
     <div className="space-y-4">
+      {/* Top Quick Action Bar */}
+      <div className="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-3 sm:p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+            {days.length}-Day Executive Overview
+          </span>
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:inline">
+            • Tap any day to inspect hourly plan or share via WhatsApp
+          </span>
+        </div>
+
+        <button
+          onClick={() => {
+            if (onOpenShareModal) {
+              onOpenShareModal("all");
+            } else {
+              const text = formatFullTripForWhatsApp(trip);
+              openWhatsAppShare(text);
+            }
+          }}
+          className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs shadow-emerald-600/20 transition-all cursor-pointer ml-auto active:scale-95"
+          title="Share Complete Trip Plan on WhatsApp"
+        >
+          <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c.969.541 1.838.835 2.809.835 3.18 0 5.767-2.587 5.768-5.766 0-3.18-2.586-5.767-5.771-5.771zm7.502 5.765c0 4.14-3.366 7.507-7.505 7.507-1.309 0-2.529-.336-3.606-.925l-4.422 1.159 1.18-4.306c-.689-1.127-1.079-2.457-1.079-3.882 0-4.141 3.366-7.508 7.506-7.508 4.14 0 7.506 3.367 7.506 7.508z" />
+          </svg>
+          <span>Share Full Trip Plan</span>
+        </button>
+      </div>
+
       {/* 2-Column Responsive Matrix matching archive companion */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
         {days.map((day, idx) => {
@@ -183,18 +219,39 @@ export default function AtAGlanceView({ days = [], onSelectDay, onOpenBudget, tr
               </div>
 
               {/* Footer Action to jump to Detailed View */}
-              <div className="pt-3.5 mt-3 border-t border-slate-100 dark:border-darkborder flex items-center justify-between">
+              <div className="pt-3.5 mt-3 border-t border-slate-100 dark:border-darkborder flex items-center justify-between gap-2 flex-wrap">
                 <span className="text-[10px] font-mono text-slate-400 flex items-center gap-1">
                   <Car className="w-3 h-3 text-slate-400" />
-                  <span className="truncate max-w-[200px]">{day.limoLeg || day.transportBadge || (isVietnam ? "Private DCar Limousine" : "Transit & Mobility")}</span>
+                  <span className="truncate max-w-[130px] sm:max-w-[170px]">{day.limoLeg || day.transportBadge || (isVietnam ? "Private DCar Limousine" : "Transit & Mobility")}</span>
                 </span>
-                <button
-                  onClick={() => onSelectDay && onSelectDay(idx)}
-                  className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all shrink-0"
-                >
-                  <span>View Hourly Plan</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
+                
+                <div className="flex items-center gap-1.5 ml-auto">
+                  <button
+                    onClick={() => {
+                      if (onOpenShareModal) {
+                        onOpenShareModal(dayNum);
+                      } else {
+                        const text = formatDayForWhatsApp(day, trip);
+                        openWhatsAppShare(text);
+                      }
+                    }}
+                    className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+                    title={`Share Day ${dayNum} plan on WhatsApp`}
+                  >
+                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                      <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c.969.541 1.838.835 2.809.835 3.18 0 5.767-2.587 5.768-5.766 0-3.18-2.586-5.767-5.771-5.771zm7.502 5.765c0 4.14-3.366 7.507-7.505 7.507-1.309 0-2.529-.336-3.606-.925l-4.422 1.159 1.18-4.306c-.689-1.127-1.079-2.457-1.079-3.882 0-4.141 3.366-7.508 7.506-7.508 4.14 0 7.506 3.367 7.506 7.508z" />
+                    </svg>
+                    <span>Share Day {dayNum}</span>
+                  </button>
+
+                  <button
+                    onClick={() => onSelectDay && onSelectDay(idx)}
+                    className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all shrink-0 cursor-pointer"
+                  >
+                    <span>Hourly Plan</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
             </div>
           );

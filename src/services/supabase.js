@@ -217,6 +217,72 @@ export async function saveTripToCloud(tripId, tripData) {
   }
 }
 
+export async function pullAllTripsFromCloud() {
+  const client = getClient();
+  if (!client) throw new Error("Supabase is not connected. Configure credentials first.");
+
+  const { data, error } = await client.from("trips").select("id, data, updated_at");
+  if (error) throw error;
+  if (!data || data.length === 0) return { success: true, count: 0, trips: [] };
+
+  const trips = [];
+  data.forEach((row) => {
+    if (row.data) {
+      const trip = row.data;
+      const cacheKey = "cached_trip_" + (row.id || trip.id);
+      localStorage.setItem(cacheKey, JSON.stringify(trip));
+      trips.push(trip);
+    }
+  });
+
+  return { success: true, count: trips.length, trips };
+}
+
+export function exportAllTripsBackup(trips = []) {
+  const backup = {
+    exportedAt: new Date().toISOString(),
+    version: "1.0",
+    app: "Trip Architect",
+    tripsCount: trips.length,
+    trips: trips
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `travel_architect_backup_${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  return true;
+}
+
+export async function importTripsBackup(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        const trips = Array.isArray(parsed) ? parsed : (parsed.trips || []);
+        if (!trips || trips.length === 0) {
+          throw new Error("No valid trips found in backup file.");
+        }
+        trips.forEach((trip) => {
+          if (trip.id) {
+            localStorage.setItem("cached_trip_" + trip.id, JSON.stringify(trip));
+          }
+        });
+        resolve({ count: trips.length, trips });
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsText(file);
+  });
+}
+
 export async function pushAllTripsToCloud(allTrips) {
   const client = getClient();
   if (!client) throw new Error("Supabase is not connected. Configure credentials first.");

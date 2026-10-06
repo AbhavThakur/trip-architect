@@ -21,6 +21,7 @@ import BottomNav from "../components/BottomNav";
 import TripAdvisorChat from "../components/TripAdvisorChat";
 import BookingDesk from "../components/BookingDesk";
 import GuideEssentialsHub from "../components/GuideEssentialsHub";
+import WhatsAppShareModal from "../components/WhatsAppShareModal";
 import { fetchTripFromCloud, saveTripToCloud, subscribeToTripUpdates } from "../services/supabase";
 
 export default function TripDetailPage({
@@ -33,6 +34,7 @@ export default function TripDetailPage({
 }) {
   const [trip, setTrip] = useState(initialTrip);
   const [activeTab, setActiveTab] = useState("itinerary");
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState("loading");
   const [saveIndicator, setSaveIndicator] = useState("");
   
@@ -228,13 +230,27 @@ export default function TripDetailPage({
               )}
             </div>
 
-            <button
-              onClick={onBack}
-              className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-black/40 hover:bg-black/60 text-white text-xs font-bold border border-white/15 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back</span>
-            </button>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <button
+                onClick={() => setShareModalOpen(true)}
+                className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold border border-emerald-400/40 transition-all flex items-center gap-1.5 cursor-pointer shadow-md shadow-emerald-950/40 active:scale-95"
+                title="Share Day-Wise or Full Trip Plan on WhatsApp"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c.969.541 1.838.835 2.809.835 3.18 0 5.767-2.587 5.768-5.766 0-3.18-2.586-5.767-5.771-5.771zm7.502 5.765c0 4.14-3.366 7.507-7.505 7.507-1.309 0-2.529-.336-3.606-.925l-4.422 1.159 1.18-4.306c-.689-1.127-1.079-2.457-1.079-3.882 0-4.141 3.366-7.508 7.506-7.508 4.14 0 7.506 3.367 7.506 7.508z" />
+                </svg>
+                <span className="hidden sm:inline">WhatsApp Share</span>
+                <span className="sm:hidden">Share</span>
+              </button>
+
+              <button
+                onClick={onBack}
+                className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-black/40 hover:bg-black/60 text-white text-xs font-bold border border-white/15 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Back</span>
+              </button>
+            </div>
           </div>
 
           <div>
@@ -753,6 +769,15 @@ export default function TripDetailPage({
           </div>
         )}
       </div>
+
+      {/* WhatsApp Share Modal */}
+      <WhatsAppShareModal
+        isOpen={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        trip={trip}
+        days={trip.itinerary || trip.days || []}
+        initialDayNum={1}
+      />
 
       {/* Floating On-Ground Advisor Chat */}
       <TripAdvisorChat currentTrip={trip} />

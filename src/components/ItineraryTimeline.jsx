@@ -39,6 +39,14 @@ import {
 } from "lucide-react";
 import InteractiveMap from "./InteractiveMap";
 import AtAGlanceView from "./AtAGlanceView";
+import WhatsAppShareModal from "./WhatsAppShareModal";
+import {
+  formatDayForWhatsApp,
+  formatFullTripForWhatsApp,
+  openWhatsAppShare,
+  copyWhatsAppText
+} from "../utils/whatsappShare";
+
 
 // Dual-Leg Flight Banner Component
 const FlightBanner = ({ flight, onEdit }) => {
@@ -132,6 +140,30 @@ export default function ItineraryTimeline({
   const [editingStop, setEditingStop] = useState(null);
   const [globalStopIndex, setGlobalStopIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareModalDayNum, setShareModalDayNum] = useState(1);
+  const [copiedDayNum, setCopiedDayNum] = useState(null);
+
+  const handleOpenShareModal = (dayNum = 1) => {
+    setShareModalDayNum(dayNum);
+    setShareModalOpen(true);
+  };
+
+  const handleQuickWhatsAppShare = (day) => {
+    if (!day) return;
+    const text = formatDayForWhatsApp(day, trip);
+    openWhatsAppShare(text);
+  };
+
+  const handleQuickCopyDay = async (day) => {
+    if (!day) return;
+    const text = formatDayForWhatsApp(day, trip);
+    const ok = await copyWhatsAppText(text);
+    if (ok) {
+      setCopiedDayNum(day.day || day.dayNum);
+      setTimeout(() => setCopiedDayNum(null), 2500);
+    }
+  };
   const [copiedId, setCopiedId] = useState(null);
 
   const handleCopyText = (text, id) => {
@@ -248,18 +280,8 @@ export default function ItineraryTimeline({
 
   const shareWhatsAppPlan = (day) => {
     if (!day) return;
-    let text = `${trip?.flag || "🧭"} *${trip?.title || tripTitle || "Trip Plan"} — Day ${day.dayNum}: ${day.title}*\n`;
-    if (day.date) text += `📅 Date: ${day.date}\n`;
-    if (day.weather) text += `⛅ Weather: ${day.weather}\n\n`;
-
-    day.places.forEach((s) => {
-      text += `• *${s.time}*: ${s.name}\n`;
-      if (s.desc) text += `   ${s.desc}\n`;
-    });
-
-    if (day.hotelName) text += `\n🏨 Stay: ${day.hotelName}`;
-    const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
-    window.open(url, "_blank");
+    const text = formatDayForWhatsApp(day, trip);
+    openWhatsAppShare(text);
   };
 
   const speakVietnamese = (text) => {
@@ -396,9 +418,9 @@ export default function ItineraryTimeline({
             </p>
           )}
 
-          {/* Hotel quick badge pill */}
-          {dayObj.hotelName && (
-            <div className="mt-2.5 flex items-center gap-2">
+          {/* Hotel & WhatsApp Share Action Row */}
+          <div className="mt-3 flex items-center justify-between gap-2 flex-wrap pt-2 border-t border-slate-100 dark:border-darkborder/50">
+            {dayObj.hotelName ? (
               <button
                 onClick={onOpenHotelCard || onOpenTaxi}
                 className="px-3 py-1 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded-full font-bold text-xs border border-blue-200 dark:border-blue-800 flex items-center gap-1.5 shadow-xs active:scale-95 transition"
@@ -406,8 +428,47 @@ export default function ItineraryTimeline({
                 <Hotel className="w-3.5 h-3.5 text-blue-500" />
                 <span>{dayObj.hotelName}</span>
               </button>
+            ) : <div />}
+
+            <div className="flex items-center gap-1.5 ml-auto">
+              <button
+                onClick={() => handleQuickCopyDay(dayObj)}
+                className="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
+                title={`Copy Day ${dayObj.dayNum} formatted plan to clipboard`}
+              >
+                {copiedDayNum === dayObj.dayNum ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-500" />
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-slate-400" />
+                    <span className="hidden sm:inline">Copy Text</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => handleQuickWhatsAppShare(dayObj)}
+                className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shadow-emerald-600/20 active:scale-95"
+                title={`Share Day ${dayObj.dayNum} plan with Google Maps links on WhatsApp`}
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c.969.541 1.838.835 2.809.835 3.18 0 5.767-2.587 5.768-5.766 0-3.18-2.586-5.767-5.771-5.771zm7.502 5.765c0 4.14-3.366 7.507-7.505 7.507-1.309 0-2.529-.336-3.606-.925l-4.422 1.159 1.18-4.306c-.689-1.127-1.079-2.457-1.079-3.882 0-4.141 3.366-7.508 7.506-7.508 4.14 0 7.506 3.367 7.506 7.508z" />
+                </svg>
+                <span>Share Day {dayObj.dayNum}</span>
+              </button>
+
+              <button
+                onClick={() => handleOpenShareModal(dayObj.dayNum)}
+                className="p-1 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 transition cursor-pointer"
+                title="Preview & Customize Share Message"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Places List */}
@@ -971,42 +1032,61 @@ export default function ItineraryTimeline({
           )}
 
           {/* Day Selector Pills Bar */}
-          <div className="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-1.5 sm:p-2 shadow-xs flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth">
+          <div className="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-1.5 sm:p-2 shadow-xs flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar scroll-smooth">
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+              <button
+                onClick={() => {
+                  setSelectedDayIdx("all");
+                  setActiveStopId(null);
+                }}
+                className={"px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 shadow-xs transition-all cursor-pointer " + (
+                  selectedDayIdx === "all"
+                    ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
+                )}
+              >
+                All ({normalizedDays.length})
+              </button>
+
+              {normalizedDays.map((d, idx) => {
+                const region = getRegionBadgeStyles(d.regionCode, d);
+                const isSelected = selectedDayIdx === idx;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setSelectedDayIdx(idx);
+                      setActiveStopId(null);
+                    }}
+                    className={"px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer " + (
+                      isSelected
+                        ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
+                    )}
+                  >
+                    <span>Day {d.dayNum}</span>
+                    <span className="opacity-80 font-normal text-[11px] truncate max-w-[90px]">{d.title?.split(" ")[0]}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             <button
               onClick={() => {
-                setSelectedDayIdx("all");
-                setActiveStopId(null);
+                if (selectedDayIdx === "all") {
+                  handleOpenShareModal("all");
+                } else {
+                  handleOpenShareModal(normalizedDays[selectedDayIdx]?.dayNum || selectedDayIdx + 1);
+                }
               }}
-              className={"px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 shadow-xs transition-all cursor-pointer " + (
-                selectedDayIdx === "all"
-                  ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
-              )}
+              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-bold shrink-0 flex items-center gap-1.5 shadow-xs transition-all cursor-pointer ml-auto"
+              title="Share on WhatsApp"
             >
-              All ({normalizedDays.length})
+              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c.969.541 1.838.835 2.809.835 3.18 0 5.767-2.587 5.768-5.766 0-3.18-2.586-5.767-5.771-5.771zm7.502 5.765c0 4.14-3.366 7.507-7.505 7.507-1.309 0-2.529-.336-3.606-.925l-4.422 1.159 1.18-4.306c-.689-1.127-1.079-2.457-1.079-3.882 0-4.141 3.366-7.508 7.506-7.508 4.14 0 7.506 3.367 7.506 7.508z" />
+              </svg>
+              <span>{selectedDayIdx === "all" ? "Share Trip" : `Share Day ${normalizedDays[selectedDayIdx]?.dayNum || selectedDayIdx + 1}`}</span>
             </button>
-
-            {normalizedDays.map((d, idx) => {
-              const region = getRegionBadgeStyles(d.regionCode, d);
-              const isSelected = selectedDayIdx === idx;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    setSelectedDayIdx(idx);
-                    setActiveStopId(null);
-                  }}
-                  className={"px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer " + (
-                    isSelected
-                      ? "bg-slate-900 text-white dark:bg-brand-600 shadow-sm font-bold"
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
-                  )}
-                >
-                  <span>Day {d.dayNum}</span>
-                  <span className="opacity-80 font-normal text-[11px] truncate max-w-[90px]">{d.title?.split(" ")[0]}</span>
-                </button>
-              );
-            })}
           </div>
 
           {/* Sticky Mobile Segmented View Switcher: List vs Map */}

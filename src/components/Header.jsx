@@ -33,6 +33,7 @@ export default function Header({
   onOpenFx,
   onOpenTaxi,
   onOpenBookingDesk,
+  onOpenShareModal,
   onOpenDocs, onOpenLostSos, onOpenLuggage,
   seniorMode,
   onToggleSeniorMode,
@@ -141,6 +142,20 @@ export default function Header({
             >
               <Download className="w-3 h-3 text-emerald-200" />
               <span>Install App</span>
+            </button>
+          )}
+
+          {/* WhatsApp Share Button */}
+          {currentTrip && onOpenShareModal && (
+            <button
+              onClick={() => onOpenShareModal("all")}
+              className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg flex items-center gap-1 text-[11px] active:scale-95 transition-all shadow-sm shadow-emerald-900/40"
+              title="Share Trip Itinerary on WhatsApp"
+            >
+              <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c.969.541 1.838.835 2.809.835 3.18 0 5.767-2.587 5.768-5.766 0-3.18-2.586-5.767-5.771-5.771zm7.502 5.765c0 4.14-3.366 7.507-7.505 7.507-1.309 0-2.529-.336-3.606-.925l-4.422 1.159 1.18-4.306c-.689-1.127-1.079-2.457-1.079-3.882 0-4.141 3.366-7.508 7.506-7.508 4.14 0 7.506 3.367 7.506 7.508z" />
+              </svg>
+              <span>Share</span>
             </button>
           )}
 

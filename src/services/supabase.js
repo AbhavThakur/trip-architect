@@ -94,6 +94,23 @@ export async function testSupabaseConnection(testUrl, testKey) {
 }
 
 export async function fetchTripFromCloud(tripId, fallbackData) {
+  // If running locally, check local dev server API first (isolated testing mode)
+  if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+    try {
+      const devRes = await fetch(`/api/trips/${encodeURIComponent(tripId)}`);
+      if (devRes.ok) {
+        const row = await devRes.json();
+        const devTrip = row.data || row;
+        if (devTrip && (devTrip.budget || devTrip.title)) {
+          const merged = { ...fallbackData, ...devTrip };
+          localStorage.setItem("cached_trip_" + tripId, JSON.stringify(merged));
+          return { data: merged, source: "localhost_dev", updatedAt: row.updated_at };
+        }
+      }
+    } catch (e) {
+      console.warn("Local dev API fetch failed, falling back:", e);
+    }
+  }
   const cacheKey = "cached_trip_" + tripId;
   const client = getClient();
 
@@ -191,6 +208,19 @@ export async function saveTripToCloud(tripId, tripData) {
   try {
     localStorage.setItem(cacheKey, JSON.stringify(tripData));
   } catch (e) {}
+
+  // If in local dev environment, also save to local dev endpoint for isolated local testing
+  if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+    try {
+      await fetch(`/api/trips/${encodeURIComponent(tripId)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: tripId, data: tripData })
+      });
+    } catch (err) {
+      console.warn("Local dev post error:", err);
+    }
+  }
 
   const client = getClient();
   if (!client) {

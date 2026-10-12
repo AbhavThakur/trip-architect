@@ -29,3 +29,7 @@ yarn-error.log*
 
 # Local Automation & Scratch Scripts
 scratch/
+
+# Local Dev Mock/Cache Files
+src/data/trips/.local-dev-cache.json
+*.local-dev-cache.json

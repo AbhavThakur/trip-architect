@@ -76,43 +76,51 @@ export default function SplitBudget({ budget, onSaveBudget, tripId, trip }) {
     { item: "Vietnam E-Visas & Travel Insurance", details: "Official single-entry e-visas ($25/each) + Comprehensive senior travel cover", total: 13000, pax: 5, category: "visas", date: "2026-11-20", status: "paid", paidBy: "Abhav" }
   ];
 
-  const initialItems = (budget.breakdown && Array.isArray(budget.breakdown) && budget.breakdown.length > 0)
-    ? budget.breakdown.map((b, idx) => ({
-        item: b.item || b.name || "Expense Item",
-        details: b.details || b.note || "Planned allocation",
-        total: parseCost(b.cost || b.amount || b.total),
-        pax: budget.paxCount || 2,
-        category: (b.category || (
-          (b.item || "").toLowerCase().includes("bus") || (b.item || "").toLowerCase().includes("train") || (b.item || "").toLowerCase().includes("flight") || (b.item || "").toLowerCase().includes("transit") || (b.item || "").toLowerCase().includes("cab") ? "transport" :
-          (b.item || "").toLowerCase().includes("stay") || (b.item || "").toLowerCase().includes("resort") || (b.item || "").toLowerCase().includes("hotel") ? "stays" :
-          (b.item || "").toLowerCase().includes("food") || (b.item || "").toLowerCase().includes("dining") || (b.item || "").toLowerCase().includes("meal") || (b.item || "").toLowerCase().includes("coffee") ? "food" :
-          (b.item || "").toLowerCase().includes("entry") || (b.item || "").toLowerCase().includes("ticket") || (b.item || "").toLowerCase().includes("guide") || (b.item || "").toLowerCase().includes("sightseeing") || (b.item || "").toLowerCase().includes("cart") || (b.item || "").toLowerCase().includes("coracle") ? "tours" : "misc"
-        )),
-        date: b.date || "",
-        status: b.status || "estimated",
-        paidBy: b.paidBy || b.payer || "Shared",
-        bookingUrl: b.bookingUrl || null,
-        bookingLabel: b.bookingLabel || null,
-        bookingAltUrl: b.bookingAltUrl || null,
-        bookingAltLabel: b.bookingAltLabel || null,
-        bookingThirdUrl: b.bookingThirdUrl || null,
-        bookingThirdLabel: b.bookingThirdLabel || null,
-        bookingParams: b.bookingParams || null
+  const initialItems = (budget.items && Array.isArray(budget.items) && budget.items.length > 0)
+    ? budget.items.map(it => ({
+        ...it,
+        total: parseCost(it.total || it.amount || it.cost),
+        pax: it.pax || budget.paxCount || 2,
+        pp: it.pp || Math.round(parseCost(it.total || it.amount || it.cost) / (it.pax || budget.paxCount || 2)),
+        paidBy: it.paidBy || it.payer || "Shared"
       }))
-    : (budget.items && budget.items.length > 0
-        ? budget.items.map(it => ({ ...it, paidBy: it.paidBy || it.payer || "Shared" }))
+    : (budget.breakdown && Array.isArray(budget.breakdown) && budget.breakdown.length > 0)
+        ? budget.breakdown.map((b, idx) => ({
+            item: b.item || b.name || "Expense Item",
+            details: b.details || b.note || "Planned allocation",
+            total: parseCost(b.cost || b.amount || b.total),
+            pax: budget.paxCount || 2,
+            pp: Math.round(parseCost(b.cost || b.amount || b.total) / (budget.paxCount || 2)),
+            category: (b.category || (
+              (b.item || "").toLowerCase().includes("bus") || (b.item || "").toLowerCase().includes("train") || (b.item || "").toLowerCase().includes("flight") || (b.item || "").toLowerCase().includes("transit") || (b.item || "").toLowerCase().includes("cab") ? "transport" :
+              (b.item || "").toLowerCase().includes("stay") || (b.item || "").toLowerCase().includes("resort") || (b.item || "").toLowerCase().includes("hotel") ? "stays" :
+              (b.item || "").toLowerCase().includes("food") || (b.item || "").toLowerCase().includes("dining") || (b.item || "").toLowerCase().includes("meal") || (b.item || "").toLowerCase().includes("coffee") ? "food" :
+              (b.item || "").toLowerCase().includes("entry") || (b.item || "").toLowerCase().includes("ticket") || (b.item || "").toLowerCase().includes("guide") || (b.item || "").toLowerCase().includes("sightseeing") || (b.item || "").toLowerCase().includes("cart") || (b.item || "").toLowerCase().includes("coracle") ? "tours" : "misc"
+            )),
+            date: b.date || "",
+            status: b.status || "estimated",
+            paidBy: b.paidBy || b.payer || "Shared",
+            bookingUrl: b.bookingUrl || null,
+            bookingLabel: b.bookingLabel || null,
+            bookingAltUrl: b.bookingAltUrl || null,
+            bookingAltLabel: b.bookingAltLabel || null,
+            bookingThirdUrl: b.bookingThirdUrl || null,
+            bookingThirdLabel: b.bookingThirdLabel || null,
+            bookingParams: b.bookingParams || null
+          }))
         : (budget.categories && budget.categories.length > 0
             ? budget.categories.map((c, i) => ({
                 item: c.name,
                 details: "Planned budget allocation",
                 total: parseCost(c.amount),
                 pax: budget.paxCount || 2,
+                pp: Math.round(parseCost(c.amount) / (budget.paxCount || 2)),
                 category: c.key || (c.name.toLowerCase().includes("flight") ? "flights" : c.name.toLowerCase().includes("hotel") ? "stays" : "misc"),
                 date: "",
                 status: "estimated",
                 paidBy: "Shared"
               }))
-            : []));
+            : []);
 
   const [items, setItems] = useState(initialItems);
   const [activeFilter, setActiveFilter] = useState("all");
@@ -213,10 +221,24 @@ export default function SplitBudget({ budget, onSaveBudget, tripId, trip }) {
     setExpenses(nextExpenses);
     if (onSaveBudget) {
       const nextTotal = nextItems.reduce((sum, item) => sum + (Number(item.total) || 0), 0);
+      const nextBreakdown = nextItems.map(it => ({
+        item: it.item,
+        cost: it.total,
+        total: it.total,
+        category: it.category,
+        note: it.details || "",
+        details: it.details || "",
+        status: it.status || "estimated",
+        date: it.date || "",
+        paidBy: it.paidBy || "Shared",
+        bookingUrl: it.bookingUrl || null,
+        bookingLabel: it.bookingLabel || null,
+      }));
       onSaveBudget({
         ...budget,
         total: nextTotal,
         items: nextItems,
+        breakdown: nextBreakdown,
         expenses: nextExpenses
       });
     }

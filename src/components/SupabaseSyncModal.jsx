@@ -216,11 +216,44 @@ create policy "Public delete tickets" on storage.objects for delete using (bucke
 
           {/* Test connection result */}
           {testResult && (
-            <div className={"p-3 rounded-xl border text-xs flex items-start gap-2 " + (testResult.success ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-500/40 text-emerald-900 dark:text-emerald-300" : "bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-500/40 text-rose-900 dark:text-rose-300")}>
-              {testResult.success ? <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" /> : <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />}
-              <div>
-                <p className="font-bold">{testResult.success ? "Connection successful!" : "Connection error"}</p>
-                <p className="text-[11px] opacity-90 mt-0.5">{testResult.error || "Connected to trips table successfully."}</p>
+            <div className={"p-3.5 rounded-2xl border text-xs flex items-start gap-2.5 " + (
+              testResult.success
+                ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-500/40 text-emerald-900 dark:text-emerald-300"
+                : testResult.code === "PROJECT_PAUSED"
+                ? "bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-500/40 text-amber-900 dark:text-amber-300"
+                : "bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-500/40 text-rose-900 dark:text-rose-300"
+            )}>
+              {testResult.success ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+              ) : (
+                <AlertCircle className={`w-4 h-4 ${testResult.code === "PROJECT_PAUSED" ? "text-amber-500" : "text-rose-500"} shrink-0 mt-0.5`} />
+              )}
+              <div className="flex-1 space-y-1.5">
+                <p className="font-bold text-sm">
+                  {testResult.success
+                    ? "Connection successful!"
+                    : testResult.code === "PROJECT_PAUSED"
+                    ? "Supabase Project is Paused (Free Tier)"
+                    : "Connection error"}
+                </p>
+                <p className="text-[11px] opacity-90 leading-relaxed">
+                  {testResult.error || "Connected to trips table successfully."}
+                </p>
+                {testResult.code === "PROJECT_PAUSED" && (
+                  <div className="pt-1">
+                    <a
+                      href={`https://supabase.com/dashboard/project/${url.match(/https:\/\/([a-z0-9]+)\.supabase\.co/)?.[1] || "eqciatcascbstrohqbnp"}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-950/30 transition-all active:scale-95"
+                    >
+                      <span>Unpause Project on Supabase Dashboard ↗</span>
+                    </a>
+                    <p className="text-[10px] text-amber-700 dark:text-amber-400 mt-1.5">
+                      ⏳ After clicking "Restore" in Supabase, wait ~2-3 minutes for the database to spin back up, then click "Test Connection" again.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}

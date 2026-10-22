@@ -2,31 +2,45 @@ name: Supabase Keep-Alive Ping
 
 on:
   schedule:
-    # Runs every 4 days at 06:00 UTC (well within the 7-day inactivity limit)
-    - cron: '0 6 */4 * *'
+    # Runs every 2 days at 05:00 UTC to guarantee active database I/O well before 7-day pause
+    - cron: "0 5 */2 * *"
   workflow_dispatch: # Allows manual trigger anytime from GitHub Actions tab
 
 jobs:
   keepalive:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase Database & REST API
+      - name: Heartbeat Write & Ping Supabase Database
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://eqciatcascbstrohqbnp.supabase.co' }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxY2lhdGNhc2Nic3Ryb2hxYm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxMzE2NjYsImV4cCI6MjEwNDcwNzY2Nn0.MMUXd8hM9oINQAuGlv3A02hcD0bHIjUjwiTtG1u3q3E' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || "https://eqciatcascbstrohqbnp.supabase.co" }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxY2lhdGNhc2Nic3Ryb2hxYm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxMzE2NjYsImV4cCI6MjEwNDcwNzY2Nn0.MMUXd8hM9oINQAuGlv3A02hcD0bHIjUjwiTtG1u3q3E" }}
         run: |
+          echo "Sending Supabase active write heartbeat..."
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          WRITE_STATUS=$(curl -s -o /tmp/write_response.json -w "%{http_code}" \
+            -X POST "${SUPABASE_URL}/rest/v1/trips" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: resolution=merge-duplicates" \
+            -d "{\"id\": \"_heartbeat\", \"data\": {\"last_ping\": \"${NOW}\"}, \"updated_at\": \"${NOW}\"}")
+          
+          echo "Write HTTP Status: ${WRITE_STATUS}"
+          cat /tmp/write_response.json 2>/dev/null || true
+          echo ""
+
           echo "Pinging Supabase trips table..."
           HTTP_STATUS=$(curl -s -o /tmp/response.json -w "%{http_code}" \
-            "${SUPABASE_URL}/rest/v1/trips?select=id" \
+            "${SUPABASE_URL}/rest/v1/trips?select=id&limit=1" \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
 
-          echo "Response HTTP Status: ${HTTP_STATUS}"
+          echo "Read HTTP Status: ${HTTP_STATUS}"
           cat /tmp/response.json
           echo ""
 
-          if [ "${HTTP_STATUS}" -eq 200 ]; then
-            echo "✅ Supabase project successfully pinged! Auto-pause prevented."
+          if [ "${HTTP_STATUS}" -eq 200 ] || [ "${WRITE_STATUS}" -eq 200 ] || [ "${WRITE_STATUS}" -eq 201 ]; then
+            echo "✅ Supabase project successfully pinged with active write! Auto-pause prevented."
           else
             echo "❌ Supabase ping failed with status ${HTTP_STATUS}"
             exit 1

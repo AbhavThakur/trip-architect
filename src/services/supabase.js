@@ -85,10 +85,26 @@ export async function testSupabaseConnection(testUrl, testKey) {
           error: "Connected to project, but 'trips' table does not exist. Run the SQL migration script from SUPABASE_SETUP_GUIDE.md." 
         };
       }
+      const msg = error.message || "";
+      if (msg.includes("fetch failed") || msg.includes("Failed to fetch") || msg.includes("ENOTFOUND") || msg.includes("NetworkError")) {
+        return {
+          success: false,
+          code: "PROJECT_PAUSED",
+          error: "Supabase Project is Unreachable or Paused. Free-tier projects pause after 7 days of inactivity. Click below to unpause it on your Supabase dashboard."
+        };
+      }
       return { success: false, error: error.message };
     }
     return { success: true, count: data ? data.length : 0 };
   } catch (err) {
+    const msg = err?.message || String(err);
+    if (msg.includes("fetch failed") || msg.includes("Failed to fetch") || msg.includes("ENOTFOUND") || msg.includes("NetworkError")) {
+      return {
+        success: false,
+        code: "PROJECT_PAUSED",
+        error: "Supabase Project is Unreachable or Paused. Free-tier projects pause after 7 days of inactivity. Click the link below to restore it from your Supabase dashboard."
+      };
+    }
     return { success: false, error: err.message };
   }
 }

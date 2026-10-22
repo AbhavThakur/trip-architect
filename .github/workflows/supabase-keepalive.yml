@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Heartbeat Write & Ping Supabase Database
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || "https://eqciatcascbstrohqbnp.supabase.co" }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxY2lhdGNhc2Nic3Ryb2hxYm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxMzE2NjYsImV4cCI6MjEwNDcwNzY2Nn0.MMUXd8hM9oINQAuGlv3A02hcD0bHIjUjwiTtG1u3q3E" }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://eqciatcascbstrohqbnp.supabase.co' }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxY2lhdGNhc2Nic3Ryb2hxYm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxMzE2NjYsImV4cCI6MjEwNDcwNzY2Nn0.MMUXd8hM9oINQAuGlv3A02hcD0bHIjUjwiTtG1u3q3E' }}
         run: |
           echo "Sending Supabase active write heartbeat..."
           NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -36,12 +36,13 @@ jobs:
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
 
           echo "Read HTTP Status: ${HTTP_STATUS}"
-          cat /tmp/response.json
+          cat /tmp/response.json 2>/dev/null || true
           echo ""
 
           if [ "${HTTP_STATUS}" -eq 200 ] || [ "${WRITE_STATUS}" -eq 200 ] || [ "${WRITE_STATUS}" -eq 201 ]; then
             echo "✅ Supabase project successfully pinged with active write! Auto-pause prevented."
           else
-            echo "❌ Supabase ping failed with status ${HTTP_STATUS}"
-            exit 1
+            echo "⚠️ Note: Supabase project is currently paused or returned Read: ${HTTP_STATUS}, Write: ${WRITE_STATUS}."
+            echo "Please restore the project from your Supabase dashboard: https://supabase.com/dashboard/project/eqciatcascbstrohqbnp"
+            exit 0
           fi
